@@ -68,14 +68,16 @@ def autofollow(action, api=False, **args):
 def fave_mentions(api=False, **args):
     try:
         api = check_api(api, **args)
+        print api.auth.get_username()
     except Exception, e:
         raise e
 
-    favs = api.favorites(include_entities=False)
+    favs = api.favorites(include_entities=False, count=100)
+    favs = [m.id_str for m in favs]
     faved = []
 
     try:
-        mentions = api.mentions(trim_user=True, include_entities=False)
+        mentions = api.mentions_timeline(trim_user=True, include_entities=False, count=75)
     except Exception, e:
         raise e
 
