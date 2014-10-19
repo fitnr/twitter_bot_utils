@@ -1,8 +1,8 @@
 import tweepy
-from conf import users, apps
+import config
 
 def create(app, screen_name):
-    auth = tweepy.OAuthHandler(**apps.get(app))
-    auth.set_access_token(**users.get(screen_name))
+    auth = tweepy.OAuthHandler(**config.app(app))
+    auth.set_access_token(**config.user(screen_name))
     return tweepy.API(auth)
     

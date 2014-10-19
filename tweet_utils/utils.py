@@ -1,10 +1,9 @@
 import api as API
 
-
 def check_api(api, **args):
     if api is False:
         if args.get('screen_name') and args.get('app'):
-            api = API.create(args['app'], args['screen_name'])
+            api = API.create(args.get('app'), args.get('screen_name'))
         else:
             raise Exception('cannot create API')
     return api
