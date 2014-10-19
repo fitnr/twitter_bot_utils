@@ -1,8 +1,5 @@
 from os import path
 import json
-import apps
-import levels
-import users
 
 SINCE_ID_FILE = path.join(path.dirname(__file__), '..', '..', 'data/since/since_ids.json')
 
