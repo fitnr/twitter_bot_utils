@@ -1,13 +1,5 @@
 from . import api as API
 
-def check_api(api, **args):
-    if api is False:
-        if args.get('screen_name') and args.get('app'):
-            api = API.create(args.get('app'), args.get('screen_name'))
-        else:
-            raise Exception('cannot create API')
-    return api
-
 
 def follow_back(api=False, **args):
     autofollow('follow', api, **args)
@@ -21,7 +13,7 @@ def autofollow(action, api=False, **args):
     ignore = []
 
     try:
-        api = check_api(api, **args)
+        api = API.check_api(api, **args)
     except Exception, e:
         raise e
 
@@ -66,7 +58,7 @@ def autofollow(action, api=False, **args):
 
 def fave_mentions(api=False, **args):
     try:
-        api = check_api(api, **args)
+        api = API.check_api(api, **args)
         print api.auth.get_username()
     except Exception, e:
         raise e
