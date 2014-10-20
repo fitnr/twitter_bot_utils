@@ -1,5 +1,5 @@
 from os import path
-import config
+from . import config
 import json
 
 SINCE_ID_FILE = None
@@ -7,6 +7,7 @@ SINCE_ID_FILE = None
 
 def _set_path():
     global SINCE_ID_FILE
+
     if SINCE_ID_FILE is None:
         config.load_config()
 

@@ -8,7 +8,6 @@ def load_config(user_conf=None):
     global config
 
     if config is None:
-
         file_name = ''
 
         if user_conf and path.exists(user_conf):
@@ -29,7 +28,7 @@ def load_config(user_conf=None):
 
             config = yaml.load(config_handle)
 
-        except (AttributeError, IOError), e:
+        except (AttributeError, IOError):
             if user_conf:
                 msg = 'Custom config file not found: {0}'.format(user_conf)
 
@@ -40,14 +39,14 @@ def load_config(user_conf=None):
 
 def user(username):
     load_config()
-    user = config['users'].get(username, None)
-    if user is None:
+    user_details = config['users'].get(username, None)
+    if user_details is None:
         raise IndexError
-    return user
+    return user_details
 
 def app(appname):
     load_config()
-    app = config['apps'].get(appname, None)
-    if app is None:
+    app_details = config['apps'].get(appname, None)
+    if app_details is None:
         raise IndexError
-    return app
+    return app_details

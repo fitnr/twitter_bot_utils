@@ -1,4 +1,4 @@
-import api as API
+from . import api as API
 
 def check_api(api, **args):
     if api is False:
@@ -18,7 +18,7 @@ def unfollow(api=False, **args):
 
 
 def autofollow(action, api=False, **args):
-    users, ids, ignore = [], [], []
+    ignore = []
 
     try:
         api = check_api(api, **args)
