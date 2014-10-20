@@ -1,5 +1,5 @@
 #!/usr/local/bin/python
-from tweet_utils import utils
+from . import utils
 import argparse
 
 
