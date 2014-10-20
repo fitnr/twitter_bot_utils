@@ -3,7 +3,7 @@ import argparse
 from . import config, levels
 
 def add_default_args(parser):
-    parser.add_argument('-c', '--config_file', type=str, help='path to config file to parse (yaml)')
+    parser.add_argument('-c', '--api_config', metavar='PATH', default=None, type=str, help='path to config file to parse (yaml)')
     parser.add_argument('--development', action='store_true', help="Don't tweet, just output to stdout")
 
 def parse_default_args(botname, args):
@@ -12,9 +12,12 @@ def parse_default_args(botname, args):
     if args.development:
         levels.add_stdout_logger(botname)
 
-    if args.config_file:
-        logger.info('Using custom config file: {0}'.format(args.config_file))
-        config.load_config(args.config_file)
+    if args.api_config:
+        logger.info('Using custom config file: {0}'.format(args.api_config))
+    else:
+        logger.info('Trying to use a default config')
+
+    config.load_config(args.api_config)
 
 def setup(botname, description):
     '''Set up an general argument parsing, logging and api for bots'''

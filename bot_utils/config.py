@@ -3,6 +3,7 @@ import yaml
 
 config = None
 
+
 def load_config(user_conf=None):
     '''Load a user config file or one from a standard place'''
     global config
@@ -23,10 +24,7 @@ def load_config(user_conf=None):
                 file_name = local_conf
 
         try:
-            with open(file_name, 'r') as f:
-                config_handle = f.read()
-
-            config = yaml.load(config_handle)
+            config = parse(file_name)
 
         except (AttributeError, IOError):
             if user_conf:
@@ -37,12 +35,19 @@ def load_config(user_conf=None):
 
             raise IOError(msg)
 
+
+def parse(file_path):
+    with open(file_path, 'r') as f:
+        return yaml.load(f.read())
+
+
 def user(username):
     load_config()
     user_details = config['users'].get(username, None)
     if user_details is None:
         raise IndexError
     return user_details
+
 
 def app(appname):
     load_config()
