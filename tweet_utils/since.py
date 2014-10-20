@@ -21,7 +21,7 @@ def save_since_id(user, _id):
     with open(SINCE_ID_FILE, 'r') as f:
         ids = json.load(f)
 
-    ids[user] = str(_id)
+    ids[user] = _id
 
     with open(SINCE_ID_FILE, 'w') as f:
         json.dump(ids, f)
