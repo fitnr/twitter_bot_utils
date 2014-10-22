@@ -1,6 +1,7 @@
 import tweepy
 from os import path
-
+import json
+from . import tools
 
 class API(tweepy.API):
 
@@ -31,7 +32,7 @@ class API(tweepy.API):
                     break
 
         try:
-            self._config = parse(file_name)
+            self._config = tools.parse(file_name)
 
         except (AttributeError, IOError):
             if user_conf:
