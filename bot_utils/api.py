@@ -1,15 +1,154 @@
 import tweepy
-from . import config
+from os import path
 
-def create(app, screen_name):
-    auth = tweepy.OAuthHandler(**config.app(app))
-    auth.set_access_token(**config.user(screen_name))
-    return tweepy.API(auth)
 
-def check_api(api, **args):
-    if api is False:
-        if args.get('screen_name') and args.get('app'):
-            api = create(args.get('app'), args.get('screen_name'))
+class API(tweepy.API):
+
+    '''Extends the tweepy API with config-file handling'''
+
+    app_name = None
+    screen_name = None
+
+    possible_paths = [
+        'bots.yaml',
+        'bots.json',
+        'bots/bots.yaml',
+        'bots/bots.json'
+    ]
+
+    _since_ids = None
+
+    def __init__(self, app_name, screen_name, user_conf=None):
+        if user_conf and path.exists(user_conf):
+            file_name = user_conf
+
         else:
-            raise Exception('cannot create API')
-    return api
+            for pth in self.possible_paths:
+                expanded_path = path.join(path.expanduser('~'), pth)
+
+                if path.exists(expanded_path):
+                    file_name = expanded_path
+                    break
+
+        try:
+            self._config = parse(file_name)
+
+        except (AttributeError, IOError):
+            if user_conf:
+                msg = 'Custom config file not found: {0}'.format(user_conf)
+
+            else:
+                msg = 'Config file not found in ~/bots.{json,yaml} or ~/bots/bots.{json,yaml}'
+
+            raise IOError(msg)
+
+        if 'users' not in self._config or 'apps' not in self._config:
+            raise AttributeError('Config file incomplete. Must contain both an apps and a users section')
+
+        self.app_name = app_name
+        self.screen_name = screen_name
+
+        auth = tweepy.OAuthHandler(**self.app)
+        auth.set_access_token(**self.user)
+
+        super(API, self).__init__(auth)
+
+        self._formatted_since_id = path.expanduser(self._config['since_id_file'].format(data_path=self._config['data_path']))
+
+    def _get(self, section, key):
+        if key not in self._config[section]:
+            raise IndexError('Key not found in {section} section of config: {key}'.format(section=section, key=key))
+
+        return self._config[section][key]
+
+    @property
+    def user(self):
+        return self._get('users', self.screen_name)
+
+    @property
+    def app(self):
+        return self._get('apps', self.app_name)
+
+    @property
+    def since_ids(self):
+        if not self._since_ids:
+            with open(self._formatted_since_id, 'r') as f:
+                self._since_ids = json.load(f)
+
+        return self._since_ids
+
+    def since_id(self):
+        return self.since_ids[self.user]
+
+    def save_since_id(self, _id):
+        self._since_ids[self.user] = _id
+
+        with open(self._formatted_since_id, 'w') as f:
+            json.dump(self._since_ids, f)
+
+    def fave_mentions(self):
+        favs = self.favorites(include_entities=False, count=100)
+        favs = [m.id_str for m in favs]
+        faved = []
+
+        try:
+            mentions = self.mentions_timeline(trim_user=True, include_entities=False, count=75)
+        except Exception, e:
+            raise e
+
+        for mention in mentions:
+            # only try to fav if not in recent favs
+            if mention.id_str not in favs:
+                try:
+                    fav = self.create_favorite(mention.id_str, include_entities=False)
+                    faved.append(fav)
+
+                except Exception, e:
+                    raise e
+
+    def follow_back(self):
+        self._autofollow('follow')
+
+    def unfollow(self):
+        self._autofollow('unfollow')
+
+    def _autofollow(self, action):
+        ignore = []
+
+        # get the last 5000 followers
+        try:
+            followers = self.follower_ids()
+            followers = [x.id_str for x in followers]
+
+        except Exception, e:
+            raise e
+
+        # Get the last 5000 people user has followed
+        try:
+            friends = self.friend_ids()
+
+        except Exception, e:
+            raise e
+
+        if action is "unfollow":
+            method = self.destroy_friendship
+            independent, dependent = followers, friends
+
+        elif action is "follow":
+            method = self.create_friendship
+            independent, dependent = friends, followers
+
+        try:
+            outgoing = self.friendships_outgoing()
+            ignore = [x.id_str for x in outgoing]
+
+        except Exception, e:
+            raise e
+
+        for uid in dependent:
+            if uid in independent and uid not in ignore:
+                try:
+                    method(id=uid)
+
+                except Exception, e:
+                    raise e
