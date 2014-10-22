@@ -3,8 +3,15 @@ import argparse
 from . import levels
 
 def add_default_args(parser):
-    parser.add_argument('-c', '--api_config', metavar='PATH', default=None, type=str, help='path to config file to parse (yaml)')
-    parser.add_argument('--development', action='store_true', help="Don't tweet, just output to stdout")
+    parser.add_argument('--api-config', metavar='PATH', default=None, type=str, help='path to config file to parse (json or yaml)')
+
+    parser.add_argument('--key', type=str, help='Twitter user key')
+    parser.add_argument('--secret', type=str, help='Twitter user secret')
+    parser.add_argument('--consumer-key', type=str, help='Twitter application consumer key')
+    parser.add_argument('--consumer-secret', type=str, help='Twitter application consumer secret')
+
+    parser.add_argument('--since-id-file', type=str, help='path of JSON file with since IDs')
+
     parser.add_argument('--dry-run', action='store_true', help="Don't tweet, just output to stdout")
     parser.add_argument('-v', '--verbose', action='store_true', help="Log to stdout")
 

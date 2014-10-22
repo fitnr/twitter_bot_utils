@@ -19,9 +19,9 @@ class API(tweepy.API):
 
     _since_ids = None
 
-    def __init__(self, app_name, screen_name, user_conf=None):
-        if user_conf and path.exists(user_conf):
-            file_name = user_conf
+    def __init__(self, screen_name, args):
+        if args.user_config and path.exists(args.user_config):
+            file_name = args.user_config
 
         else:
             for pth in self.possible_paths:
@@ -35,8 +35,8 @@ class API(tweepy.API):
             self._config = tools.parse(file_name)
 
         except (AttributeError, IOError):
-            if user_conf:
-                msg = 'Custom config file not found: {0}'.format(user_conf)
+            if args.user_config:
+                msg = 'Custom config file not found: {0}'.format(args.user_config)
 
             else:
                 msg = 'Config file not found in ~/bots.{json,yaml} or ~/bots/bots.{json,yaml}'
@@ -46,11 +46,18 @@ class API(tweepy.API):
         if 'users' not in self._config or 'apps' not in self._config:
             raise AttributeError('Config file incomplete. Must contain both an apps and a users section')
 
-        self.app_name = app_name
         self.screen_name = screen_name
 
-        auth = tweepy.OAuthHandler(**self.app)
-        auth.set_access_token(**self.user)
+        if args.consumer_key and args.consumer_secret:
+            auth = tweepy.OAuthHandler(consumer_key=args.consumer_key, consumer_secret=args.consumer_secret)
+        else:
+            self.app_name = self.user['app']
+            auth = tweepy.OAuthHandler(**self.app)
+
+        if args.key and args.secret:
+            auth.set_access_token(key=args.key, secret=args.secret)
+        else:
+            auth.set_access_token(**self.user)
 
         super(API, self).__init__(auth)
 
