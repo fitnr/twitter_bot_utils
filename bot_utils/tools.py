@@ -10,7 +10,7 @@ def fave_mentions():
     parser.add_argument('-c', '--api_config', type=str, help='(optional) file with api auth details')
     args = parser.parse_args()
 
-    twitter = api.API(args.app, args.screen_name, args.api_config)
+    twitter = api.API(args.screen_name, args.api_config)
     twitter.fave_mentions()
 
 
@@ -23,7 +23,7 @@ def auto_follow():
 
     args = parser.parse_args()
 
-    twitter = api.API(args.app, args.screen_name, args.api_config)
+    twitter = api.API(args.screen_name, args.api_config)
 
     if args.unfollow:
         twitter.unfollow()

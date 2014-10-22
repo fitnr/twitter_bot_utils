@@ -5,6 +5,9 @@ from . import levels
 def add_default_args(parser):
     parser.add_argument('-c', '--api_config', metavar='PATH', default=None, type=str, help='path to config file to parse (yaml)')
     parser.add_argument('--development', action='store_true', help="Don't tweet, just output to stdout")
+    parser.add_argument('--dry-run', action='store_true', help="Don't tweet, just output to stdout")
+    parser.add_argument('-v', '--verbose', action='store_true', help="Log to stdout")
+
 
 def defaults(screen_name, args):
     '''Interpret default args, set up API'''
@@ -15,7 +18,7 @@ def defaults(screen_name, args):
     else:
         logger.info('Trying to use a default config')
 
-    if args.development:
+    if args.verbose:
         levels.add_stdout_logger(screen_name)
 
 def setup(botname, description):
