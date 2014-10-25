@@ -4,6 +4,7 @@ __version__ = '1.0'
 __author__ = 'Neil Freeman'
 __license__ = 'all rights reserved'
 
+from . import helpers
 from . import api
 from . import args
 from . import levels
