@@ -86,6 +86,10 @@ class API(tweepy.API):
 
         return self._since_ids[self.screen_name]
 
+    @since_id.setter
+    def since_id(self, value):
+        self.since_id[self.screen_name] = value
+
     def save_since_id(self, _id):
         self._since_ids[self.screen_name] = _id
 

@@ -11,14 +11,6 @@ def no_entities(status):
     else:
         return False
 
-def clean_status(status):
-    try:
-        if no_entities(status) and status.metadata.get('iso_language_code') == 'en':
-            return True
-        else:
-            return False
-    except AttributeError:
-        return False
 
 def format_status(status):
     return status.text.replace(u'&amp;', u'&').replace('&lt;', '<').replace('&gt;', '>').replace('\n', ' ')
