@@ -21,8 +21,8 @@ class API(tweepy.API):
     _since_ids = None
 
     def __init__(self, screen_name, args):
-        if args.user_config and path.exists(args.user_config):
-            file_name = args.user_config
+        if args.api_config and path.exists(args.api_config):
+            file_name = args.api_config
 
         else:
             for pth in self.possible_paths:
@@ -36,8 +36,8 @@ class API(tweepy.API):
             self._config = helpers.parse(file_name)
 
         except (AttributeError, IOError):
-            if args.user_config:
-                msg = 'Custom config file not found: {0}'.format(args.user_config)
+            if args.api_config:
+                msg = 'Custom config file not found: {0}'.format(args.api_config)
 
             else:
                 msg = 'Config file not found in ~/bots.{json,yaml} or ~/bots/bots.{json,yaml}'
@@ -58,7 +58,7 @@ class API(tweepy.API):
         if args.key and args.secret:
             auth.set_access_token(key=args.key, secret=args.secret)
         else:
-            auth.set_access_token(**self.user)
+            auth.set_access_token(key=self.user['key'], secret=self.user['secret'])
 
         super(API, self).__init__(auth)
 
@@ -79,18 +79,15 @@ class API(tweepy.API):
         return self._get('apps', self.app_name)
 
     @property
-    def since_ids(self):
+    def since_id(self):
         if not self._since_ids:
             with open(self._formatted_since_id, 'r') as f:
                 self._since_ids = json.load(f)
 
-        return self._since_ids
-
-    def since_id(self):
-        return self.since_ids[self.user]
+        return self._since_ids[self.screen_name]
 
     def save_since_id(self, _id):
-        self._since_ids[self.user] = _id
+        self._since_ids[self.screen_name] = _id
 
         with open(self._formatted_since_id, 'w') as f:
             json.dump(self._since_ids, f)
