@@ -81,20 +81,25 @@ class API(tweepy.API):
     @property
     def since_id(self):
         if not self._since_ids:
-            with open(self._formatted_since_id, 'r') as f:
-                self._since_ids = json.load(f)
-
-        return self._since_ids[self.screen_name]
+            self._since_ids = self._since_id_contents()
+        return self._since_ids.get(self.screen_name, None)
 
     @since_id.setter
     def since_id(self, value):
-        self.since_id[self.screen_name] = value
+        self._since_ids[self.screen_name] = value
 
     def save_since_id(self, _id):
         self._since_ids[self.screen_name] = _id
 
-        with open(self._formatted_since_id, 'w') as f:
+        with open(self._formatted_since_id, 'w+') as f:
             json.dump(self._since_ids, f)
+
+    def _since_id_contents(self):
+        try:
+            with open(self._formatted_since_id, 'rb') as f:
+                return json.load(f)
+        except IOError:
+            return dict()
 
     def fave_mentions(self):
         favs = self.favorites(include_entities=False, count=100)
