@@ -1,6 +1,8 @@
 import logging
 import argparse
-from . import levels
+from os import environ, path
+from sys import stdout
+
 
 def add_default_args(parser):
     parser.add_argument('-c', '--config', metavar='PATH', default=None, type=str, help='path to config file to parse (json or yaml)')
@@ -26,13 +28,48 @@ def defaults(screen_name, args):
         logger.info('Trying to use a default config')
 
     if args.verbose:
-        levels.add_stdout_logger(screen_name)
+        add_stdout_logger(screen_name)
+
 
 def setup(botname, description):
     '''Set up an general argument parsing, logging'''
-    levels.add_logger(botname)
+    add_logger(botname)
 
     parser = argparse.ArgumentParser(description=description)
     add_default_args(parser)
 
     return parser
+
+
+def log_threshold():
+    if environ.get('DEVELOPMENT', False) and not environ.get('production', False):
+        # environment = 'development'
+        threshold = logging.DEBUG
+    else:
+        # environment = 'production'
+        threshold = logging.INFO
+
+    return threshold
+
+
+def add_logger(logger_name, log_path="bots/logs"):
+    logger = logging.getLogger(logger_name)
+    logger.setLevel(log_threshold())
+
+    log_file = path.join(path.expanduser('~'), log_path, logger_name + '.log')
+    fh = logging.FileHandler(log_file)
+    fh.setFormatter(logging.Formatter('%(asctime)s %(name)-13s line %(lineno)d %(levelname)-5s %(message)s'))
+
+    logger.addHandler(fh)
+
+    return logger
+
+
+def add_stdout_logger(logger_name):
+    logger = logging.getLogger(logger_name)
+
+    ch = logging.StreamHandler(stdout)
+    ch.setLevel(logging.DEBUG)
+    ch.setFormatter(logging.Formatter('%(filename)-10s %(lineno)-3d %(message)s'))
+
+    logger.addHandler(ch)
