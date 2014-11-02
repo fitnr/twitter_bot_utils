@@ -3,6 +3,14 @@ from os import path
 import json
 from . import helpers
 
+CONFIG_PATHS = [
+    'botrc',
+    'bots.yaml',
+    'bots.json',
+    'bots/botrc',
+    'bots/bots.yaml',
+    'bots/bots.json'
+]
 
 class API(tweepy.API):
 
@@ -11,21 +19,14 @@ class API(tweepy.API):
     app_name = None
     screen_name = None
 
-    possible_paths = [
-        'bots.yaml',
-        'bots.json',
-        'bots/bots.yaml',
-        'bots/bots.json'
-    ]
+    _last_tweet, _last_reply, _last_retweet = None, None, None
 
-    _since_ids = None
-
-    def __init__(self, screen_name, args):
-        if args.api_config and path.exists(args.api_config):
-            file_name = args.api_config
+    def __init__(self, screen_name, **kwargs):
+        if kwargs.get('config') and path.exists(kwargs['config']):
+            file_name = kwargs['config']
 
         else:
-            for pth in self.possible_paths:
+            for pth in CONFIG_PATHS:
                 expanded_path = path.join(path.expanduser('~'), pth)
 
                 if path.exists(expanded_path):
@@ -33,14 +34,14 @@ class API(tweepy.API):
                     break
 
         try:
-            self._config = helpers.parse(file_name)
+            self._config = helpers.config_parse(file_name)
 
         except (AttributeError, IOError):
-            if args.api_config:
-                msg = 'Custom config file not found: {0}'.format(args.api_config)
+            if kwargs.get('config'):
+                msg = 'Custom config file not found: {0}'.format(kwargs['config'])
 
             else:
-                msg = 'Config file not found in ~/bots.{json,yaml} or ~/bots/bots.{json,yaml}'
+                msg = 'Config file not found in ~/bots.{json,yaml} or ~/bots/bots.{json,yaml} or ~/botrc or ~/bots/botrc'
 
             raise IOError(msg)
 
@@ -49,14 +50,15 @@ class API(tweepy.API):
 
         self.screen_name = screen_name
 
-        if args.consumer_key and args.consumer_secret:
-            auth = tweepy.OAuthHandler(consumer_key=args.consumer_key, consumer_secret=args.consumer_secret)
+        # Passed arguments override config
+        if kwargs.get('consumer_key') and kwargs.get('consumer_secret'):
+            auth = tweepy.OAuthHandler(consumer_key=kwargs['consumer_key'], consumer_secret=kwargs['consumer_secret'])
         else:
             self.app_name = self.user['app']
             auth = tweepy.OAuthHandler(**self.app)
 
-        if args.key and args.secret:
-            auth.set_access_token(key=args.key, secret=args.secret)
+        if kwargs.get('key') and kwargs.get('secret'):
+            auth.set_access_token(key=kwargs['key'], secret=kwargs['secret'])
         else:
             auth.set_access_token(key=self.user['key'], secret=self.user['secret'])
 

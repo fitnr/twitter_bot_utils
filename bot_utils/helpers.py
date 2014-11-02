@@ -16,7 +16,7 @@ def format_status(status):
     return status.text.replace(u'&amp;', u'&').replace('&lt;', '<').replace('&gt;', '>').replace('\n', ' ')
 
 
-def parse(file_path):
+def config_parse(file_path):
     with open(file_path, 'r') as f:
         if file_path[-4:] == 'yaml':
             return yaml.load(f.read())
