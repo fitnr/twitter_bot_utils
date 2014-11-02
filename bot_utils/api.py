@@ -48,20 +48,25 @@ class API(tweepy.API):
             raise AttributeError('Config file incomplete. Must contain both an apps and a users section')
 
         self.screen_name = screen_name
+        self.app_name = self.user['app']
 
-        # Passed arguments override config
-        if kwargs.get('consumer_key') and kwargs.get('consumer_secret'):
-            auth = tweepy.OAuthHandler(consumer_key=kwargs['consumer_key'], consumer_secret=kwargs['consumer_secret'])
-        else:
-            self.app_name = self.user['app']
-            auth = tweepy.OAuthHandler(**self.app)
-
-        if kwargs.get('key') and kwargs.get('secret'):
-            auth.set_access_token(key=kwargs['key'], secret=kwargs['secret'])
-        else:
-            auth.set_access_token(key=self.user['key'], secret=self.user['secret'])
+        auth = self._setup_auth(kwargs)
 
         super(API, self).__init__(auth)
+
+    def _setup_auth(self, kwargs):
+        '''Setup tweepy authentication using passed args or config file settings'''
+
+        consumer_key = kwargs.get('consumer_key') or self.app['consumer_key']
+        consumer_secret = kwargs.get('consumer_secret') or self.app['consumer_secret']
+
+        key = kwargs.get('key') or self.user['key']
+        secret = kwargs.get('secret') or self.user['secret']
+
+        auth = tweepy.OAuthHandler(consumer_key=consumer_key, consumer_secret=consumer_secret)
+        auth.set_access_token(key=key, secret=secret)
+
+        return auth
 
     def _get(self, section, key):
         if key not in self._config[section]:
