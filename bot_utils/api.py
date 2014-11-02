@@ -1,6 +1,5 @@
 import tweepy
 from os import path
-import json
 from . import helpers
 
 CONFIG_PATHS = [
@@ -64,8 +63,6 @@ class API(tweepy.API):
 
         super(API, self).__init__(auth)
 
-        self._formatted_since_id = path.expanduser(self._config['since_id_file'].format(data_path=self._config['data_path']))
-
     def _get(self, section, key):
         if key not in self._config[section]:
             raise IndexError('Key not found in {section} section of config: {key}'.format(section=section, key=key))
@@ -81,27 +78,29 @@ class API(tweepy.API):
         return self._get('apps', self.app_name)
 
     @property
-    def since_id(self):
-        if not self._since_ids:
-            self._since_ids = self._since_id_contents()
-        return self._since_ids.get(self.screen_name, None)
+    def last_tweet(self):
+        if not self._last_tweet:
+            self._last_tweet = self.user_timeline().pop(0).id
 
-    @since_id.setter
-    def since_id(self, value):
-        self._since_ids[self.screen_name] = value
+        return self._last_tweet
 
-    def save_since_id(self, _id):
-        self._since_ids[self.screen_name] = _id
+    @property
+    def last_reply(self):
+        if not self._last_reply:
+            tl = self.user_timeline()
+            filtered = [tweet for tweet in tl if tweet.in_reply_to_user_id]
+            self._last_reply = filtered[0].id
 
-        with open(self._formatted_since_id, 'w+') as f:
-            json.dump(self._since_ids, f)
+        return self._last_reply
 
-    def _since_id_contents(self):
-        try:
-            with open(self._formatted_since_id, 'rb') as f:
-                return json.load(f)
-        except IOError:
-            return dict()
+    @property
+    def last_retweet(self):
+        if not self._last_retweet:
+            tl = self.user_timeline()
+            filtered = [tweet for tweet in tl if tweet.retweeted]
+            self._last_retweet = filtered[0].id
+
+        return self._last_retweet
 
     def fave_mentions(self):
         favs = self.favorites(include_entities=False, count=100)
