@@ -3,7 +3,7 @@ from os import environ, path
 from sys import stdout
 
 def log_threshold():
-    if environ.get('FITNR_DEV', False) and not environ.get('FITNR_PROD', False):
+    if environ.get('DEVELOPMENT', False) and not environ.get('production', False):
         # environment = 'development'
         threshold = logging.DEBUG
     else:
@@ -18,7 +18,7 @@ def add_logger(logger_name, log_path="bots/logs"):
 
     log_file = path.join(path.expanduser('~'), log_path, logger_name + '.log')
     fh = logging.FileHandler(log_file)
-    fh.setFormatter(logging.Formatter('%(asctime)s %(name)-16s line %(lineno)d %(levelname)-5s %(message)s'))
+    fh.setFormatter(logging.Formatter('%(asctime)s %(name)-13s line %(lineno)d %(levelname)-5s %(message)s'))
 
     logger.addHandler(fh)
 

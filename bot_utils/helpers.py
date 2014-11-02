@@ -1,3 +1,4 @@
+from HTMLParser import HTMLParser
 import yaml
 import json
 
@@ -13,7 +14,7 @@ def no_entities(status):
 
 
 def format_status(status):
-    return status.text.replace(u'&amp;', u'&').replace('&lt;', '<').replace('&gt;', '>').replace('\n', ' ')
+    return HTMLParser().unescape(status.text).replace('\n', ' ')
 
 
 def config_parse(file_path):
