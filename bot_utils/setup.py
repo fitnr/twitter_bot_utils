@@ -31,7 +31,7 @@ def defaults(screen_name, args):
         add_stdout_logger(screen_name)
 
 
-def setup(botname, description):
+def setup_args(botname, description):
     '''Set up an general argument parsing, logging'''
     add_logger(botname)
 
