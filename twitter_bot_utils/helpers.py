@@ -52,3 +52,19 @@ def config_parse(file_path):
 
         elif file_path[-4:] == 'json':
             return json.load(f.read())
+
+
+def remove_entity(status, entitytype):
+    '''Use indices to remove given entity type from status text'''
+    return remove_entities(status, [entitytype])
+
+def remove_entities(status, entitylist):
+    '''Remove entities for a list of items'''
+    indices = [ent['indices'] for etype, entval in status.entities.items() for ent in entval if etype in entitylist]
+    indices.sort(key=lambda x: x[0], reverse=True)
+
+    text = status.text
+
+    for start, end in indices:
+        text = text[:start] + text[end:]
+    return text
