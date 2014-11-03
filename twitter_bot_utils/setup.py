@@ -20,7 +20,7 @@ def add_default_args(parser):
 
 def defaults(screen_name, args):
     '''Interpret default args, set up API'''
-    logger = logging.getLogger(screen_name)
+    logger = add_logger(screen_name)
 
     if args.config:
         logger.info('Using custom config file: {0}'.format(args.config))
@@ -31,11 +31,10 @@ def defaults(screen_name, args):
         add_stdout_logger(screen_name)
 
 
-def setup_args(botname, description):
+def setup_args(description, **kwargs):
     '''Set up an general argument parsing, logging'''
-    add_logger(botname)
 
-    parser = argparse.ArgumentParser(description=description)
+    parser = argparse.ArgumentParser(description=description, **kwargs)
     add_default_args(parser)
 
     return parser
