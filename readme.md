@@ -9,6 +9,8 @@ The utilities are a wrapper for the excellent [Tweepy](http://tweepy.org) and [a
 Easily set up the api with a yaml or json config file:
 
 ````python
+from twitter_bot_utils import api
+
 # Different ways to create the tweepy API object.
 twitter = api.API('MyBotName', args)
 twitter = api.API('MyBotName', config='path/to/config.yaml')
@@ -48,7 +50,6 @@ foo: bar
 The config file, minus the 'users' and 'apps' section, is available to you, so use it for more settings and options. If this YAML file is the settings file for the code above:
 
 ````python
-
 twitter.config['foo']
 # returns 'bar'
 
@@ -94,17 +95,17 @@ You can also pass authentication arguments with these options arguments.
 
 ````python
 import logging
-from bot_utils import api, setup
+import twitter_bot_utils
 
 # This sets up an argparse.ArgumentParser with some default arguments, which are explained below
-parser = setup.setup_args('MyBotName', description='Tweet something')
+parser = twitter_bot_utils.setup_args('MyBotName', description='Tweet something')
 
 parser.add_argument('-m', '--my-arg', help="You're passing an argument to argparse.ArgumentParser")
 
 args = parser.parse_args()
 
 # Parse the default args. If vocal is set, the logger will output to stdout.
-setup.defaults('MyBotName', args)
+twitter_bot_utils.defaults('MyBotName', args)
 
 # That's right, utils set up a logger for you. It has the same name as your bot
 logger = logging.getLogger('MyBotName')
@@ -118,6 +119,8 @@ if not args.dry_run:
 ````
 
 ### Helpers
+
+## Checking for entities
 
 Easily check if tweets have specific entities:
 
@@ -144,4 +147,29 @@ twitter_bot_utils.helpers.has_entities(status)
 # These also exist:
 # twitter_bot_utils.helpers.has_url
 # twitter_bot_utils.helpers.has_symbol
+````
+
+## Filtering out entities
+
+Easily remove entities from a tweet's text.
+
+````python
+import twitter_bot_utils
+
+api = twitter_bot_utils.api.API('MyBotName')
+
+results = api.search("special topic")
+
+results[0].text
+# 'This is an example tweet with a #hashtag and a link http://foo.com'
+
+twitter_bot_utils.helpers.remove_entity(results[0], 'hashtags')
+# 'This is an example tweet with a  and a link http://foo.com'
+
+twitter_bot_utils.helpers.remove_entity(results[0], 'urls')
+# 'This is an example tweet with a #hashtag and a link '
+
+# Remove multiple entities with remove_entities.
+twitter_bot_utils.helpers.remove_entities(results[0], ['urls', 'hashtags', 'media'])
+# 'This is an example tweet with a  and a link '
 ````
