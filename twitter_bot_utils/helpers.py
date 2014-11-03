@@ -60,10 +60,15 @@ def remove_entity(status, entitytype):
 
 def remove_entities(status, entitylist):
     '''Remove entities for a list of items'''
-    indices = [ent['indices'] for etype, entval in status.entities.items() for ent in entval if etype in entitylist]
-    indices.sort(key=lambda x: x[0], reverse=True)
+    try:
+        entities = status.entities
+        text = status.text
+    except AttributeError:
+        entities = status.get('entities', dict())
+        text = status['text']
 
-    text = status.text
+    indices = [ent['indices'] for etype, entval in entities.items() for ent in entval if etype in entitylist]
+    indices.sort(key=lambda x: x[0], reverse=True)
 
     for start, end in indices:
         text = text[:start] + text[end:]

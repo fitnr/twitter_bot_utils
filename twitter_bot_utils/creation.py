@@ -18,9 +18,9 @@ def add_default_args(parser):
     parser.add_argument('-v', '--verbose', action='store_true', help="Log to stdout")
 
 
-def defaults(screen_name, args):
+def defaults(screen_name, args, **kwargs):
     '''Interpret default args, set up API'''
-    logger = add_logger(screen_name)
+    logger = add_logger(screen_name, log_path=kwargs.get('logpath', '~/bots/logs'))
 
     if args.config:
         logger.info('Using custom config file: {0}'.format(args.config))
@@ -51,11 +51,11 @@ def log_threshold():
     return threshold
 
 
-def add_logger(logger_name, log_path="bots/logs"):
+def add_logger(logger_name, log_path="~/bots/logs"):
     logger = logging.getLogger(logger_name)
     logger.setLevel(log_threshold())
 
-    log_file = path.join(path.expanduser('~'), log_path, logger_name + '.log')
+    log_file = path.expanduser(path.join(log_path, logger_name + '.log'))
     fh = logging.FileHandler(log_file)
     fh.setFormatter(logging.Formatter('%(asctime)s %(name)-13s line %(lineno)d %(levelname)-5s %(message)s'))
 
