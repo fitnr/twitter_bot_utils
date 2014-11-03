@@ -78,19 +78,18 @@ class API(tweepy.API):
 
         return auth
 
-    def _get(self, section, key):
-        if key not in self._config[section]:
-            raise IndexError('Key not found in {section} section of config: {key}'.format(section=section, key=key))
-
-        return self._config[section][key]
+    @property
+    def config(self):
+        '''Return the config, omitting the auth keys'''
+        return dict((k, v) for k, v in self._config.items() if k not in ['usere', 'apps'])
 
     @property
     def user(self):
-        return self._get('users', self.screen_name)
+        return self._config['users'][self.screen_name]
 
     @property
     def app(self):
-        return self._get('apps', self.app_name)
+        return self._config['apps'][self.app_name]
 
     @property
     def last_tweet(self):
