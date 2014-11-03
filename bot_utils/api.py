@@ -20,7 +20,17 @@ class API(tweepy.API):
 
     _last_tweet, _last_reply, _last_retweet = None, None, None
 
-    def __init__(self, screen_name, **kwargs):
+    def __init__(self, screen_name, parsed_args=None, **kwargs):
+        # Optionally used args from argparse.ArgumentParser
+        if parsed_args:
+            try:
+                args = dict((k, v) for k, v in vars(parsed_args).items() if v is not None)
+                kwargs.update(**args)
+            except TypeError:
+            # probably didn't get a Namespace() for passed args
+                pass
+
+        # Use passed config file, or look for it in the paths above
         if kwargs.get('config') and path.exists(kwargs['config']):
             file_name = kwargs['config']
 
