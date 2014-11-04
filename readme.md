@@ -12,16 +12,26 @@ Easily set up the api with a yaml or json config file:
 from twitter_bot_utils import api
 
 # Different ways to create the tweepy API object.
-twitter = api.API('MyBotName', args)
 twitter = api.API('MyBotName', config='path/to/config.yaml')
 twitter = api.API('MyBotName', consumer_key='...', consumer_secret='...', key='...', secret='...')
 
-# If the config file is called bots.yaml or bots.json or botrc, and lives at ~/ or ~/bots,
-# twitter bot utils will find it automatically
+# If the config file is set up, twitter bot utils will find it automatically
+# See below for details
 twitter = api.API('MyBotName')
-````
 
-Example config file layout:
+# twitter_bot_utils comes with some built-in command line parsers, so below.
+# It will happily consume the result of argparse.parser.parse_args()
+# Assuming a parser has been set up:
+args = parser.parse_args()
+twitter = api.API('MyBotName', args)
+````
+### Config file setup
+
+By default, twitter_bot_utils will read settings from a YAML or JSON config file. By default, it looks in the ~/ and ~/bots directories for files named  bots.yaml, bots.json, or botrc. Custom config files can be set, too, of course
+
+Custom settings in the config are available at runtime, so use the config file for any special settings you want.
+
+Example config file layout (in YAML. JSON works, too):
 
 ````yaml
 users:
@@ -47,15 +57,27 @@ foo: bar
 
 ````
 
-The config file, minus the 'users' and 'apps' section, is available to you, so use it for more settings and options. If this YAML file is the settings file for the code above:
+Using the config settings:
 
 ````python
+import twitter_bot_utils
+
+# Look for config in the default places mentioned above:
+twitter = twitter_bot_utils.api.API('MyBotName')
+
 twitter.config['foo']
 # returns 'bar'
 
 # The current user and app are also available:
 twitter.user['custom_setting']
 # hello world
+````
+
+Setting a custom config file is simple:
+
+````python
+# The config keyword argument will set a custom file location
+twitter = twitter_bot_utils.api.API('MyBotName', config='special/file/path.yaml')
 ````
 
 ### Recent tweets
@@ -80,43 +102,60 @@ twitter.search('#botALLY', since_id=twitter.last_tweet)
 
 ### Default Command Line Options
 
-Some usefulcommand line flags are available by default:
+Some useful command line flags are available by default:
 
 * -n, --dry-run: Don't tweet, just output to stdout
 * -v, --verbose: Log to stdout
-* -c PATH, --config PATH: path to a config file. This is a JSON or YAML file laid out according to the below format. 
+* -c, --config: path to a config file. This is a JSON or YAML file laid out according to the below format. 
 
 You can also pass authentication arguments with these options arguments.
 
-* --key KEY: Twitter user key
-* --secret SECRET: Twitter user secret
-* --consumer-key CONSUMER_KEY: Twitter application consumer key
-* --consumer-secret CONSUMER_SECRET: Twitter application consumer secret
+* --key: Twitter user key
+* --secret: Twitter user secret
+* --consumer-key: Twitter application consumer key
+* --consumer-secret: Twitter application consumer secret
+
+Say this is `yourapp.py`:
 
 ````python
 import logging
 import twitter_bot_utils
 
 # This sets up an argparse.ArgumentParser with some default arguments, which are explained below
-parser = twitter_bot_utils.setup_args('MyBotName', description='Tweet something')
+parser = twitter_bot_utils.setup_args('MyBot', description='Tweet something')
 
 parser.add_argument('-m', '--my-arg', help="You're passing an argument to argparse.ArgumentParser")
 
 args = parser.parse_args()
 
 # Parse the default args. If vocal is set, the logger will output to stdout.
-twitter_bot_utils.defaults('MyBotName', args)
+twitter_bot_utils.defaults('MyBot', args)
 
-# That's right, utils set up a logger for you. It has the same name as your bot
-logger = logging.getLogger('MyBotName')
+# That's right, utils set up a logger for you.
+# It has the same name as the first argument to setup_args
+logger = logging.getLogger('MyBot')
 
 # Do logic here to generate a tweet somehow
-tweet = my_tweet_function()
+tweet = my_tweet_function(args.my_arg)
+
+logger.info("Generated "+ tweet)
 
 # Use args.dry_run to control tweeting
 if not args.dry_run:
     twitter.update_status(tweet)
 ````
+
+````bash
+# Looks for settings in a config file (e.g. bots.yaml, see config section above)
+# Outputs results to stdout, doesn't publish anything 
+$ python yourapp.py --dry-run --verbose
+Generated <EXAMPLE TWEET>
+
+# Authenicate with these values instead of the config file
+$ python yourapp.py --verbose --consumer-key $ck --consumer-secret $cs --key $user_key --secret $user_secret
+Generated <EXAMPLE TWEET 2>
+````
+
 
 ### Helpers
 
