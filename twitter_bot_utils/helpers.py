@@ -42,7 +42,11 @@ def has_entities(status):
 
 
 def format_status(status):
-    return HTMLParser().unescape(status.text).replace('\n', ' ')
+    return format_text(status.text)
+
+
+def format_text(text):
+    return HTMLParser().unescape(text).replace('\n', ' ').strip()
 
 
 def config_parse(file_path):
