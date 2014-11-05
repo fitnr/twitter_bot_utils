@@ -6,6 +6,6 @@ __license__ = 'all rights reserved'
 __all__ = ['api', 'creation', 'helpers', 'tools']
 
 from . import helpers
-from . import api
+from .api import API
 from .creation import add_default_args, defaults, setup_args
 from . import tools

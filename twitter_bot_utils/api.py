@@ -28,6 +28,7 @@ def _find_config_file(config_file=None, config_list=None):
         config_list = [config_file] + config_list
 
     for pth in config_list:
+
         expanded = path.expanduser(pth)
         if path.exists(expanded):
             return expanded
@@ -72,16 +73,11 @@ class API(tweepy.API):
 
         self._screen_name = screen_name
 
+        # get config file and parse it
         try:
             # Use passed config file, or look for it in the paths above
             file_name = _find_config_file(kwargs.get('config'))
             file_config = helpers.config_parse(file_name)
-
-            # kwargs take precendence
-            file_config.update(**kwargs)
-
-            # set overall, app and user conf dicts
-            self._config_setup(file_config)
 
         except (AttributeError, IOError):
             if kwargs.get('config'):
@@ -92,16 +88,25 @@ class API(tweepy.API):
 
             raise IOError(msg)
 
+        # kwargs take precendence over config file
+        file_config.update(**kwargs)
+
+        # set overall, app and user conf dicts
+        self._config_setup(file_config)
+
+        # setup auth
         try:
             auth = _setup_auth(self._user_conf, self._app_conf, **kwargs)
 
         except KeyError:
             raise KeyError("Incomplete config")
 
-
+        # initiate api connection
         super(API, self).__init__(auth)
 
-    def _conf_update(self, update):
+    def _conf_update(self, update=None):
+        update = update or {}
+
         for k, v in update.items():
             if k not in self._protected_info:
                 self._config[k] = v
@@ -112,8 +117,8 @@ class API(tweepy.API):
         # Pull user and app data from the file
         self._app_name = file_config.get('users', {}).get(self.screen_name, {}).get('app')
 
-        self._app_conf = file_config.get('apps', {}).get(self.app)
-        self._user_conf = file_config.get('users', {}).get(self.screen_name)
+        self._app_conf = file_config.get('apps', {}).get(self.app, {})
+        self._user_conf = file_config.get('users', {}).get(self.screen_name, {})
 
         # Pull non-authentication settings from the file.
         # User, app, and general settings are included, in that order of preference
