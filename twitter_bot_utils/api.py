@@ -1,22 +1,62 @@
 import tweepy
-from os import path
+import itertools
+from os import path, getcwd
 from . import helpers
 
-CONFIG_PATHS = [
+CONFIG_DIRS = [
+    '~',
+    '~/bots',
+]
+
+CONFIG_BASES = [
     'botrc',
     'bots.yaml',
-    'bots.json',
-    'bots/botrc',
-    'bots/bots.yaml',
-    'bots/bots.json'
+    'bots.json'
 ]
+
+
+def _find_config_file(config_file=None, config_list=None):
+    '''Search for a file in a list of files'''
+
+    config_list = config_list or []
+    dirs = [getcwd()] + CONFIG_DIRS
+
+    for _dir, _base in itertools.product(dirs, CONFIG_BASES):
+        config_list.append(path.join(_dir, _base))
+
+    if config_file:
+        config_list = [config_file] + config_list
+
+    for pth in config_list:
+        expanded = path.expanduser(pth)
+        if path.exists(expanded):
+            return expanded
+
+
+def _setup_auth(user_conf, app_conf, **kwargs):
+    '''Setup tweepy authentication using passed args or config file settings'''
+
+    consumer_key = kwargs.get('consumer_key') or app_conf['consumer_key']
+    consumer_secret = kwargs.get('consumer_secret') or app_conf['consumer_secret']
+
+    key = kwargs.get('key') or user_conf['key']
+    secret = kwargs.get('secret') or user_conf['secret']
+
+    auth = tweepy.OAuthHandler(consumer_key=consumer_key, consumer_secret=consumer_secret)
+    auth.set_access_token(key=key, secret=secret)
+
+    return auth
+
 
 class API(tweepy.API):
 
     '''Extends the tweepy API with config-file handling'''
 
-    app_name = None
-    screen_name = None
+    _app_name, _screen_name = None, None
+
+    _config, _user_conf, _app_conf = {}, {}, {}
+
+    _protected_info = ['apps', 'users', 'consumer_key', 'consumer_secret', 'key', 'secret', 'app']
 
     _last_tweet, _last_reply, _last_retweet = None, None, None
 
@@ -27,69 +67,71 @@ class API(tweepy.API):
                 args = dict((k, v) for k, v in vars(parsed_args).items() if v is not None)
                 kwargs.update(**args)
             except TypeError:
-            # probably didn't get a Namespace() for passed args
+                # probably didn't get a Namespace() for passed args
                 pass
 
-        # Use passed config file, or look for it in the paths above
-        if kwargs.get('config') and path.exists(kwargs['config']):
-            file_name = kwargs['config']
-
-        else:
-            for pth in CONFIG_PATHS:
-                expanded_path = path.join(path.expanduser('~'), pth)
-
-                if path.exists(expanded_path):
-                    file_name = expanded_path
-                    break
+        self._screen_name = screen_name
 
         try:
-            self._config = helpers.config_parse(file_name)
+            # Use passed config file, or look for it in the paths above
+            file_name = _find_config_file(kwargs.get('config'))
+            file_config = helpers.config_parse(file_name)
+
+            # kwargs take precendence
+            file_config.update(**kwargs)
+
+            # set overall, app and user conf dicts
+            self._config_setup(file_config)
 
         except (AttributeError, IOError):
             if kwargs.get('config'):
                 msg = 'Custom config file not found: {0}'.format(kwargs['config'])
 
             else:
-                msg = 'Config file not found in ~/bots.{json,yaml} or ~/bots/bots.{json,yaml} or ~/botrc or ~/bots/botrc'
+                msg = 'Config file not found in ~/bots.{json,yaml}, ~/bots/bots.{json,yaml}, ~/botrc or ~/bots/botrc'
 
             raise IOError(msg)
 
-        if 'users' not in self._config or 'apps' not in self._config:
-            raise AttributeError('Config file incomplete. Must contain both an apps and a users section')
+        try:
+            auth = _setup_auth(self._user_conf, self._app_conf, **kwargs)
 
-        self.screen_name = screen_name
-        self.app_name = self.user['app']
+        except KeyError:
+            raise KeyError("Incomplete config")
 
-        auth = self._setup_auth(kwargs)
 
         super(API, self).__init__(auth)
 
-    def _setup_auth(self, kwargs):
-        '''Setup tweepy authentication using passed args or config file settings'''
+    def _conf_update(self, update):
+        for k, v in update.items():
+            if k not in self._protected_info:
+                self._config[k] = v
 
-        consumer_key = kwargs.get('consumer_key') or self.app['consumer_key']
-        consumer_secret = kwargs.get('consumer_secret') or self.app['consumer_secret']
+    def _config_setup(self, file_config):
+        '''Return object that holds config settings'''
 
-        key = kwargs.get('key') or self.user['key']
-        secret = kwargs.get('secret') or self.user['secret']
+        # Pull user and app data from the file
+        self._app_name = file_config.get('users', {}).get(self.screen_name, {}).get('app')
 
-        auth = tweepy.OAuthHandler(consumer_key=consumer_key, consumer_secret=consumer_secret)
-        auth.set_access_token(key=key, secret=secret)
+        self._app_conf = file_config.get('apps', {}).get(self.app)
+        self._user_conf = file_config.get('users', {}).get(self.screen_name)
 
-        return auth
+        # Pull non-authentication settings from the file.
+        # User, app, and general settings are included, in that order of preference
+        self._conf_update(file_config)
+        self._conf_update(self._app_conf)
+        self._conf_update(self._user_conf)
 
     @property
     def config(self):
-        '''Return the config, omitting the auth keys'''
-        return dict((k, v) for k, v in self._config.items() if k not in ['usere', 'apps'])
+        return self._config
 
     @property
-    def user(self):
-        return self._config['users'][self.screen_name]
+    def screen_name(self):
+        return self._screen_name
 
     @property
     def app(self):
-        return self._config['apps'][self.app_name]
+        return self._app_name
 
     @property
     def last_tweet(self):
