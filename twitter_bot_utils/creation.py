@@ -12,8 +12,6 @@ def add_default_args(parser):
     parser.add_argument('--consumer-key', type=str, help='Twitter application consumer key')
     parser.add_argument('--consumer-secret', type=str, help='Twitter application consumer secret')
 
-    parser.add_argument('--since-id-file', type=str, help='path of JSON file with since IDs')
-
     parser.add_argument('-n', '--dry-run', action='store_true', help="Don't tweet, just output to stdout")
     parser.add_argument('-v', '--verbose', action='store_true', help="Log to stdout")
 
