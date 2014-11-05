@@ -1,10 +1,10 @@
-## twitter bot utils
+# twitter bot utils
 
 These Python utilities make it a little easier to set up a Twitter bot, with an eye to making command-line options easy to reproduce.
 
 The utilities are a wrapper for the excellent [Tweepy](http://tweepy.org) and [argparse]() libraries, which handle the Twitter API and command line options, respectively. They're ideal if you want to store the configuration settings for a few bots in a config file.
 
-### Setting up a tweepy API
+## Setting up a tweepy API
 
 Easily set up the api with a yaml or json config file:
 
@@ -80,7 +80,7 @@ Setting a custom config file is simple:
 twitter = twitter_bot_utils.api.API('MyBotName', config='special/file/path.yaml')
 ````
 
-### Recent tweets
+## Recent tweets
 
 It's often useful to know what a bot has done recently. There are three properties in the twitter_bot_utils.API object for this. Use them for setting up since_id arguments.
 
@@ -100,20 +100,20 @@ twitter.last_retweet
 twitter.search('#botALLY', since_id=twitter.last_tweet)
 ````
 
-### Default Command Line Options
+## Default Command Line Options
 
 Some useful command line flags are available by default:
 
-* -n, --dry-run: Don't tweet, just output to stdout
-* -v, --verbose: Log to stdout
-* -c, --config: path to a config file. This is a JSON or YAML file laid out according to the below format. 
+* `-n, --dry-run`: Don't tweet, just output to stdout
+* `-v, --verbose`: Log to stdout
+* `-c, --config`: path to a config file. This is a JSON or YAML file laid out according to the below format. 
 
 You can also pass authentication arguments with these options arguments.
 
-* --key: Twitter user key
-* --secret: Twitter user secret
-* --consumer-key: Twitter application consumer key
-* --consumer-secret: Twitter application consumer secret
+* `--key`: Twitter user key
+* `--secret`: Twitter user secret
+* `--consumer-key`: Twitter application consumer key
+* `--consumer-secret`: Twitter application consumer secret
 
 Say this is `yourapp.py`:
 
@@ -156,10 +156,9 @@ $ python yourapp.py --verbose --consumer-key $ck --consumer-secret $cs --key $us
 Generated <EXAMPLE TWEET 2>
 ````
 
+## Helpers
 
-### Helpers
-
-## Checking for entities
+### Checking for entities
 
 Easily check if tweets have specific entities:
 
@@ -188,7 +187,7 @@ twitter_bot_utils.helpers.has_entities(status)
 # twitter_bot_utils.helpers.has_symbol
 ````
 
-## Filtering out entities
+### Filtering out entities
 
 Easily remove entities from a tweet's text.
 
