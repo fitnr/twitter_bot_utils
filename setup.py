@@ -11,7 +11,7 @@ except ImportError:
 setup(
     name='twitter_bot_utils',
 
-    version='0.4.2',
+    version='0.5',
 
     description='Python utilities for twitter bots',
 
@@ -23,7 +23,7 @@ setup(
 
     author_email='contact@fakeisthenewreal.org',
 
-    license=open('LICENSE').read(),
+    license='GPL',
 
     packages=['twitter_bot_utils'],
 

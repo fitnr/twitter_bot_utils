@@ -145,6 +145,8 @@ if not args.dry_run:
     twitter.update_status(tweet)
 ````
 
+Then on the command line:
+
 ````bash
 # Looks for settings in a config file (e.g. bots.yaml, see config section above)
 # Outputs results to stdout, doesn't publish anything 
