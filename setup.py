@@ -2,16 +2,25 @@ from setuptools import setup
 
 try:
     from pypandoc import convert
-    read_md = lambda f: convert(f, 'rst')
+    def read_md(f):
+        try:
+            return convert(f, 'rst')
+        except IOError:
+            return ''
+
 except ImportError:
     print("pypandoc module not found, could not convert Markdown to RST")
-    read_md = lambda f: open(f, 'r').read()
+    def read_md(f):
+        try:
+            return open(f, 'r').read()
+        except IOError:
+            return ''
 
 
 setup(
     name='twitter_bot_utils',
 
-    version='0.5',
+    version='0.5.1',
 
     description='Python utilities for twitter bots',
 
