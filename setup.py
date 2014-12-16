@@ -7,6 +7,7 @@ except ImportError:
     print("pypandoc module not found, could not convert Markdown to RST")
     read_md = lambda f: open(f, 'r').read()
 
+
 setup(
     name='twitter_bot_utils',
 
@@ -22,7 +23,7 @@ setup(
 
     author_email='contact@fakeisthenewreal.org',
 
-    license='All rights reserved',
+    license=open('LICENSE').read(),
 
     packages=['twitter_bot_utils'],
 
