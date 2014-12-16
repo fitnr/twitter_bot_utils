@@ -2,6 +2,12 @@ import tweepy
 import itertools
 from os import path, getcwd
 from . import helpers
+# "FileNotFoundError" is a Py 3 thing. If we're in Py 2, we mimic it with a lambda expression.
+try:
+    FileNotFoundError
+except NameError:
+    from errno import ENOENT
+    FileNotFoundError = lambda x: IOError(ENOENT, x)
 
 CONFIG_DIRS = [
     '~',
@@ -15,23 +21,25 @@ CONFIG_BASES = [
 ]
 
 
-def _find_config_file(config_file=None, config_list=None):
+def _find_config_file(config_file=None):
     '''Search for a file in a list of files'''
 
-    config_list = config_list or []
+    if config_file:
+        if path.exists(config_file):
+            return config_file
+        else:
+            raise FileNotFoundError('Custom config file not found: {}'.format(config_file))
+
     dirs = [getcwd()] + CONFIG_DIRS
 
-    for _dir, _base in itertools.product(dirs, CONFIG_BASES):
-        config_list.append(path.join(_dir, _base))
+    for directory, base in itertools.product(dirs, CONFIG_BASES):
+        filepath = path.expanduser(path.join(directory, base))
+        if path.exists(filepath):
+            return filepath
 
-    if config_file:
-        config_list = [config_file] + config_list
+    raise FileNotFoundError('Config file not found in ~/bots.{json,yaml}, ~/bots/bots.{json,yaml}, ~/botrc or ~/bots/botrc')
 
-    for pth in config_list:
 
-        expanded = path.expanduser(pth)
-        if path.exists(expanded):
-            return expanded
 
 
 def _setup_auth(user_conf, app_conf, **kwargs):
@@ -74,19 +82,10 @@ class API(tweepy.API):
         self._screen_name = screen_name
 
         # get config file and parse it
-        try:
-            # Use passed config file, or look for it in the paths above
-            file_name = _find_config_file(kwargs.get('config'))
-            file_config = helpers.config_parse(file_name)
 
-        except (AttributeError, IOError):
-            if kwargs.get('config'):
-                msg = 'Custom config file not found: {0}'.format(kwargs['config'])
-
-            else:
-                msg = 'Config file not found in ~/bots.{json,yaml}, ~/bots/bots.{json,yaml}, ~/botrc or ~/bots/botrc'
-
-            raise IOError(msg)
+        # Use passed config file, or look for it in the paths above
+        file_name = _find_config_file(kwargs.get('config'))
+        file_config = helpers.config_parse(file_name)
 
         # kwargs take precendence over config file
         file_config.update(**kwargs)
