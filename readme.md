@@ -4,6 +4,10 @@ Twitter bot utils make it a little easier to set up a Twitter bot, with an eye t
 
 This package is intended to assist with the creation of bots for artistic or personal projects. Don't use it to spam or harrass people.
 
+Works with Python 2.7 and 3.4 (2.6 & 3.3 probably work, too).
+
+Install with `pip install twitter_bot_utils`.
+
 ## Setting up a tweepy API
 
 The main goal of Twitter bot utils is to create Tweepy instances with authentication data stored in a simple conf file. This gives botmakers a simple, reusable place to store keys outside of source control.
