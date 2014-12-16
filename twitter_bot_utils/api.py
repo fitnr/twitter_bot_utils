@@ -41,7 +41,6 @@ PROTECTED_INFO = [
     'consumer_secret',
     'key',
     'secret',
-    'app'
 ]
 
 
