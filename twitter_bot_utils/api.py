@@ -20,6 +20,16 @@ CONFIG_BASES = [
     'bots.json'
 ]
 
+PROTECTED_INFO = [
+    'apps',
+    'users',
+    'consumer_key',
+    'consumer_secret',
+    'key',
+    'secret',
+    'app'
+]
+
 
 def _find_config_file(config_file=None):
     '''Search for a file in a list of files'''
@@ -40,16 +50,35 @@ def _find_config_file(config_file=None):
     raise FileNotFoundError('Config file not found in ~/bots.{json,yaml}, ~/bots/bots.{json,yaml}, ~/botrc or ~/bots/botrc')
 
 
+def _config_setup(cls, file_config):
+    '''Return object that holds config settings'''
+
+    # Pull user and app data from the file
+    user_conf = file_config.get('users', {}).get(cls.screen_name, {})
+    app_conf = file_config.get('apps', {}).get(user_conf['app'], {})
+
+    # Pull non-authentication settings from the file.
+    # User, app, and general settings are included, in that order of preference
+    cls.update_config(file_config)
+    cls.update_config(app_conf)
+    cls.update_config(user_conf)
+
+    return {
+        'consumer_key': app_conf.get('consumer_key'),
+        'consumer_secret': app_conf.get('consumer_secret'),
+        'key': user_conf.get('key'),
+        'secret': user_conf.get('secret')
+    }
 
 
-def _setup_auth(user_conf, app_conf, **kwargs):
+def _setup_auth(conf, **kwargs):
     '''Setup tweepy authentication using passed args or config file settings'''
 
-    consumer_key = kwargs.get('consumer_key') or app_conf['consumer_key']
-    consumer_secret = kwargs.get('consumer_secret') or app_conf['consumer_secret']
+    consumer_key = kwargs.get('consumer_key') or conf['consumer_key']
+    consumer_secret = kwargs.get('consumer_secret') or conf['consumer_secret']
 
-    key = kwargs.get('key') or user_conf['key']
-    secret = kwargs.get('secret') or user_conf['secret']
+    key = kwargs.get('key') or conf['key']
+    secret = kwargs.get('secret') or conf['secret']
 
     auth = tweepy.OAuthHandler(consumer_key=consumer_key, consumer_secret=consumer_secret)
     auth.set_access_token(key=key, secret=secret)
@@ -64,8 +93,6 @@ class API(tweepy.API):
     _app_name, _screen_name = None, None
 
     _config, _user_conf, _app_conf = {}, {}, {}
-
-    _protected_info = ['apps', 'users', 'consumer_key', 'consumer_secret', 'key', 'secret', 'app']
 
     _last_tweet, _last_reply, _last_retweet = None, None, None
 
@@ -91,11 +118,11 @@ class API(tweepy.API):
         file_config.update(**kwargs)
 
         # set overall, app and user conf dicts
-        self._config_setup(file_config)
+        conf = _config_setup(self, file_config)
 
         # setup auth
         try:
-            auth = _setup_auth(self._user_conf, self._app_conf, **kwargs)
+            auth = _setup_auth(conf, **kwargs)
 
         except KeyError:
             raise KeyError("Incomplete config")
@@ -103,27 +130,8 @@ class API(tweepy.API):
         # initiate api connection
         super(API, self).__init__(auth)
 
-    def _conf_update(self, update=None):
-        update = update or {}
-
-        for k, v in update.items():
-            if k not in self._protected_info:
-                self._config[k] = v
-
-    def _config_setup(self, file_config):
-        '''Return object that holds config settings'''
-
-        # Pull user and app data from the file
-        self._app_name = file_config.get('users', {}).get(self.screen_name, {}).get('app')
-
-        self._app_conf = file_config.get('apps', {}).get(self.app, {})
-        self._user_conf = file_config.get('users', {}).get(self.screen_name, {})
-
-        # Pull non-authentication settings from the file.
-        # User, app, and general settings are included, in that order of preference
-        self._conf_update(file_config)
-        self._conf_update(self._app_conf)
-        self._conf_update(self._user_conf)
+    def update_config(self, update):
+        self._config.update({k: v for k, v in update.items() if k not in PROTECTED_INFO})
 
     @property
     def config(self):
@@ -135,18 +143,18 @@ class API(tweepy.API):
 
     @property
     def app(self):
-        return self._app_name
+        return self._config['app']
 
     @property
-    def last_tweet(self):
-        if not self._last_tweet:
+    def last_tweet(self, refresh=None):
+        if refresh or not self._last_tweet:
             self._last_tweet = self.user_timeline().pop(0).id
 
         return self._last_tweet
 
     @property
-    def last_reply(self):
-        if not self._last_reply:
+    def last_reply(self, refresh=None):
+        if refresh or not self._last_reply:
             tl = self.user_timeline()
             filtered = [tweet for tweet in tl if tweet.in_reply_to_user_id]
             self._last_reply = filtered[0].id
@@ -154,11 +162,10 @@ class API(tweepy.API):
         return self._last_reply
 
     @property
-    def last_retweet(self):
-        if not self._last_retweet:
+    def last_retweet(self, refresh=None):
+        if refresh or not self._last_retweet:
             tl = self.user_timeline()
             filtered = [tweet for tweet in tl if tweet.retweeted]
             self._last_retweet = filtered[0].id
 
         return self._last_retweet
-
