@@ -1,39 +1,39 @@
 # twitter bot utils
 
-These Python utilities make it a little easier to set up a Twitter bot, with an eye to making command-line options easy to reproduce.
+Twitter bot utils make it a little easier to set up a Twitter bot, with an eye to making config and command-line options easy to manage and reproduce. They're intended for managing a small-to-medium-sized coterie of Twitter accounts on one machine. The package is a super-simple wrapper for the excellent [Tweepy](http://tweepy.org) library. It also provides shortcuts for setting up command line tools with [argparse](https://docs.python.org/3/library/argparse.html).
 
-The utilities are a wrapper for the excellent [Tweepy](http://tweepy.org) and [argparse]() libraries, which handle the Twitter API and command line options, respectively. They're ideal if you want to store the configuration settings for a few bots in a config file.
+This package is intended to assist with the creation of bots for artistic or personal projects. Don't use it to spam or harrass people.
 
 ## Setting up a tweepy API
 
-Easily set up the api with a yaml or json config file:
+The main goal of Twitter bot utils is to create Tweepy instances with authentication data stored in a simple conf file. This gives botmakers a simple, reusable place to store keys outside of source control.
+
+By default, twitter_bot_utils will read settings from a YAML or JSON config file. By default, it looks in the ~/ and ~/bots directories for files named "bots.yaml", "bots.json", or "botrc". Custom config files can be set, too, of course.
 
 ````python
 from twitter_bot_utils import api
 
-# Different ways to create the tweepy API object.
-twitter = api.API('MyBotName', config='path/to/config.yaml')
-twitter = api.API('MyBotName', consumer_key='...', consumer_secret='...', key='...', secret='...')
-
-# If the config file is set up, twitter bot utils will find it automatically
-# See below for details
+# Automatically check for a config file in the above-named directories
 twitter = api.API('MyBotName')
 
-# twitter_bot_utils comes with some built-in command line parsers, so below.
-# It will happily consume the result of argparse.parser.parse_args()
-# Assuming a parser has been set up:
-args = parser.parse_args()
-twitter = api.API('MyBotName', args)
-````
-### Config file setup
+# Specify a specific config file
+twitter = api.API('MyBotName', config='path/to/config.yaml')
 
-By default, twitter_bot_utils will read settings from a YAML or JSON config file. By default, it looks in the ~/ and ~/bots directories for files named  bots.yaml, bots.json, or botrc. Custom config files can be set, too, of course
+# This is possible, although you should consider just using Tweepy directly
+twitter = api.API('MyBotName', consumer_key='...', consumer_secret='...', key='...', secret='...')
+````
+
+Twitter bot utils comes with some built-in command line parsers, and the API object will also happily consume the result of `argparse.parser.parse_args()` (see below for details).
+
+### Config file setup
 
 Custom settings in the config are available at runtime, so use the config file for any special settings you want.
 
-Example config file layout (in YAML. JSON works, too):
+Example config file layout (This is YAML, JSON works, too):
 
 ````yaml
+# ~/bots.yaml
+
 users:
     # twitter screen_name
     MyBotName:
@@ -82,7 +82,7 @@ twitter = twitter_bot_utils.api.API('MyBotName', config='special/file/path.yaml'
 
 ## Recent tweets
 
-It's often useful to know what a bot has done recently. There are three properties in the twitter_bot_utils.API object for this. Use them for setting up since_id arguments.
+Basically, the `twitter_bot_utils.api.API` object is a wrapper for Tweepy with some configuration reading options added. It also adds three convenience methods for finding recent tweets, since it's often useful to know what a bot has done recently without setting up a whole backend for saving the bot's tweets.
 
 ````python
 twitter = api.API('MyBotName')
@@ -96,7 +96,7 @@ twitter.last_reply
 twitter.last_retweet
 # id of most recent retweet from MyBotName
 
-# What's happened since the last time the bot was active?
+# Example: what's happened since the last time the bot was active?
 twitter.search('#botALLY', since_id=twitter.last_tweet)
 ````
 
@@ -128,7 +128,7 @@ parser.add_argument('-m', '--my-arg', help="You're passing an argument to argpar
 
 args = parser.parse_args()
 
-# Parse the default args. If vocal is set, the logger will output to stdout.
+# Parse the default args. For instance, if --verbose is set, the logger will output to stdout.
 twitter_bot_utils.defaults('MyBot', args)
 
 # That's right, utils set up a logger for you.
