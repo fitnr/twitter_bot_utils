@@ -76,6 +76,7 @@ def remove_entity(status, entitytype):
     '''Use indices to remove given entity type from status text'''
     return remove_entities(status, [entitytype])
 
+
 def remove_entities(status, entitylist):
     '''Remove entities for a list of items'''
     try:
@@ -90,4 +91,20 @@ def remove_entities(status, entitylist):
 
     for start, end in indices:
         text = text[:start] + text[end:]
+    return text
+
+
+def replace_urls(status):
+    '''replace URLS with expanded urls'''
+    text = status.text
+
+    if not has_url(status):
+        return text
+
+    urls = [(e['indices'], e['expanded_url']) for e in status.entities['urls']]
+    urls.sort(key=lambda x: x[0][0], reverse=True)
+
+    for (start, end), url in urls:
+        text = text[:start] + url + text[end:]
+
     return text
