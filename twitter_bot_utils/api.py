@@ -37,7 +37,7 @@ class API(tweepy.API):
         # Optionally used args from argparse.ArgumentParser
         if parsed_args:
             try:
-                args = dict((k, v) for k, v in vars(parsed_args).items() if v is not None)
+                args = dict((k, v) for k, v in list(vars(parsed_args).items()) if v is not None)
                 kwargs.update(**args)
             except TypeError:
                 # probably didn't get a Namespace() for passed args

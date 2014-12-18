@@ -2,6 +2,7 @@
 ---
 
 * Add confighelper module, with tools for parsing simple config files
+* Fix Python 3 compatibility
 
 0.5.2
 -----

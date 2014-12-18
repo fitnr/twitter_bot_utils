@@ -104,7 +104,7 @@ def setup(screen_name, file_config):
 
 
 def update(config, updated):
-    config.update({k: v for k, v in updated.items() if k not in PROTECTED_INFO})
+    config.update({k: v for k, v in list(updated.items()) if k not in PROTECTED_INFO})
 
 
 def setup_auth(keys, **kwargs):

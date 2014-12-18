@@ -11,9 +11,10 @@
 
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
-from HTMLParser import HTMLParser
-
+try:
+    from html.parser import HTMLParser
+except ImportError:
+    from html.parser import HTMLParser
 
 def has_url(status):
     return has_entity(status, 'urls')
@@ -44,7 +45,7 @@ def has_entity(status, entitykey):
 
 def has_entities(status):
     try:
-        if len([i for v in status.entities.values() for i in v]) > 0:
+        if len([i for v in list(status.entities.values()) for i in v]) > 0:
             return True
 
     except (AttributeError, KeyError):
@@ -75,7 +76,7 @@ def remove_entities(status, entitylist):
         entities = status.get('entities', dict())
         text = status['text']
 
-    indices = [ent['indices'] for etype, entval in entities.items() for ent in entval if etype in entitylist]
+    indices = [ent['indices'] for etype, entval in list(entities.items()) for ent in entval if etype in entitylist]
     indices.sort(key=lambda x: x[0], reverse=True)
 
     for start, end in indices:

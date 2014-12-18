@@ -35,14 +35,14 @@ def _autofollow(API, action):
         followers = API.follower_ids()
         followers = [x.id_str for x in followers]
 
-    except Exception as e:
+    except Exception, e:
         raise e
 
     # Get the last 5000 people user has followed
     try:
         friends = API.friend_ids()
 
-    except Exception as e:
+    except Exception, e:
         raise e
 
     if action is "unfollow":
@@ -59,7 +59,7 @@ def _autofollow(API, action):
         outgoing = API.friendships_outgoing()
         ignore = [x.id_str for x in outgoing]
 
-    except Exception as e:
+    except Exception, e:
         raise e
 
     for uid in dependent:
@@ -68,7 +68,7 @@ def _autofollow(API, action):
                 method(id=uid)
                 logger.debug('{0}: {1}'.format(action, uid))
 
-            except Exception as e:
+            except Exception, e:
                 raise e
 
 
@@ -81,7 +81,7 @@ def fave_mentions(API):
 
     try:
         mentions = API.mentions_timeline(trim_user=True, include_entities=False, count=75)
-    except Exception as e:
+    except Exception, e:
         raise e
 
     for mention in mentions:
@@ -92,7 +92,7 @@ def fave_mentions(API):
                 faved.append(fav)
                 logger.debug('faved {0}: {1}'.format(mention.id_str, mention.text))
 
-            except Exception as e:
+            except Exception, e:
                 raise e
 
 
