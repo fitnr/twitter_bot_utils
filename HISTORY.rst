@@ -1,3 +1,9 @@
+0.6.2
+-----
+
+Add 'archive' module for reading Twitter archives or simple text files.
+
+
 0.6.1
 -----
 
