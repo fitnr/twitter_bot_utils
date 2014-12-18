@@ -23,10 +23,10 @@ def add_default_args(parser):
 
     parser.add_argument('--key', type=str, help='Twitter user key')
     parser.add_argument('--secret', type=str, help='Twitter user secret')
-    parser.add_argument('--consumer-key', type=str, help='Twitter application consumer key')
-    parser.add_argument('--consumer-secret', type=str, help='Twitter application consumer secret')
+    parser.add_argument('--consumer-key', type=str, help='Twitter consumer key')
+    parser.add_argument('--consumer-secret', type=str, help='Twitter consumer secret')
 
-    parser.add_argument('-n', '--dry-run', action='store_true', help="Don't tweet, just output to stdout")
+    parser.add_argument('-n', '--dry-run', action='store_true', help="Don't actually run")
     parser.add_argument('-v', '--verbose', action='store_true', help="Log to stdout")
 
 
