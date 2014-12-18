@@ -3,7 +3,8 @@ import unittest
 import tweepy
 import logging
 import argparse
-from twitter_bot_utils import api, confighelper, creation, helpers, tools
+import inspect
+from twitter_bot_utils import api, archive, confighelper, creation, helpers, tools
 
 TWEET = {
     "source": "\u003Ca href=\"http:\/\/twitter.com\/download\/iphone\" rel=\"nofollow\"\u003ETwitter for iPhone\u003C\/a\u003E",
@@ -46,7 +47,7 @@ class test_twitter_bot_utils(unittest.TestCase):
         self.api = tweepy.API()
         self.status = tweepy.Status.parse(self.api, TWEET)
 
-        self.yaml = os.path.join(os.path.dirname(__file__), 'test.yaml')
+        self.yaml = os.path.join(os.path.dirname(__file__), 'data/test.yaml')
 
         self.screen_name = 'example_screen_name'
 
@@ -54,6 +55,9 @@ class test_twitter_bot_utils(unittest.TestCase):
 
         self.arg_input = ['--consumer-key', '123', '-n', '-v']
         self.args = self.parser.parse_args(self.arg_input)
+
+        self.txtfile = os.path.join(os.path.dirname(__file__), 'data/tweets.txt')
+        self.archive = os.path.dirname(__file__)
 
     def test_setup(self):
 
@@ -86,8 +90,10 @@ class test_twitter_bot_utils(unittest.TestCase):
         assert helpers.has_mention(self.status)
 
         assert helpers.remove_entity(self.status, 'hashtags') == self.status.text
-        assert helpers.remove_entity(self.status, 'user_mentions') == " example tweet example tweet example tweet"
-        assert helpers.remove_entities(self.status, ['hashtags', 'user_mentions']) == " example tweet example tweet example tweet"
+        assert helpers.remove_entity(
+            self.status, 'user_mentions') == " example tweet example tweet example tweet"
+        assert helpers.remove_entities(
+            self.status, ['hashtags', 'user_mentions']) == " example tweet example tweet example tweet"
 
     def test_find_conf_file(self):
         assert confighelper.find_file(self.yaml) == self.yaml
@@ -125,7 +131,7 @@ class test_twitter_bot_utils(unittest.TestCase):
         assert isinstance(twitter, api.API)
 
     def test_api_args(self):
-        brokenconfig = os.path.join(os.path.dirname(__file__), 'broken.yaml')
+        brokenconfig = os.path.join(os.path.dirname(__file__), 'data/broken.yaml')
 
         self.assertRaises(ValueError, api.API, 'example', [1, 2, 3])
         self.assertRaises(ValueError, api.API, 'example_screen_name', config=brokenconfig)
@@ -144,6 +150,16 @@ class test_twitter_bot_utils(unittest.TestCase):
 
         assert twitter.screen_name == 'example_screen_name'
         assert twitter.app == 'example_app_name'
+
+    def test_loading_archive_data(self):
+        archives = archive.read_json(self.archive)
+        assert inspect.isgenerator(archives)
+        self.assertEqual(len(list(archives)), 3)
+
+    def test_loading_text_data(self):
+        txt = archive.read_text(self.txtfile)
+        assert inspect.isgenerator(txt)
+        assert len(list(txt)) == 4
 
 
 if __name__ == '__main__':
