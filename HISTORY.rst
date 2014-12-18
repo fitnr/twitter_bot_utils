@@ -1,3 +1,10 @@
+0.5.2
+-----
+
+Changes:
+
+* Add helpers.replace_urls method
+
 0.5
 ---
 
