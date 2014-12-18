@@ -1,0 +1,11 @@
+users:
+    example_screen_name:
+        app: example_app_name
+        custom: foo
+
+apps:
+    example_app_name:
+        custom: baz
+
+
+custom: bar

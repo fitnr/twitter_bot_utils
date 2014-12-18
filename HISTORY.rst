@@ -1,3 +1,8 @@
+0.6
+---
+
+* Add confighelper module, with tools for parsing simple config files
+
 0.5.2
 -----
 

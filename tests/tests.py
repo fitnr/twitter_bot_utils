@@ -3,7 +3,7 @@ import unittest
 import tweepy
 import logging
 import argparse
-from twitter_bot_utils import api, creation, helpers, tools
+from twitter_bot_utils import api, confighelper, creation, helpers, tools
 
 TWEET = {
     "source": "\u003Ca href=\"http:\/\/twitter.com\/download\/iphone\" rel=\"nofollow\"\u003ETwitter for iPhone\u003C\/a\u003E",
@@ -47,6 +47,9 @@ class test_twitter_bot_utils(unittest.TestCase):
         self.status = tweepy.Status.parse(self.api, TWEET)
 
         self.yaml = os.path.join(os.path.dirname(__file__), 'test.yaml')
+
+        self.screen_name = 'example_screen_name'
+
         self.parser = creation.setup_args(description='desc')
 
         self.arg_input = ['--consumer-key', '123', '-n', '-v']
@@ -86,13 +89,46 @@ class test_twitter_bot_utils(unittest.TestCase):
         assert helpers.remove_entity(self.status, 'user_mentions') == " example tweet example tweet example tweet"
         assert helpers.remove_entities(self.status, ['hashtags', 'user_mentions']) == " example tweet example tweet example tweet"
 
-    def test_api_conf_file(self):
-        assert api._find_config_file(self.yaml) == self.yaml
+    def test_find_conf_file(self):
+        assert confighelper.find_file(self.yaml) == self.yaml
+        real_path = os.path.realpath(os.path.dirname(__file__))
+
+        self.assertEqual(
+            confighelper.find_file(default_directories=[real_path], default_bases=[self.yaml]),
+            os.path.realpath(self.yaml)
+        )
+
+    def test_parse(self):
+        parsed = confighelper.parse(self.yaml)
+        assert parsed['users']['example_screen_name']['key'] == 'INDIA'
+        assert parsed['custom'] == 'bar'
+
+    def test_config_setup(self):
+        fileconfig = confighelper.parse(self.yaml)
+        config, keys = confighelper.setup(self.screen_name, fileconfig)
+
+        assert config['custom'] == 'foo'
+        assert keys['secret'] == 'LIMA'
+        assert keys['consumer_key'] == 'NOVEMBER'
+
+    def test_update_config(self):
+        a = {'foo': 'bar'}
+        b = {'foo': 'mux', 'key': 'a'}
+        confighelper.update(a, b)
+
+        self.assertEqual(a['foo'], b['foo'])
+        self.assertIsNone(a.get('key'))
 
     def test_api_creation(self):
         twitter = api.API('example_screen_name', self.args, config=self.yaml)
 
         assert isinstance(twitter, api.API)
+
+    def test_api_args(self):
+        brokenconfig = os.path.join(os.path.dirname(__file__), 'broken.yaml')
+
+        self.assertRaises(ValueError, api.API, 'example', [1, 2, 3])
+        self.assertRaises(ValueError, api.API, 'example_screen_name', config=brokenconfig)
 
     def test_api_attributes(self):
         twitter = api.API('example_screen_name', self.args, config=self.yaml)

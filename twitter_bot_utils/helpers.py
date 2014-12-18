@@ -13,8 +13,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from HTMLParser import HTMLParser
-import yaml
-import json
 
 
 def has_url(status):
@@ -61,15 +59,6 @@ def format_status(status):
 
 def format_text(text):
     return HTMLParser().unescape(text).replace('\n', ' ').strip()
-
-
-def config_parse(file_path):
-    with open(file_path, 'r') as f:
-        if file_path[-4:] == 'yaml':
-            return yaml.load(f.read())
-
-        elif file_path[-4:] == 'json':
-            return json.load(f.read())
 
 
 def remove_entity(status, entitytype):
