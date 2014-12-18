@@ -12,7 +12,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 try:
-    from html.parser import HTMLParser
+    from HTMLParser import HTMLParser
 except ImportError:
     from html.parser import HTMLParser
 

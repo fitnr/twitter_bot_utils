@@ -1,6 +1,6 @@
-__version__ = '0.6'
+__version__ = '0.6.1'
 __author__ = 'Neil Freeman'
-__license__ = 'all rights reserved'
+__license__ = 'GPL'
 __all__ = ['api', 'confighelper', 'creation', 'helpers', 'tools']
 
 from . import api
