@@ -56,6 +56,8 @@ def parse(file_path):
         elif file_path[-4:] == 'json':
             return json.load(f.read())
 
+    raise ValueError("Unrecognized config file type")
+
 
 def find_file(config_file=None, default_directories=None, default_bases=None):
     '''Search for a file in a list of files'''
