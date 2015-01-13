@@ -20,7 +20,7 @@ except ImportError:
 setup(
     name='twitter_bot_utils',
 
-    version='0.6.2',
+    version='0.6.2.1',
 
     description='Python utilities for twitter bots',
 

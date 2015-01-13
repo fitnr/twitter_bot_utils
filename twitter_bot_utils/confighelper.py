@@ -35,7 +35,7 @@ PROTECTED_INFO = [
 ]
 
 
-def configure(screen_name, file_name, directories=None, bases=None, **kwargs):
+def configure(screen_name, file_name=None, directories=None, bases=None, **kwargs):
     """Setup a TBU config dictionary"""
     # Use passed config file, or look for it in the paths above
     config_file = find_file(file_name, directories, bases)
@@ -63,22 +63,22 @@ def find_file(config_file=None, default_directories=None, default_bases=None):
     '''Search for a file in a list of files'''
 
     if config_file:
-        if path.exists(config_file):
+        if path.exists(path.expanduser(config_file)):
             return config_file
         else:
             raise FileNotFoundError('Custom config file not found: {}'.format(config_file))
 
-    default_directories = default_directories or []
-    default_bases = default_bases or []
+    dirs = default_directories or ['~/bots', '~']
+    dirs = [getcwd()] + dirs
 
-    dirs = [getcwd()] + default_directories
+    bases = default_bases or ['bots.yaml', 'bots.json', 'botrc']
 
-    for directory, base in itertools.product(dirs, default_bases):
+    for directory, base in itertools.product(dirs, bases):
         filepath = path.expanduser(path.join(directory, base))
         if path.exists(filepath):
             return filepath
 
-    raise FileNotFoundError('Config file not found in ~/bots.{json,yaml}, ~/bots/bots.{json,yaml}, ~/botrc or ~/bots/botrc')
+    raise FileNotFoundError('Config file not found in: ' + str([path.join(a, b) for a, b in itertools.product(dirs, bases)]))
 
 
 def setup(screen_name, file_config):
