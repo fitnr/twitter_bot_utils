@@ -1,3 +1,8 @@
+0.6.3
+-----
+
+* Add helpers.shorten - cuts a string down to 140 characters without breaking words.
+
 0.6.2
 -----
 

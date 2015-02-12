@@ -17,6 +17,7 @@ try:
 except ImportError:
     from html.parser import HTMLParser
 
+
 def has_url(status):
     return has_entity(status, 'urls')
 
@@ -99,3 +100,15 @@ def replace_urls(status):
         text = text[:start] + url + text[end:]
 
     return text
+
+
+def shorten(string, length=140, ellipsis=None):
+    string = string.strip()
+
+    if len(string) > length:
+        ellipsis = ellipsis or ''
+        L = length - len(ellipsis)
+        return u' '.join(string[:L].split(' ')[:-1]).strip(',;:') + ellipsis
+
+    else:
+        return string

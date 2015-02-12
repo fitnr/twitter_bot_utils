@@ -20,7 +20,7 @@ except ImportError:
 setup(
     name='twitter_bot_utils',
 
-    version='0.6.2.1',
+    version='0.6.3',
 
     description='Python utilities for twitter bots',
 
@@ -44,8 +44,8 @@ setup(
     },
 
     install_requires=[
-        'tweepy>=2.3.0',
-        'PyYAML>=3.11',
+        'tweepy >=3.1.0, <4',
+        'PyYAML==3.11',
         'argparse>=1.2.1',
     ],
 
