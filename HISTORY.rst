@@ -1,3 +1,10 @@
+0.6.4
+-----
+
+* Add helpers.queryize - formats a list of terms for a Twitter search.
+* Automatically use ellipsis character ('…') in helpers.shorten when `ellipsis=True`.
+
+
 0.6.3
 -----
 
