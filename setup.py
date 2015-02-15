@@ -43,6 +43,8 @@ setup(
         ],
     },
 
+    use_2to3=True,
+
     install_requires=[
         'tweepy >=3.1.0, <4',
         'PyYAML==3.11',
