@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # Copyright 2014 Neil Freeman
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -11,6 +12,12 @@
 
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import unicode_literals
+
+try:
+    from urllib import quote_plus
+except ImportError:
+    from urllib.parse import quote_plus
 
 try:
     from HTMLParser import HTMLParser
@@ -103,12 +110,35 @@ def replace_urls(status):
 
 
 def shorten(string, length=140, ellipsis=None):
+    '''Shorten a string to 140 characters,
+    Optionally add an ellipsis character: '…' if ellipsis=True, or a given string
+    e.g. ellipsis=' (cut)' '''
     string = string.strip()
 
     if len(string) > length:
-        ellipsis = ellipsis or ''
+        if ellipsis is True:
+            ellipsis = '…'
+        else:
+            ellipsis = ellipsis or ''
+
         L = length - len(ellipsis)
-        return u' '.join(string[:L].split(' ')[:-1]).strip(',;:') + ellipsis
+
+        return ' '.join(string[:L].split(' ')[:-1]).strip(',;:') + ellipsis
 
     else:
         return string
+
+
+def queryize(terms, screen_name=None):
+    '''Create query from list of terms, using OR
+    but intelligently excluding terms beginning with '-' (Twitter's NOT operator).
+    Optionally add -from:screen_name.
+    Returns a string ready to be passed to tweepy.API.search
+    '''
+
+    ors = (x for x in terms if x[0] != '-')
+    nots = (x for x in terms if x[0] == '-')
+
+    sn = " -from:" + screen_name + ' ' if screen_name else ''
+
+    return quote_plus(' OR '.join(ors) + sn + ' '.join(nots))
