@@ -1,3 +1,9 @@
+0.6.5
+-----
+
+* Fix bugs in queryize, recent tweets in API
+* use logger named screen_name in follow tools
+
 0.6.4
 -----
 
