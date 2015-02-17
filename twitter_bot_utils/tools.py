@@ -1,4 +1,5 @@
 #!/usr/local/bin/python
+# -*- coding: utf-8 -*-
 
 # Copyright 2014 Neil Freeman
 # This program is free software: you can redistribute it and/or modify
@@ -27,7 +28,7 @@ def unfollow(API):
 
 
 def _autofollow(API, action):
-    logger = getLogger('auto_follow')
+    logger = getLogger(API.screen_name)
     ignore = []
 
     # get the last 5000 followers
@@ -53,7 +54,7 @@ def _autofollow(API, action):
         method = API.create_friendship
         independent, dependent = friends, followers
 
-    logger.debug('{0}: found {1} friends, {2} followers'.format(action, len(friends), len(followers)))
+    logger.debug(u'{0}: found {1} friends, {2} followers'.format(action, len(friends), len(followers)))
 
     try:
         outgoing = API.friendships_outgoing()
@@ -73,7 +74,7 @@ def _autofollow(API, action):
 
 
 def fave_mentions(API):
-    logger = getLogger('fave_mentions')
+    logger = getLogger(API.screen_name)
 
     favs = API.favorites(include_entities=False, count=100)
     favs = [m.id_str for m in favs]
@@ -90,7 +91,7 @@ def fave_mentions(API):
             try:
                 fav = API.create_favorite(mention.id_str, include_entities=False)
                 faved.append(fav)
-                logger.debug('faved {0}: {1}'.format(mention.id_str, mention.text))
+                logger.debug(u'faved {0}: {1}'.format(mention.id_str, mention.text))
 
             except Exception as e:
                 raise e
