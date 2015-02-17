@@ -127,10 +127,7 @@ def queryize(terms, screen_name=None):
     Optionally add -from:screen_name.
     Returns a string ready to be passed to tweepy.API.search
     '''
-
     ors = (x for x in terms if x[0] != '-')
     nots = (x for x in terms if x[0] == '-')
-
-    sn = " -from:" + screen_name + ' ' if screen_name else ''
-
+    sn = " -from:" + screen_name + ' ' if screen_name else ' '
     return quote_plus(' OR '.join(ors) + sn + ' '.join(nots))
