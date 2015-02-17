@@ -31,7 +31,7 @@ class API(tweepy.API):
 
     '''Extends the tweepy API with config-file handling'''
 
-    _last_tweet, _last_reply, _last_retweet = None, None, None
+    _last_tweet = _last_reply = _last_retweet = None
 
     def __init__(self, screen_name, parsed_args=None, **kwargs):
         # Optionally used args from argparse.ArgumentParser
@@ -70,27 +70,35 @@ class API(tweepy.API):
     def app(self):
         return self._config['app']
 
+    def _sinces(self):
+        tl = self.user_timeline(self.screen_name)
+
+        if len(tl) > 0:
+            self._last_tweet = tl[0].id
+        else:
+            self._last_tweet = self._last_reply = self._last_retweet = False
+            return
+
+        replies = [t for t in tl if t.in_reply_to_user_id]
+        self._last_reply = replies[0].id if len(replies) > 0 else False
+
+        retweets = [t for t in tl if t.retweeted]
+        self._last_retweet = retweets[0].id if len(retweets) > 0 else False
+
+    def _last(self, last_what, refresh):
+        if refresh or getattr(self, last_what) is None:
+            self._sinces()
+
+        return getattr(self, last_what)
+
     @property
     def last_tweet(self, refresh=None):
-        if refresh or not self._last_tweet:
-            self._last_tweet = self.user_timeline().pop(0).id
-
-        return self._last_tweet
+        return self._last('_last_tweet', refresh)
 
     @property
     def last_reply(self, refresh=None):
-        if refresh or not self._last_reply:
-            tl = self.user_timeline()
-            filtered = [tweet for tweet in tl if tweet.in_reply_to_user_id]
-            self._last_reply = filtered[0].id
-
-        return self._last_reply
+        return self._last('_last_reply', refresh)
 
     @property
     def last_retweet(self, refresh=None):
-        if refresh or not self._last_retweet:
-            tl = self.user_timeline()
-            filtered = [tweet for tweet in tl if tweet.retweeted]
-            self._last_retweet = filtered[0].id
-
-        return self._last_retweet
+        return self._last('_last_retweet', refresh)
