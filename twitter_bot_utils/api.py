@@ -47,7 +47,7 @@ class API(tweepy.API):
 
         try:
             # get config file and parse it
-            self._config, keys = confighelper.configure(screen_name, kwargs.get('config'), CONFIG_DIRS, CONFIG_BASES, **kwargs)
+            self._config, keys = confighelper.configure(screen_name, kwargs.get('config_file'), CONFIG_DIRS, CONFIG_BASES, **kwargs)
 
             # setup auth
             auth = confighelper.setup_auth(keys)
