@@ -52,8 +52,8 @@ class API(tweepy.API):
             # setup auth
             auth = confighelper.setup_auth(keys)
 
-        except KeyError:
-            raise ValueError("Incomplete config file.")
+        except KeyError as e:
+            raise ValueError("Incomplete config file: {}".format(e))
 
         # initiate api connection
         super(API, self).__init__(auth)

@@ -126,7 +126,7 @@ class test_twitter_bot_utils(unittest.TestCase):
         self.assertIsNone(a.get('key'))
 
     def test_api_creation(self):
-        twitter = api.API('example_screen_name', self.args, config=self.yaml)
+        twitter = api.API('example_screen_name', self.args, config_file=self.yaml)
 
         assert isinstance(twitter, api.API)
 
@@ -134,10 +134,10 @@ class test_twitter_bot_utils(unittest.TestCase):
         brokenconfig = os.path.join(os.path.dirname(__file__), 'data/broken.yaml')
 
         self.assertRaises(ValueError, api.API, 'example', [1, 2, 3])
-        self.assertRaises(ValueError, api.API, 'example_screen_name', config=brokenconfig)
+        self.assertRaises(ValueError, api.API, 'example_screen_name', config_file=brokenconfig)
 
     def test_api_attributes(self):
-        twitter = api.API('example_screen_name', self.args, config=self.yaml)
+        twitter = api.API('example_screen_name', self.args, config_file=self.yaml)
 
         assert twitter.config['custom'] == 'foo'
 

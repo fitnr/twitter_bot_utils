@@ -45,7 +45,10 @@ def configure(screen_name, file_name=None, directories=None, bases=None, **kwarg
     file_config.update(**kwargs)
 
     # config and keys dicts
-    return setup(screen_name, file_config)
+    try:
+        return setup(screen_name, file_config)
+    except KeyError:
+        raise KeyError("Config file {} missing keys".format(config_file))
 
 
 def parse(file_path):
