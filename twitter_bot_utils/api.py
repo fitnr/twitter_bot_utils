@@ -71,7 +71,7 @@ class API(tweepy.API):
         return self._config['app']
 
     def _sinces(self):
-        tl = self.user_timeline(self.screen_name)
+        tl = self.user_timeline(self.screen_name, count=200, include_rts=True, exclude_replies=False)
 
         if len(tl) > 0:
             self._last_tweet = tl[0].id
@@ -79,17 +79,21 @@ class API(tweepy.API):
             self._last_tweet = self._last_reply = self._last_retweet = False
             return
 
-        replies = [t for t in tl if t.in_reply_to_user_id]
-        self._last_reply = replies[0].id if len(replies) > 0 else False
+        try:
+            self._last_reply = max(t.id for t in tl if t.in_reply_to_user_id)
+        except ValueError:
+            self._last_reply = False
 
-        retweets = [t for t in tl if t.retweeted]
-        self._last_retweet = retweets[0].id if len(retweets) > 0 else False
+        try:
+            self._last_retweet = max(t.id for t in tl if t.retweeted)
+        except ValueError:
+            self._last_retweet = False
 
     def _last(self, last_what, refresh):
         if refresh or getattr(self, last_what) is None:
             self._sinces()
 
-        return getattr(self, last_what)
+        return getattr(self, last_what) or 1
 
     @property
     def last_tweet(self, refresh=None):
