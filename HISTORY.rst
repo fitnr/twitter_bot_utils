@@ -1,3 +1,8 @@
+0.6.6
+-----
+
+* Grab longer user timeline for establishing recent replies, retweets
+
 0.6.5
 -----
 
