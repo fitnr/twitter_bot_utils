@@ -76,24 +76,24 @@ class API(tweepy.API):
         if len(tl) > 0:
             self._last_tweet = tl[0].id
         else:
-            self._last_tweet = self._last_reply = self._last_retweet = False
+            self._last_tweet = self._last_reply = self._last_retweet = None
             return
 
         try:
             self._last_reply = max(t.id for t in tl if t.in_reply_to_user_id)
         except ValueError:
-            self._last_reply = False
+            self._last_reply = None
 
         try:
             self._last_retweet = max(t.id for t in tl if t.retweeted)
         except ValueError:
-            self._last_retweet = False
+            self._last_retweet = None
 
     def _last(self, last_what, refresh):
         if refresh or getattr(self, last_what) is None:
             self._sinces()
 
-        return getattr(self, last_what) or 1
+        return getattr(self, last_what)
 
     @property
     def last_tweet(self, refresh=None):
