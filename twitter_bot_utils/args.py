@@ -17,7 +17,6 @@ import argparse
 from os import environ, path
 from sys import stdout
 
-
 def add_default_args(parser):
     parser.add_argument('-c', '--config', metavar='PATH', default=None, type=str, help='path to config file to parse (json or yaml)')
 
@@ -30,29 +29,21 @@ def add_default_args(parser):
     parser.add_argument('-v', '--verbose', action='store_true', help="Log to stdout")
 
 
-def defaults(screen_name, args, **kwargs):
-    '''Interpret default args, set up API'''
-    logger = add_logger(screen_name, log_path=kwargs.get('logpath', '~/bots/logs'))
-
-    if args.config:
-        logger.info('Using custom config file: {0}'.format(args.config))
-    else:
-        logger.info('Trying to use a default config')
-
-    if args.verbose:
-        add_stdout_logger(screen_name)
-
-
-def setup_args(description, **kwargs):
-    '''Set up an general argument parsing, logging'''
-
-    parser = argparse.ArgumentParser(description=description, **kwargs)
+def parent():
+    parser = argparse.ArgumentParser(add_help=False)
     add_default_args(parser)
-
     return parser
 
 
-def log_threshold():
+def add_logger(screen_name, verbose=None, **kwargs):
+    '''Interpret default args, set up logger'''
+    logger = logger(screen_name, log_path=kwargs.get('logpath'))
+
+    if verbose:
+        stdout_logger(screen_name)
+
+
+def _log_threshold():
     if environ.get('DEVELOPMENT', False) and not environ.get('production', False):
         # environment = 'development'
         threshold = logging.DEBUG
@@ -63,9 +54,9 @@ def log_threshold():
     return threshold
 
 
-def add_logger(logger_name, log_path="~/bots/logs"):
+def logger(logger_name, log_path="~/bots/logs"):
     logger = logging.getLogger(logger_name)
-    logger.setLevel(log_threshold())
+    logger.setLevel(_log_threshold())
 
     log_file = path.expanduser(path.join(log_path, logger_name + '.log'))
     fh = logging.FileHandler(log_file)
@@ -76,7 +67,7 @@ def add_logger(logger_name, log_path="~/bots/logs"):
     return logger
 
 
-def add_stdout_logger(logger_name):
+def stdout_logger(logger_name):
     logger = logging.getLogger(logger_name)
 
     ch = logging.StreamHandler(stdout)
