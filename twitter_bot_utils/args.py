@@ -37,11 +37,12 @@ def parent():
 
 def add_logger(screen_name, verbose=None, **kwargs):
     '''Interpret default args, set up logger'''
-    logger = logger(screen_name, log_path=kwargs.get('logpath'))
+    log = logger(screen_name, log_path=kwargs.get('logpath'))
 
     if verbose:
         stdout_logger(screen_name)
 
+    return log
 
 def _log_threshold():
     if environ.get('DEVELOPMENT', False) and not environ.get('production', False):
@@ -54,24 +55,25 @@ def _log_threshold():
     return threshold
 
 
-def logger(logger_name, log_path="~/bots/logs"):
-    logger = logging.getLogger(logger_name)
-    logger.setLevel(_log_threshold())
+def logger(logger_name, log_path=None):
+    log_path = log_path or "~/bots/logs"
+    log = logging.getLogger(logger_name)
+    log.setLevel(_log_threshold())
 
     log_file = path.expanduser(path.join(log_path, logger_name + '.log'))
     fh = logging.FileHandler(log_file)
     fh.setFormatter(logging.Formatter('%(asctime)s %(name)-13s line %(lineno)d %(levelname)-5s %(message)s'))
 
-    logger.addHandler(fh)
+    log.addHandler(fh)
 
-    return logger
+    return log
 
 
 def stdout_logger(logger_name):
-    logger = logging.getLogger(logger_name)
+    log = logging.getLogger(logger_name)
 
     ch = logging.StreamHandler(stdout)
     ch.setLevel(logging.DEBUG)
     ch.setFormatter(logging.Formatter('%(filename)-10s %(lineno)-3d %(message)s'))
 
-    logger.addHandler(ch)
+    log.addHandler(ch)
