@@ -1,22 +1,5 @@
 from setuptools import setup
 
-try:
-    from pypandoc import convert
-    def read_md(f):
-        try:
-            return convert(f, 'rst')
-        except IOError:
-            return ''
-
-except ImportError:
-    print("pypandoc module not found, could not convert Markdown to RST")
-    def read_md(f):
-        try:
-            return open(f, 'r').read()
-        except IOError:
-            return ''
-
-
 setup(
     name='twitter_bot_utils',
 
@@ -24,7 +7,7 @@ setup(
 
     description='Python utilities for twitter bots',
 
-    long_description=read_md('readme.md'),
+    long_description=open('readme.rst', 'r').read(),
 
     url='http://github.com/fitnr/twitter_bot_utils',
 
@@ -32,7 +15,7 @@ setup(
 
     author_email='contact@fakeisthenewreal.org',
 
-    license='GPL',
+    license='GPLv3',
 
     packages=['twitter_bot_utils'],
 
