@@ -15,8 +15,6 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from . import api
-from . import creation
 from logging import getLogger
 
 def follow_back(API):
@@ -96,29 +94,3 @@ def fave_mentions(API):
             except Exception as e:
                 raise e
 
-
-def cli_fave_mentions():
-    parser = creation.setup_args(description='fave mentions')
-    parser.add_argument('screen_name', type=str, meta='[SCREEN NAME]', help='User who will be doing the favoriting')
-
-    args = parser.parse_args()
-    creation.defaults('fave_mentions', args)
-
-    twitter = api.API(args.screen_name, args)
-    fave_mentions(twitter)
-
-
-def cli_auto_follow():
-    parser = creation.setup_args(description="automatic following")
-    parser.add_argument('-u', '--unfollow', action='store_true', help="Unfollow those who don't follow you")
-    parser.add_argument('screen_name', type=str, meta='[SCREEN NAME]', help='User who will be doing the favoriting')
-
-    args = parser.parse_args()
-    creation.defaults('auto_follow', args)
-
-    twitter = api.API(args.screen_name, args)
-
-    if args.unfollow:
-        unfollow(twitter)
-    else:
-        follow_back(twitter)
