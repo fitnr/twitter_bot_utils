@@ -1,3 +1,8 @@
+0.7
+-----
+
+* Change api for creating parsers. `creation` module is gone, use tbu.args.parent() to pass a parent to `argparse.ArgumentParser`.
+
 0.6.6
 -----
 

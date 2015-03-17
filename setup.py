@@ -3,7 +3,7 @@ from setuptools import setup
 setup(
     name='twitter_bot_utils',
 
-    version='0.6.7',
+    version='0.7',
 
     description='Python utilities for twitter bots',
 
