@@ -1,9 +1,9 @@
 from setuptools import setup
-
+from twitter_bot_utils import __version__
 setup(
     name='twitter_bot_utils',
 
-    version='0.7',
+    version=__version__,
 
     description='Python utilities for twitter bots',
 
@@ -21,8 +21,8 @@ setup(
 
     entry_points={
         'console_scripts': [
-            'fave_mentions=twitter_bot_utils.tools:cli_fave_mentions',
-            'auto_follow=twitter_bot_utils.tools:cli_auto_follow'
+            'twitter-fave-mentions=twitter_bot_utils.cli:fave_mentions',
+            'twitter-auto-follow=twitter_bot_utils.cli:auto_follow'
         ],
     },
 
