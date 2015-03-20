@@ -1,4 +1,4 @@
-__version__ = '0.7-1'
+__version__ = '0.7.post2'
 __author__ = 'Neil Freeman'
 __license__ = 'GPL'
 __all__ = ['api', 'args', 'archive', 'confighelper', 'helpers', 'tools']
