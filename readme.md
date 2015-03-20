@@ -112,7 +112,7 @@ Some useful command line flags are available by default:
 * `-v, --verbose`: Log to stdout
 * `-c, --config`: path to a config file. This is a JSON or YAML file laid out according to the below format. 
 
-You can also pass authentication arguments with these options arguments.
+You can also pass authentication arguments with these arguments.
 
 * `--key`: Twitter user key
 * `--secret`: Twitter user secret
@@ -122,24 +122,24 @@ You can also pass authentication arguments with these options arguments.
 Say this is `yourapp.py`:
 
 ````python
-import logging
-import twitter_bot_utils
+import argprase
+import twitter_bot_utils as tbu
 
-# This sets up an argparse.ArgumentParser with some default arguments, which are explained below
-parser = twitter_bot_utils.setup_args('MyBot', description='Tweet something')
-
-parser.add_argument('-m', '--my-arg', help="You're passing an argument to argparse.ArgumentParser")
+# This sets up an argparse.ArgumentParser with the default arguments
+parent = tbu.args.parent()
+parser = argparse.ArgumentParser('Description', parents=[parent])
+parser.add_argument('-m', '--my-arg')
 
 args = parser.parse_args()
 
 # Parse the default args. For instance, if --verbose is set, the logger will output to stdout.
-twitter_bot_utils.defaults('MyBot', args)
+twitter_bot_utils.defaults('MyBot', **vars(args))
 
-# That's right, utils set up a logger for you.
-# It has the same name as the first argument to setup_args
-logger = logging.getLogger('MyBot')
+# Quickly setup a logger named 'MyBot'
+# The default arguments include 'verbose', which will enable logger.debug() statements
+logger = tbu.args.add_logger('MyBot', args.verbose)
 
-# Do logic here to generate a tweet somehow
+# Generate a tweet somehow
 tweet = my_tweet_function(args.my_arg)
 
 logger.info("Generated "+ tweet)
@@ -150,7 +150,6 @@ if not args.dry_run:
 ````
 
 Then on the command line:
-
 ````bash
 # Looks for settings in a config file (e.g. bots.yaml, see config section above)
 # Outputs results to stdout, doesn't publish anything 
@@ -163,7 +162,6 @@ Generated <EXAMPLE TWEET 2>
 ````
 
 ## Helpers
-
 ### Checking for entities
 
 Easily check if tweets have specific entities:
