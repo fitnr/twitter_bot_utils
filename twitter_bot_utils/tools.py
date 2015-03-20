@@ -15,6 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from __future__ import unicode_literals
 from logging import getLogger
 
 def follow_back(API):
@@ -52,7 +53,7 @@ def _autofollow(API, action):
         method = API.create_friendship
         independent, dependent = friends, followers
 
-    logger.debug(u'{0}: found {1} friends, {2} followers'.format(action, len(friends), len(followers)))
+    logger.debug('{0}: found {1} friends, {2} followers'.format(action, len(friends), len(followers)))
 
     try:
         outgoing = API.friendships_outgoing()
@@ -89,7 +90,7 @@ def fave_mentions(API):
             try:
                 fav = API.create_favorite(mention.id_str, include_entities=False)
                 faved.append(fav)
-                logger.debug(u'faved {0}: {1}'.format(mention.id_str, mention.text))
+                logger.debug('faved {0}: {1}'.format(mention.id_str, mention.text))
 
             except Exception as e:
                 raise e
