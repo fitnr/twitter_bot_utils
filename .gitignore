@@ -4,3 +4,4 @@ build
 dist
 *.zip
 readme.rst
+.tox

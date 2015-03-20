@@ -1,5 +1,6 @@
 from setuptools import setup
 from twitter_bot_utils import __version__
+
 setup(
     name='twitter_bot_utils',
 
@@ -33,5 +34,7 @@ setup(
         'PyYAML==3.11',
         'argparse>=1.2.1',
     ],
-    test_suite='tests'
+
+    test_suite="tests",
+
 )

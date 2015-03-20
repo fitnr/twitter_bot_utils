@@ -4,7 +4,8 @@ import tweepy
 import logging
 import argparse
 import inspect
-from twitter_bot_utils import api, archive, confighelper, creation, helpers, tools
+from twitter_bot_utils import archive, confighelper, helpers
+from twitter_bot_utils import args
 
 TWEET = {
     "source": "\u003Ca href=\"http:\/\/twitter.com\/download\/iphone\" rel=\"nofollow\"\u003ETwitter for iPhone\u003C\/a\u003E",
@@ -51,7 +52,8 @@ class test_twitter_bot_utils(unittest.TestCase):
 
         self.screen_name = 'example_screen_name'
 
-        self.parser = creation.setup_args(description='desc')
+        parent = args.parent()
+        self.parser = argparse.ArgumentParser(description='desc', parents=[parent])
 
         self.arg_input = ['--consumer-key', '123', '-n', '-v']
         self.args = self.parser.parse_args(self.arg_input)
@@ -72,10 +74,8 @@ class test_twitter_bot_utils(unittest.TestCase):
         assert args.dry_run
         assert args.verbose
 
-    def test_creation_defaults(self):
-        args = self.parser.parse_args(self.arg_input)
-
-        creation.defaults('test', args)
+    def test_add_logger(self):
+        args.add_logger('test', self.args.verbose)
 
         l = logging.getLogger('test')
         assert isinstance(l, logging.Logger)
@@ -108,48 +108,6 @@ class test_twitter_bot_utils(unittest.TestCase):
         parsed = confighelper.parse(self.yaml)
         assert parsed['users']['example_screen_name']['key'] == 'INDIA'
         assert parsed['custom'] == 'bar'
-
-    def test_config_setup(self):
-        fileconfig = confighelper.parse(self.yaml)
-        config, keys = confighelper.setup(self.screen_name, fileconfig)
-
-        assert config['custom'] == 'foo'
-        assert keys['secret'] == 'LIMA'
-        assert keys['consumer_key'] == 'NOVEMBER'
-
-    def test_update_config(self):
-        a = {'foo': 'bar'}
-        b = {'foo': 'mux', 'key': 'a'}
-        confighelper.update(a, b)
-
-        self.assertEqual(a['foo'], b['foo'])
-        self.assertIsNone(a.get('key'))
-
-    def test_api_creation(self):
-        twitter = api.API('example_screen_name', config_file=self.yaml, **vars(self.args))
-
-        assert isinstance(twitter, api.API)
-
-    def test_api_args(self):
-        brokenconfig = os.path.join(os.path.dirname(__file__), 'data/broken.yaml')
-
-        self.assertRaises(ValueError, api.API, 'example')
-        self.assertRaises(ValueError, api.API, 'example_screen_name', config_file=brokenconfig)
-
-    def test_api_attributes(self):
-        twitter = api.API('example_screen_name', config_file=self.yaml, **vars(self.args))
-
-        assert twitter.config['custom'] == 'foo'
-
-        try:
-            key = twitter.config['key']
-        except KeyError:
-            key = False
-
-        assert key is False
-
-        assert twitter.screen_name == 'example_screen_name'
-        assert twitter.app == 'example_app_name'
 
     def test_loading_archive_data(self):
         archives = archive.read_json(self.archive)
