@@ -33,5 +33,5 @@ setup(
         'PyYAML==3.11',
         'argparse>=1.2.1',
     ],
-
+    test_suite='tests'
 )
