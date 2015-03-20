@@ -33,21 +33,12 @@ class API(tweepy.API):
 
     _last_tweet = _last_reply = _last_retweet = None
 
-    def __init__(self, screen_name, parsed_args=None, **kwargs):
-        # Optionally used args from argparse.ArgumentParser
-        if parsed_args:
-            try:
-                args = dict((k, v) for k, v in list(vars(parsed_args).items()) if v is not None)
-                kwargs.update(**args)
-            except TypeError:
-                # probably didn't get a Namespace() for passed args
-                pass
-
+    def __init__(self, screen_name, config_file=None, **kwargs):
         self._screen_name = screen_name
 
         try:
             # get config file and parse it
-            self._config, keys = confighelper.configure(screen_name, kwargs.get('config_file'), CONFIG_DIRS, CONFIG_BASES, **kwargs)
+            self._config, keys = confighelper.configure(screen_name, config_file, CONFIG_DIRS, CONFIG_BASES, **kwargs)
 
             # setup auth
             auth = confighelper.setup_auth(keys)
