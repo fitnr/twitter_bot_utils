@@ -1,3 +1,7 @@
+0.8
+-----
+* No longer accept argpase.Namespace in api.API. use keyword args instead.
+
 0.7
 -----
 
