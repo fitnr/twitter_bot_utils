@@ -23,10 +23,10 @@ def fave_mentions():
     parser.add_argument('screen_name', type=str, metavar='[screen-name]', help='User who will be doing the favoriting')
 
     arguments = parser.parse_args()
-    args.add_logger('fave_mentions', arguments.verbose)
+    args.add_logger(arguments.screen_name, arguments.verbose)
 
-    twitter = api.API(arguments.screen_name, arguments)
-    tools.fave_mentions(twitter)
+    twitter = api.API(**vars(arguments))
+    tools.fave_mentions(twitter, arguments.dry_run)
 
 
 def auto_follow():
@@ -35,11 +35,11 @@ def auto_follow():
     parser.add_argument('screen_name', type=str, metavar='[screen-name]', help='User who will be doing the (un)following')
 
     arguments = parser.parse_args()
-    args.add_logger('auto_follow', arguments.verbose)
+    args.add_logger(arguments.screen_name, arguments.verbose)
 
-    twitter = api.API(arguments.screen_name, arguments)
+    twitter = api.API(**vars(arguments))
 
     if arguments.unfollow:
-        tools.unfollow(twitter)
+        tools.unfollow(twitter, arguments.dry_run)
     else:
-        tools.follow_back(twitter)
+        tools.follow_back(twitter, arguments.dry_run)

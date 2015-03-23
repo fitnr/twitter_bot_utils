@@ -215,3 +215,7 @@ twitter_bot_utils.helpers.remove_entity(results[0], 'urls')
 twitter_bot_utils.helpers.remove_entities(results[0], ['urls', 'hashtags', 'media'])
 # 'This is an example tweet with a  and a link '
 ````
+
+### Command Line Utilities
+* `twitter-auto-follow`: Follow accounts that follow your bot
+* `twitter-fave-mentions`: Favorite your bots' mentions

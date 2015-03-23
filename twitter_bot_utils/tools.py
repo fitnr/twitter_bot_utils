@@ -17,67 +17,68 @@
 
 from __future__ import unicode_literals
 from logging import getLogger
+from tweepy.error import TweepError
 
-def follow_back(API):
-    _autofollow(API, 'follow')
-
-
-def unfollow(API):
-    _autofollow(API, 'unfollow')
+def follow_back(API, dry_run=None):
+    _autofollow(API, 'follow', dry_run)
 
 
-def _autofollow(API, action):
+def unfollow(API, dry_run=None):
+    _autofollow(API, 'unfollow', dry_run)
+
+
+def _autofollow(API, action, dry_run):
     logger = getLogger(API.screen_name)
-    ignore = []
 
-    # get the last 5000 followers
     try:
-        followers = API.follower_ids()
-        followers = [x.id_str for x in followers]
+        # get the last 5000 followers
+        followers = API.followers_ids()
 
-    except Exception as e:
-        raise e
+        # Get the last 5000 people user has followed
+        friends = API.friends_ids()
 
-    # Get the last 5000 people user has followed
-    try:
-        friends = API.friend_ids()
+    except TweepError as e:
+        logger.error('{}: error getting followers/followers'.format(action))
+        logger.error("{}".format(e))
+        return
 
-    except Exception as e:
-        raise e
-
-    if action is "unfollow":
+    if action == "unfollow":
         method = API.destroy_friendship
         independent, dependent = followers, friends
 
-    elif action is "follow":
+    elif action == "follow":
         method = API.create_friendship
         independent, dependent = friends, followers
+    else:
+        raise IndexError("Unknown action: {}".format(action))
 
-    logger.debug('{0}: found {1} friends, {2} followers'.format(action, len(friends), len(followers)))
+    logger.info('{0}: found {1} friends, {2} followers'.format(action, len(friends), len(followers)))
 
-    try:
-        outgoing = API.friendships_outgoing()
-        ignore = [x.id_str for x in outgoing]
+    # auto-following:
+    # for all my followers
+    # if i don't already follow them: create friendship
 
-    except Exception as e:
-        raise e
+    # auto-unfollowing:
+    # for all my friends
+    # if they don't follow me: destroy friendship
+    targets = [x for x in dependent if x not in independent]
 
-    for uid in dependent:
-        if uid in independent and uid not in ignore:
-            try:
+    for uid in targets:
+        try:
+            if not dry_run:
                 method(id=uid)
-                logger.debug('{0}: {1}'.format(action, uid))
+            logger.info('{0}: {1}'.format(action, uid))
 
-            except Exception as e:
-                raise e
+        except TweepError as e:
+            logger.warning('Error performing "{}" on {}'.format(action, uid))
+            logger.warning("{}".format(e))
 
 
-def fave_mentions(API):
+def fave_mentions(API, dry_run):
     logger = getLogger(API.screen_name)
 
-    favs = API.favorites(include_entities=False, count=100)
-    favs = [m.id_str for m in favs]
-    faved = []
+    f = API.favorites(include_entities=False, count=150)
+    favs = [m.id_str for m in f]
 
     try:
         mentions = API.mentions_timeline(trim_user=True, include_entities=False, count=75)
@@ -88,10 +89,12 @@ def fave_mentions(API):
         # only try to fav if not in recent favs
         if mention.id_str not in favs:
             try:
-                fav = API.create_favorite(mention.id_str, include_entities=False)
-                faved.append(fav)
-                logger.debug('faved {0}: {1}'.format(mention.id_str, mention.text))
+                if not dry_run:
+                    API.create_favorite(mention.id_str, include_entities=False)
 
-            except Exception as e:
-                raise e
+                logger.info('faved {0}: {1}'.format(mention.id_str, mention.text))
+
+            except TweepError as e:
+                logger.warning('Error favoriting {}'.format(mention.id_str))
+                logger.warning("{}".format(e))
 
