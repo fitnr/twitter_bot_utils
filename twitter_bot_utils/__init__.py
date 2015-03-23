@@ -1,4 +1,3 @@
-__version__ = '0.8.post1'
 # Copyright 2014-2015 Neil Freeman contact@fakeisthenewreal.org
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -13,13 +12,7 @@ __version__ = '0.8.post1'
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+__version__ = '0.8.1'
 __author__ = 'Neil Freeman'
 __license__ = 'GPL'
 __all__ = ['api', 'args', 'archive', 'confighelper', 'helpers', 'tools']
-
-from . import api
-from . import archive
-from . import helpers
-from . import confighelper
-from . import tools
-from . import args

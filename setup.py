@@ -1,10 +1,10 @@
 from setuptools import setup
-from twitter_bot_utils import __version__
+from twitter_bot_utils import __version__ as version
 
 setup(
     name='twitter_bot_utils',
 
-    version=__version__,
+    version=version,
 
     description='Python utilities for twitter bots',
 
