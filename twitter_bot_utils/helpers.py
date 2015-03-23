@@ -105,7 +105,7 @@ def replace_urls(status):
 
 
 def shorten(string, length=140, ellipsis=None):
-    '''Shorten a string to 140 characters,
+    '''Shorten a string to 140 characters without breaking words.
     Optionally add an ellipsis character: '…' if ellipsis=True, or a given string
     e.g. ellipsis=' (cut)' '''
     string = string.strip()
@@ -124,13 +124,13 @@ def shorten(string, length=140, ellipsis=None):
         return string
 
 
-def queryize(terms, screen_name=None):
+def queryize(terms, exclude_screen_name=None):
     '''Create query from list of terms, using OR
     but intelligently excluding terms beginning with '-' (Twitter's NOT operator).
-    Optionally add -from:screen_name.
+    Optionally add -from:exclude_screen_name.
     Returns a string ready to be passed to tweepy.API.search
     '''
     ors = (x for x in terms if x[0] != '-')
     nots = (x for x in terms if x[0] == '-')
-    sn = " -from:" + screen_name + ' ' if screen_name else ' '
+    sn = " -from:" + exclude_screen_name + ' ' if exclude_screen_name else ' '
     return quote_plus(' OR '.join(ors) + sn + ' '.join(nots))

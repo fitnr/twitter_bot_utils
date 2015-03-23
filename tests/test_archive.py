@@ -4,7 +4,7 @@ import tweepy
 import logging
 import argparse
 import inspect
-from twitter_bot_utils import archive, confighelper, helpers
+from twitter_bot_utils import archive, confighelper
 from twitter_bot_utils import args
 
 TWEET = {
@@ -67,12 +67,12 @@ class test_twitter_bot_utils(unittest.TestCase):
         assert self.parser.description == 'desc'
 
     def test_parsing_args(self):
-        args = self.parser.parse_args(self.arg_input)
+        arguments = self.parser.parse_args(self.arg_input)
 
-        assert args.consumer_key == '123'
-        assert args.config is None
-        assert args.dry_run
-        assert args.verbose
+        assert arguments.consumer_key == '123'
+        assert arguments.config is None
+        assert arguments.dry_run
+        assert arguments.verbose
 
     def test_add_logger(self):
         args.add_logger('test', self.args.verbose)
@@ -84,16 +84,6 @@ class test_twitter_bot_utils(unittest.TestCase):
 
         assert len(l.handlers) == 2
         assert isinstance(l.handlers[1], logging.StreamHandler)
-
-    def test_helpers(self):
-        assert helpers.has_hashtag(self.status) is False
-        assert helpers.has_mention(self.status)
-
-        assert helpers.remove_entity(self.status, 'hashtags') == self.status.text
-        assert helpers.remove_entity(
-            self.status, 'user_mentions') == " example tweet example tweet example tweet"
-        assert helpers.remove_entities(
-            self.status, ['hashtags', 'user_mentions']) == " example tweet example tweet example tweet"
 
     def test_find_conf_file(self):
         assert confighelper.find_file(self.yaml) == self.yaml
