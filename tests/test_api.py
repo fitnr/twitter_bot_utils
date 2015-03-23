@@ -1,8 +1,31 @@
 import os
 import unittest
+import mock
 import tweepy
 import argparse
 from twitter_bot_utils import api, confighelper
+
+TIMELINE = [
+    {
+        "id": 1235,
+        "in_reply_to_user_id": None,
+        "retweeted": False
+    },
+    {
+        "id": 1234,
+        "in_reply_to_user_id": 1,
+        "retweeted": False
+    },
+    {
+        "id": 1233,
+        "retweeted": True,
+        "in_reply_to_user_id": None,
+    },
+]
+
+
+def fake_timeline():
+    return [tweepy.Status.parse(tweepy.api, t) for t in TIMELINE]
 
 
 class test_twitter_bot_utils(unittest.TestCase):
@@ -63,6 +86,34 @@ class test_twitter_bot_utils(unittest.TestCase):
 
         assert twitter.screen_name == 'example_screen_name'
         assert twitter.app == 'example_app_name'
+
+    @mock.patch.object(tweepy.API, 'user_timeline', return_value=fake_timeline())
+    def test_recent_tweets(self, _):
+
+        twitter = api.API('example_screen_name', config_file=self.yaml, **vars(self.args))
+
+        self.assertEqual(twitter.last_tweet, 1235)
+        assert twitter.last_retweet == 1233
+        assert twitter.last_reply == 1234
+
+    @mock.patch.object(tweepy.API, 'user_timeline', return_value=[fake_timeline()[0]])
+    def test_recent_tweets_no_rts(self, _):
+
+        twitter = api.API('example_screen_name', config_file=self.yaml, **vars(self.args))
+
+        self.assertEqual(twitter.last_tweet, 1235)
+        assert twitter.last_retweet is None
+        assert twitter.last_reply is None
+
+    @mock.patch.object(tweepy.API, 'user_timeline', return_value=[])
+    def test_recent_tweets_no_tl(self, _):
+
+        twitter = api.API('example_screen_name', config_file=self.yaml, **vars(self.args))
+
+        self.assertEqual(twitter.last_tweet, None)
+        assert twitter.last_retweet is None
+        assert twitter.last_reply is None
+
 
 if __name__ == '__main__':
     unittest.main()

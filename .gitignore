@@ -5,3 +5,5 @@ dist
 *.zip
 readme.rst
 .tox
+.eggs
+*.egg
