@@ -13,9 +13,12 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 from __future__ import unicode_literals
-from urllib import quote_plus
-from HTMLParser import HTMLParser
-
+try:
+    from urllib import quote_plus
+    from HTMLParser import HTMLParser
+except ImportError:
+    from urllib.parse import quote_plus
+    from html.parser import HTMLParser
 
 def has_url(status):
     return has_entity(status, 'urls')
