@@ -33,15 +33,27 @@ class API(tweepy.API):
 
     _last_tweet = _last_reply = _last_retweet = None
 
-    def __init__(self, screen_name, config_file=None, **kwargs):
+    def __init__(self, screen_name=None, config_file=None, app=None, **kwargs):
+
+        if screen_name is None and app is None:
+            raise ValueError('Missing argument. Must have one of: screen_name, app.')
+
         self._screen_name = screen_name
 
         try:
             # get config file and parse it
-            self._config, keys = confighelper.configure(screen_name, config_file, CONFIG_DIRS, CONFIG_BASES, **kwargs)
+            self._config, keys = confighelper.configure(screen_name, app, file_name=config_file,
+                                                        directories=CONFIG_DIRS, bases=CONFIG_BASES, **kwargs)
 
             # setup auth
-            auth = confighelper.setup_auth(keys)
+            auth = tweepy.OAuthHandler(consumer_key=keys['consumer_key'], consumer_secret=keys['consumer_secret'])
+
+            try:
+                auth.set_access_token(key=keys['key'], secret=keys['secret'])
+
+            except KeyError:
+                # API won't have an access key
+                pass
 
         except KeyError as e:
             raise ValueError("Incomplete config file: {}".format(e))

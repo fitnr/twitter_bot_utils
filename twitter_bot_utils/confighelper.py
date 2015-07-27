@@ -35,7 +35,7 @@ PROTECTED_INFO = [
 ]
 
 
-def configure(screen_name, file_name=None, directories=None, bases=None, **kwargs):
+def configure(screen_name, app=None, file_name=None, directories=None, bases=None, **kwargs):
     """Setup a TBU config dictionary"""
     # Use passed config file, or look for it in the paths above
     config_file = find_file(file_name, directories, bases)
@@ -46,7 +46,7 @@ def configure(screen_name, file_name=None, directories=None, bases=None, **kwarg
 
     # config and keys dicts
     try:
-        return setup(screen_name, file_config)
+        return setup(screen_name, app, file_config)
     except KeyError:
         raise KeyError("Config file {} missing keys".format(config_file))
 
@@ -84,13 +84,21 @@ def find_file(config_file=None, default_directories=None, default_bases=None):
     raise FileNotFoundError('Config file not found in: ' + str([path.join(a, b) for a, b in itertools.product(dirs, bases)]))
 
 
-def setup(screen_name, file_config):
-    '''Return object that holds config settings'''
+def setup(screen_name, app, file_config):
+    '''Return object that holds config settings.
+    If screen_name is or missing, no user key/secret will be returned,
+    and API object won't have an auth token for certain Twitter queries.
+    '''
     config = dict()
 
     # Pull user and app data from the file
     user_conf = file_config.get('users', {}).get(screen_name, {})
-    app_conf = file_config.get('apps', {}).get(user_conf['app'], {})
+
+    if app:
+        app_conf = file_config.get('apps', {}).get(app, {})
+
+    else:
+        app_conf = file_config.get('apps', {}).get(user_conf['app'], {})
 
     # Pull non-authentication settings from the file.
     # User, app, and general settings are included, in that order of preference
@@ -101,9 +109,11 @@ def setup(screen_name, file_config):
     keys = {
         'consumer_key': app_conf['consumer_key'],
         'consumer_secret': app_conf['consumer_secret'],
-        'key': user_conf['key'],
-        'secret': user_conf['secret']
     }
+
+    if user_conf:
+        keys['key'] = user_conf['key']
+        keys['secret'] = user_conf['secret']
 
     return config, keys
 
@@ -112,16 +122,10 @@ def update(config, updated):
     config.update({k: v for k, v in list(updated.items()) if k not in PROTECTED_INFO})
 
 
-def setup_auth(keys, **kwargs):
+def setup_auth(**keys):
     '''Setup tweepy authentication using passed args or config file settings'''
 
-    consumer_key = kwargs.get('consumer_key') or keys['consumer_key']
-    consumer_secret = kwargs.get('consumer_secret') or keys['consumer_secret']
-
-    key = kwargs.get('key') or keys['key']
-    secret = kwargs.get('secret') or keys['secret']
-
-    auth = tweepy.OAuthHandler(consumer_key=consumer_key, consumer_secret=consumer_secret)
-    auth.set_access_token(key=key, secret=secret)
+    auth = tweepy.OAuthHandler(consumer_key=keys['consumer_key'], consumer_secret=keys['consumer_secret'])
+    auth.set_access_token(key=keys['key'], secret=keys['secret'])
 
     return auth

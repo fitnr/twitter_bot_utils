@@ -18,13 +18,8 @@ from os import environ, path
 from sys import stdout
 
 
-def add_default_args(parser, version=None):
+def _add_boilerplate_args(parser, version=None):
     parser.add_argument('-c', '--config', metavar='PATH', default=None, type=str, help='path to config file to parse (json or yaml)')
-
-    parser.add_argument('--key', type=str, help='Twitter user key')
-    parser.add_argument('--secret', type=str, help='Twitter user secret')
-    parser.add_argument('--consumer-key', type=str, help='Twitter consumer key')
-    parser.add_argument('--consumer-secret', type=str, help='Twitter consumer secret')
 
     parser.add_argument('-n', '--dry-run', action='store_true', help="Don't actually run")
     parser.add_argument('-v', '--verbose', action='store_true', help="Log to stdout")
@@ -32,6 +27,23 @@ def add_default_args(parser, version=None):
     if version:
         parser.add_argument('-V', '--version', action='version', version="%(prog)s " + version)
 
+def add_default_args(parser, version=None):
+    _add_boilerplate_args(parser, version)
+
+    _add_user_args(parser)
+    _add_consumer_args(parser)
+
+def add_no_user_args(parser, version=None):
+    _add_boilerplate_args(parser, version)
+    _add_consumer_args(parser)
+
+def _add_user_args(parser):
+    parser.add_argument('--key', type=str, help='Twitter user key')
+    parser.add_argument('--secret', type=str, help='Twitter user secret')
+
+def _add_consumer_args(parser):
+    parser.add_argument('--consumer-key', type=str, help='Twitter consumer key')
+    parser.add_argument('--consumer-secret', type=str, help='Twitter consumer secret')
 
 def parent(version=None):
     parser = argparse.ArgumentParser(add_help=False)

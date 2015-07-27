@@ -84,6 +84,18 @@ Setting a custom config file is simple:
 twitter = twitter_bot_utils.api.API('MyBotName', config='special/file/path.yaml')
 ````
 
+### Without user authentication
+
+Some Twitter API queries don't require user authentication. To set up an Tweepy API instance without user authentication, set up a bots.yaml file as above, but omit the `users` section. Then use the app keyword argument:
+
+````python
+import twitter_bot_utils
+
+twitter = twitter_bot_utils.api.API(app='my_app_name', config_file='path/to/config.yaml')
+
+twitter.search(q="Twitter searches don't require user authentication")
+````
+
 ## Recent tweets
 
 Basically, the `twitter_bot_utils.api.API` object is a wrapper for Tweepy with some configuration reading options added. It also adds three convenience methods for finding recent tweets, since it's often useful to know what a bot has done recently without setting up a whole backend for saving the bot's tweets.
@@ -122,7 +134,7 @@ You can also pass authentication arguments with these arguments.
 Say this is `yourapp.py`:
 
 ````python
-import argprase
+import argparse
 import twitter_bot_utils as tbu
 
 # This sets up an argparse.ArgumentParser with the default arguments
@@ -132,15 +144,15 @@ parser.add_argument('-m', '--my-arg')
 
 args = parser.parse_args()
 
+# Set up a logger named 'MyBot'
 # Parse the default args. For instance, if --verbose is set, the logger will output to stdout.
-twitter_bot_utils.defaults('MyBot', **vars(args))
-
-# Quickly setup a logger named 'MyBot'
 # The default arguments include 'verbose', which will enable logger.debug() statements
 logger = tbu.args.add_logger('MyBot', args.verbose)
 
 # Generate a tweet somehow
 tweet = my_tweet_function(args.my_arg)
+
+twitter = tbu.api.API('MyBot', **vars(args))
 
 logger.info("Generated "+ tweet)
 
