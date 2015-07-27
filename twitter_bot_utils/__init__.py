@@ -16,3 +16,5 @@ __version__ = '0.8.1'
 __author__ = 'Neil Freeman'
 __license__ = 'GPL'
 __all__ = ['api', 'args', 'archive', 'confighelper', 'helpers', 'tools']
+
+from . import api, args, archive, confighelper, helpers, tools
