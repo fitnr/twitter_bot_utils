@@ -47,7 +47,7 @@ class test_twitter_bot_utils(unittest.TestCase):
 
     def test_config_setup(self):
         fileconfig = confighelper.parse(self.yaml)
-        config, keys = confighelper.setup(self.screen_name, fileconfig)
+        config, keys = confighelper.setup(fileconfig, self.screen_name)
 
         assert config['custom'] == 'foo'
         assert keys['secret'] == 'LIMA'

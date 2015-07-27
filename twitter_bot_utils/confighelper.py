@@ -46,7 +46,7 @@ def configure(screen_name, app=None, file_name=None, directories=None, bases=Non
 
     # config and keys dicts
     try:
-        return setup(screen_name, app, file_config)
+        return setup(file_config, screen_name, app)
     except KeyError:
         raise KeyError("Config file {} missing keys".format(config_file))
 
@@ -84,7 +84,7 @@ def find_file(config_file=None, default_directories=None, default_bases=None):
     raise FileNotFoundError('Config file not found in: ' + str([path.join(a, b) for a, b in itertools.product(dirs, bases)]))
 
 
-def setup(screen_name, app, file_config):
+def setup(file_config, screen_name, app=None):
     '''Return object that holds config settings.
     If screen_name is or missing, no user key/secret will be returned,
     and API object won't have an auth token for certain Twitter queries.
