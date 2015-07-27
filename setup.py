@@ -1,10 +1,9 @@
 from setuptools import setup
-from twitter_bot_utils import __version__ as version
 
 setup(
     name='twitter_bot_utils',
 
-    version=version,
+    version='0.9',
 
     description='Python utilities for twitter bots',
 
@@ -38,6 +37,7 @@ setup(
     test_suite="tests",
 
     tests_require=[
-        'mock',
+        'tox',
+        'mock'
     ],
 )
