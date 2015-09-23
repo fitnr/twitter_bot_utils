@@ -42,23 +42,26 @@ TWEET = {
 }
 
 
-class test_twitter_bot_utils(unittest.TestCase):
+class TestTwitterBotUtils(unittest.TestCase):
 
     def setUp(self):
         self.api = tweepy.API()
         self.status = tweepy.Status.parse(self.api, TWEET)
 
-        self.yaml = os.path.join(os.path.dirname(__file__), 'data', 'test.yaml')
+        self.yaml = os.path.join(os.path.dirname(__file__),
+                                 'data', 'test.yaml')
 
         self.screen_name = 'example_screen_name'
 
         parent = args.parent()
-        self.parser = argparse.ArgumentParser(description='desc', parents=[parent])
+        self.parser = argparse.ArgumentParser(
+            description='desc', parents=[parent])
 
         self.arg_input = ['--consumer-key', '123', '-n', '-v']
         self.args = self.parser.parse_args(self.arg_input)
 
-        self.txtfile = os.path.join(os.path.dirname(__file__), 'data/tweets.txt')
+        self.txtfile = os.path.join(os.path.dirname(__file__),
+                                    'data/tweets.txt')
         self.archive = os.path.dirname(__file__)
 
     def test_setup(self):
@@ -90,7 +93,8 @@ class test_twitter_bot_utils(unittest.TestCase):
         real_path = os.path.realpath(os.path.dirname(__file__))
 
         self.assertEqual(
-            confighelper.find_file(default_directories=[real_path], default_bases=[self.yaml]),
+            confighelper.find_file(default_directories=[real_path],
+                                   default_bases=[self.yaml]),
             os.path.realpath(self.yaml)
         )
 

@@ -36,17 +36,20 @@ class API(tweepy.API):
     def __init__(self, screen_name=None, config_file=None, app=None, **kwargs):
 
         if screen_name is None and app is None:
-            raise ValueError('Missing argument. Must have one of: screen_name, app.')
+            raise ValueError(
+                'Missing argument. Must have one of: screen_name, app.')
 
         self._screen_name = screen_name
 
         try:
             # get config file and parse it
-            self._config, keys = confighelper.configure(screen_name, app, file_name=config_file,
-                                                        directories=CONFIG_DIRS, bases=CONFIG_BASES, **kwargs)
+            self._config, keys = confighelper.configure(
+                screen_name, app, file_name=config_file,
+                directories=CONFIG_DIRS, bases=CONFIG_BASES, **kwargs)
 
             # setup auth
-            auth = tweepy.OAuthHandler(consumer_key=keys['consumer_key'], consumer_secret=keys['consumer_secret'])
+            auth = tweepy.OAuthHandler(consumer_key=keys['consumer_key'],
+                                       consumer_secret=keys['consumer_secret'])
 
             try:
                 auth.set_access_token(key=keys['key'], secret=keys['secret'])
@@ -74,7 +77,8 @@ class API(tweepy.API):
         return self._config['app']
 
     def _sinces(self):
-        tl = self.user_timeline(self.screen_name, count=200, include_rts=True, exclude_replies=False)
+        tl = self.user_timeline(self.screen_name, count=200, include_rts=True,
+                                exclude_replies=False)
 
         if len(tl) > 0:
             self._last_tweet = tl[0].id

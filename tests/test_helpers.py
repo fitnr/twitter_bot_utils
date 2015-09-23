@@ -39,7 +39,7 @@ TWEET = {
 }
 
 
-class test_tbu_helpers(unittest.TestCase):
+class TestTbuHelpers(unittest.TestCase):
 
     def setUp(self):
         self.api = tweepy.API()
@@ -64,7 +64,8 @@ class test_tbu_helpers(unittest.TestCase):
     def test_replace_urls(self):
         assert helpers.replace_urls(self.status) == TWEET['text']
 
-        TWEET['entities']['urls'] = [{"indices": [0, 12], "expanded_url": "http://long.long.url"}]
+        TWEET['entities']['urls'] = [
+            {"indices": [0, 12], "expanded_url": "http://long.long.url"}]
         TWEET['text'] = 'http://short hey'
 
         status = tweepy.Status.parse(self.api, TWEET)
@@ -73,8 +74,9 @@ class test_tbu_helpers(unittest.TestCase):
 
     def test_shorten(self):
         hello = ("This is a long string that's longer than 140 characters, "
-                 "yes it's quite long. It's so long that we need to shorten it. "
-                 "Supercalifragilisticexpialidocious! Amazing. I want to test this.")
+                 "yes it's quite long. It's so long that we need to shorten "
+                 "it. Supercalifragilisticexpialidocious! Amazing. I want to "
+                 "test this.")
 
         for l in range(10, 180, 10):
             self.assertLessEqual(len(helpers.shorten(hello, l)), l)
@@ -88,7 +90,8 @@ class test_tbu_helpers(unittest.TestCase):
     def test_querize(self):
         query = ('hi', 'bye', 'wow', '-no', '-nah')
         self.assertEqual(helpers.queryize(query), 'hi+OR+bye+OR+wow+-no+-nah')
-        self.assertEqual(helpers.queryize(query, 'user'), 'hi+OR+bye+OR+wow+-from%3Auser+-no+-nah')
+        self.assertEqual(helpers.queryize(query, 'user'),
+                         'hi+OR+bye+OR+wow+-from%3Auser+-no+-nah')
 
 if __name__ == '__main__':
     unittest.main()

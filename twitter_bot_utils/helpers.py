@@ -20,6 +20,7 @@ except ImportError:
     from urllib.parse import quote_plus
     from html.parser import HTMLParser
 
+
 def has_url(status):
     return has_entity(status, 'urls')
 
@@ -80,7 +81,8 @@ def remove_entities(status, entitylist):
         entities = status.get('entities', dict())
         text = status['text']
 
-    indices = [ent['indices'] for etype, entval in list(entities.items()) for ent in entval if etype in entitylist]
+    indices = [ent['indices'] for etype, entval in list(entities.items())
+               for ent in entval if etype in entitylist]
     indices.sort(key=lambda x: x[0], reverse=True)
 
     for start, end in indices:
@@ -106,8 +108,8 @@ def replace_urls(status):
 
 def shorten(string, length=140, ellipsis=None):
     '''Shorten a string to 140 characters without breaking words.
-    Optionally add an ellipsis character: '…' if ellipsis=True, or a given string
-    e.g. ellipsis=' (cut)' '''
+    Optionally add an ellipsis character: '…' if ellipsis=True,
+    or a given string e.g. ellipsis=' (cut)' '''
     string = string.strip()
 
     if len(string) > length:
@@ -116,17 +118,17 @@ def shorten(string, length=140, ellipsis=None):
         else:
             ellipsis = ellipsis or ''
 
-        L = length - len(ellipsis)
+        l = length - len(ellipsis)
 
-        return ' '.join(string[:L].split(' ')[:-1]).strip(',;:') + ellipsis
+        return ' '.join(string[:l].split(' ')[:-1]).strip(',;:') + ellipsis
 
     else:
         return string
 
 
 def queryize(terms, exclude_screen_name=None):
-    '''Create query from list of terms, using OR
-    but intelligently excluding terms beginning with '-' (Twitter's NOT operator).
+    '''Create query from list of terms, using OR but
+    intelligently excluding terms beginning with '-' (Twitter's NOT operator).
     Optionally add -from:exclude_screen_name.
     Returns a string ready to be passed to tweepy.API.search
     '''

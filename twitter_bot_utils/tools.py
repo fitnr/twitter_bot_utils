@@ -19,23 +19,24 @@ from __future__ import unicode_literals
 from logging import getLogger
 from tweepy.error import TweepError
 
-def follow_back(API, dry_run=None):
-    _autofollow(API, 'follow', dry_run)
+
+def follow_back(api, dry_run=None):
+    _autofollow(api, 'follow', dry_run)
 
 
-def unfollow(API, dry_run=None):
-    _autofollow(API, 'unfollow', dry_run)
+def unfollow(api, dry_run=None):
+    _autofollow(api, 'unfollow', dry_run)
 
 
-def _autofollow(API, action, dry_run):
-    logger = getLogger(API.screen_name)
+def _autofollow(api, action, dry_run):
+    logger = getLogger(api.screen_name)
 
     try:
         # get the last 5000 followers
-        followers = API.followers_ids()
+        followers = api.followers_ids()
 
         # Get the last 5000 people user has followed
-        friends = API.friends_ids()
+        friends = api.friends_ids()
 
     except TweepError as e:
         logger.error('{}: error getting followers/followers'.format(action))
@@ -43,16 +44,17 @@ def _autofollow(API, action, dry_run):
         return
 
     if action == "unfollow":
-        method = API.destroy_friendship
+        method = api.destroy_friendship
         independent, dependent = followers, friends
 
     elif action == "follow":
-        method = API.create_friendship
+        method = api.create_friendship
         independent, dependent = friends, followers
     else:
         raise IndexError("Unknown action: {}".format(action))
 
-    logger.info('{0}: found {1} friends, {2} followers'.format(action, len(friends), len(followers)))
+    logger.info('{0}: found {1} friends, {2} followers'.format(
+        action, len(friends), len(followers)))
 
     # auto-following:
     # for all my followers
@@ -74,14 +76,16 @@ def _autofollow(API, action, dry_run):
             logger.warning("{}".format(e))
 
 
-def fave_mentions(API, dry_run):
-    logger = getLogger(API.screen_name)
+def fave_mentions(api, dry_run):
+    logger = getLogger(api.screen_name)
 
-    f = API.favorites(include_entities=False, count=150)
+    f = api.favorites(include_entities=False, count=150)
     favs = [m.id_str for m in f]
 
     try:
-        mentions = API.mentions_timeline(trim_user=True, include_entities=False, count=75)
+        mentions = api.mentions_timeline(trim_user=True,
+                                         include_entities=False,
+                                         count=75)
     except Exception as e:
         raise e
 
@@ -90,11 +94,11 @@ def fave_mentions(API, dry_run):
         if mention.id_str not in favs:
             try:
                 if not dry_run:
-                    API.create_favorite(mention.id_str, include_entities=False)
+                    api.create_favorite(mention.id_str, include_entities=False)
 
-                logger.info('faved {0}: {1}'.format(mention.id_str, mention.text))
+                logger.info('faved {0}: {1}'.format(mention.id_str,
+                                                    mention.text))
 
             except TweepError as e:
                 logger.warning('Error favoriting {}'.format(mention.id_str))
                 logger.warning("{}".format(e))
-
