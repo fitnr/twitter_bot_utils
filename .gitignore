@@ -7,3 +7,4 @@ readme.rst
 .tox
 .eggs
 *.egg
+bots.yaml
