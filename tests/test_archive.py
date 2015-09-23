@@ -75,7 +75,7 @@ class test_twitter_bot_utils(unittest.TestCase):
         assert arguments.verbose
 
     def test_add_logger(self):
-        args.add_logger('test', self.args.verbose)
+        args.add_logger('test', self.args.verbose, logpath='tests')
 
         l = logging.getLogger('test')
         assert isinstance(l, logging.Logger)
@@ -84,6 +84,10 @@ class test_twitter_bot_utils(unittest.TestCase):
 
         assert len(l.handlers) == 2
         assert isinstance(l.handlers[1], logging.StreamHandler)
+
+        testpath = os.path.join('tests', 'test.log')
+        assert os.path.exists(testpath)
+        os.remove(testpath)
 
     def test_find_conf_file(self):
         assert confighelper.find_file(self.yaml) == self.yaml
