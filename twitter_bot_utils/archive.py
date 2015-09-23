@@ -18,7 +18,8 @@ from glob import iglob
 
 
 def read_json(directory, data_files='data/js/tweets/*.js'):
-    '''Scrape a twitter archive file. Inspiration from https://github.com/mshea/Parse-Twitter-Archive'''
+    '''Scrape a twitter archive file.
+    Inspiration from https://github.com/mshea/Parse-Twitter-Archive'''
     files = path.join(directory, data_files)
 
     for fname in iglob(files):

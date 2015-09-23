@@ -28,7 +28,7 @@ def fake_timeline():
     return [tweepy.Status.parse(tweepy.api, t) for t in TIMELINE]
 
 
-class test_twitter_bot_utils(unittest.TestCase):
+class TestTwitterBotUtils(unittest.TestCase):
 
     def setUp(self):
         self.api = tweepy.API()
@@ -42,7 +42,8 @@ class test_twitter_bot_utils(unittest.TestCase):
         setattr(self.args, 'dry_run', True)
         setattr(self.args, 'verbose', True)
 
-        self.txtfile = os.path.join(os.path.dirname(__file__), 'data/tweets.txt')
+        self.txtfile = os.path.join(os.path.dirname(__file__),
+                                    'data/tweets.txt')
         self.archive = os.path.dirname(__file__)
 
     def test_config_setup(self):
@@ -62,18 +63,22 @@ class test_twitter_bot_utils(unittest.TestCase):
         self.assertIsNone(a.get('key'))
 
     def test_api_creation(self):
-        twitter = api.API('example_screen_name', config_file=self.yaml, **vars(self.args))
+        twitter = api.API('example_screen_name', config_file=self.yaml,
+                          **vars(self.args))
 
         assert isinstance(twitter, api.API)
 
     def test_api_args(self):
-        brokenconfig = os.path.join(os.path.dirname(__file__), 'data/broken.yaml')
+        brokenconfig = os.path.join(os.path.dirname(__file__),
+                                    'data/broken.yaml')
 
         self.assertRaises(ValueError, api.API, 'example')
-        self.assertRaises(ValueError, api.API, 'example_screen_name', config_file=brokenconfig)
+        self.assertRaises(ValueError, api.API, 'example_screen_name',
+                          config_file=brokenconfig)
 
     def test_api_attributes(self):
-        twitter = api.API('example_screen_name', config_file=self.yaml, **vars(self.args))
+        twitter = api.API('example_screen_name', config_file=self.yaml,
+                          **vars(self.args))
 
         assert twitter.config['custom'] == 'foo'
 
@@ -87,19 +92,23 @@ class test_twitter_bot_utils(unittest.TestCase):
         assert twitter.screen_name == 'example_screen_name'
         assert twitter.app == 'example_app_name'
 
-    @mock.patch.object(tweepy.API, 'user_timeline', return_value=fake_timeline())
+    @mock.patch.object(tweepy.API, 'user_timeline',
+                       return_value=fake_timeline())
     def test_recent_tweets(self, _):
 
-        twitter = api.API('example_screen_name', config_file=self.yaml, **vars(self.args))
+        twitter = api.API('example_screen_name', config_file=self.yaml,
+                          **vars(self.args))
 
         self.assertEqual(twitter.last_tweet, 1235)
         assert twitter.last_retweet == 1233
         assert twitter.last_reply == 1234
 
-    @mock.patch.object(tweepy.API, 'user_timeline', return_value=[fake_timeline()[0]])
+    @mock.patch.object(tweepy.API, 'user_timeline',
+                       return_value=[fake_timeline()[0]])
     def test_recent_tweets_no_rts(self, _):
 
-        twitter = api.API('example_screen_name', config_file=self.yaml, **vars(self.args))
+        twitter = api.API('example_screen_name', config_file=self.yaml,
+                          **vars(self.args))
 
         self.assertEqual(twitter.last_tweet, 1235)
         assert twitter.last_retweet is None
@@ -108,7 +117,8 @@ class test_twitter_bot_utils(unittest.TestCase):
     @mock.patch.object(tweepy.API, 'user_timeline', return_value=[])
     def test_recent_tweets_no_tl(self, _):
 
-        twitter = api.API('example_screen_name', config_file=self.yaml, **vars(self.args))
+        twitter = api.API('example_screen_name', config_file=self.yaml,
+                          **vars(self.args))
 
         self.assertEqual(twitter.last_tweet, None)
         assert twitter.last_retweet is None

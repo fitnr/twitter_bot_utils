@@ -17,7 +17,8 @@ import itertools
 import yaml
 import json
 from os import path, getcwd
-# "FileNotFoundError" is a Py 3 thing. If we're in Py 2, we mimic it with a lambda expression.
+# "FileNotFoundError" is a Py 3 thing. If we're in Py 2, we mimic it with a
+# lambda expression.
 try:
     FileNotFoundError
 except NameError:
@@ -35,7 +36,8 @@ PROTECTED_INFO = [
 ]
 
 
-def configure(screen_name, app=None, file_name=None, directories=None, bases=None, **kwargs):
+def configure(screen_name, app=None, file_name=None, directories=None,
+              bases=None, **kwargs):
     """Setup a TBU config dictionary"""
     # Use passed config file, or look for it in the paths above
     config_file = find_file(file_name, directories, bases)
@@ -69,7 +71,8 @@ def find_file(config_file=None, default_directories=None, default_bases=None):
         if path.exists(path.expanduser(config_file)):
             return config_file
         else:
-            raise FileNotFoundError('Custom config file not found: {}'.format(config_file))
+            raise FileNotFoundError('Custom config file not found: {}'.format(
+                config_file))
 
     dirs = default_directories or ['~/bots', '~']
     dirs = [getcwd()] + dirs
@@ -81,7 +84,8 @@ def find_file(config_file=None, default_directories=None, default_bases=None):
         if path.exists(filepath):
             return filepath
 
-    raise FileNotFoundError('Config file not found in: ' + str([path.join(a, b) for a, b in itertools.product(dirs, bases)]))
+    raise FileNotFoundError('Config file not found in: ' + str(
+        [path.join(a, b) for a, b in itertools.product(dirs, bases)]))
 
 
 def setup(file_config, screen_name, app=None):
@@ -119,13 +123,15 @@ def setup(file_config, screen_name, app=None):
 
 
 def update(config, updated):
-    config.update({k: v for k, v in list(updated.items()) if k not in PROTECTED_INFO})
+    config.update({k: v for k, v in list(updated.items())
+                   if k not in PROTECTED_INFO})
 
 
 def setup_auth(**keys):
     '''Setup tweepy authentication using passed args or config file settings'''
 
-    auth = tweepy.OAuthHandler(consumer_key=keys['consumer_key'], consumer_secret=keys['consumer_secret'])
+    auth = tweepy.OAuthHandler(consumer_key=keys['consumer_key'],
+                               consumer_secret=keys['consumer_secret'])
     auth.set_access_token(key=keys['key'], secret=keys['secret'])
 
     return auth
