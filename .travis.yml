@@ -29,3 +29,6 @@ after_script:
 
 matrix:
   fast_finish: true
+  allow_failures:
+   - python: 2.6
+   - python: 3.2
