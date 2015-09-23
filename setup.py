@@ -1,5 +1,11 @@
 from setuptools import setup
 
+try:
+    readme = open('./readme.rst', 'r').read()
+
+except IOError:
+    readme = ''
+
 setup(
     name='twitter_bot_utils',
 
@@ -7,7 +13,7 @@ setup(
 
     description='Python utilities for twitter bots',
 
-    long_description=open('readme.rst', 'r').read(),
+    long_description=readme,
 
     url='http://github.com/fitnr/twitter_bot_utils',
 
