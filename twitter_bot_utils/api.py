@@ -13,11 +13,12 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import tweepy
+from os import path
 from . import confighelper
 
 CONFIG_DIRS = [
     '~',
-    '~/bots',
+    path.join('~', 'bots'),
 ]
 
 CONFIG_BASES = [

@@ -71,7 +71,7 @@ def find_file(config_file=None, default_directories=None, default_bases=None):
         else:
             raise FileNotFoundError('Custom config file not found: {}'.format(config_file))
 
-    dirs = default_directories or ['~/bots', '~']
+    dirs = default_directories or [path.join('~', 'bots'), '~']
     dirs = [getcwd()] + dirs
 
     bases = default_bases or ['bots.yaml', 'bots.json', 'botrc']

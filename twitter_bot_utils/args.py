@@ -73,7 +73,7 @@ def _log_threshold():
 
 
 def logger(logger_name, log_path=None):
-    log_path = log_path or "~/bots/logs"
+    log_path = log_path or path.join('~', 'bots', 'logs')
     log = logging.getLogger(logger_name)
     log.setLevel(_log_threshold())
 

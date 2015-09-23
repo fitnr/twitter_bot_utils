@@ -33,7 +33,7 @@ class test_twitter_bot_utils(unittest.TestCase):
     def setUp(self):
         self.api = tweepy.API()
 
-        self.yaml = os.path.join(os.path.dirname(__file__), 'data/test.yaml')
+        self.yaml = os.path.join(os.path.dirname(__file__), 'data', 'test.yaml')
 
         self.screen_name = 'example_screen_name'
 
@@ -42,7 +42,7 @@ class test_twitter_bot_utils(unittest.TestCase):
         setattr(self.args, 'dry_run', True)
         setattr(self.args, 'verbose', True)
 
-        self.txtfile = os.path.join(os.path.dirname(__file__), 'data/tweets.txt')
+        self.txtfile = os.path.join(os.path.dirname(__file__), 'data', 'tweets.txt')
         self.archive = os.path.dirname(__file__)
 
     def test_config_setup(self):
