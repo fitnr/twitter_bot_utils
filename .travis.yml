@@ -1,0 +1,28 @@
+language: python
+
+python:
+ - pypy
+ - pypy3
+ - 2.6
+ - 2.7
+ - 3.2
+ - 3.3
+ - 3.4
+ - 3.5
+
+# Use container-based infrastructure
+sudo: false
+
+install:
+ - pip install nose
+
+script:
+ - nosetests
+
+after_script:
+ - pip install pep8 pyflakes
+ - pyflakes . | tee >(wc -l)
+ - pep8 --statistics --count .
+
+matrix:
+  fast_finish: true
