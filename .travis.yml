@@ -15,14 +15,19 @@ sudo: false
 
 install:
  - pip install -r requirements.txt
- - pip install nose
+ - pip install nose coverage
  - mkdir --parents ~/bots/logs
  - cp tests/data/test.yaml bots.yaml
 
 script:
- - nosetests
+ - coverage run -m --include=twitter_bot_utils/* nose -x
+
+after_success:
+ - pip install coveralls
+ - coveralls
 
 after_script:
+ - coverage report
  - pip install pep8 pyflakes
  - pyflakes . | tee >(wc -l)
  - pep8 --statistics --count .
