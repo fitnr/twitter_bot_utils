@@ -16,7 +16,7 @@ sudo: false
 install:
  - pip install -r requirements.txt
  - pip install nose
- - mkdir ~/bots/logs
+ - mkdir --parents ~/bots/logs
 
 script:
  - nosetests
