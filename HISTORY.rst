@@ -1,3 +1,18 @@
+0.9.1
+-----
+
+* Fixed Windows bug (thanks hugovk)
+* Added mock to tests, using Travis for CI
+* Smoother Python 2/3 integration
+
+0.9
+-----
+
+* Setup easier for tasks that don't require Twitter authentication
+* Big update to follow/fave CLI
+* Added tox and various tests
+* Refactored args module
+
 0.8.1
 -----
 
