@@ -43,6 +43,7 @@ setup(
     test_suite="tests",
 
     tests_require=[
+        'coverage',
         'tox',
         'mock'
     ],
