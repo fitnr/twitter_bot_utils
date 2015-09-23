@@ -66,10 +66,14 @@ class test_twitter_bot_utils(unittest.TestCase):
 
         assert isinstance(twitter, api.API)
 
-    def test_api_args(self):
-        brokenconfig = os.path.join(os.path.dirname(__file__), 'data/broken.yaml')
+    def test_api_missing_config(self):
+        # Missing file raises IO Error
+        self.assertRaises(IOError, api.API, 'example')
 
-        self.assertRaises(ValueError, api.API, 'example')
+    def test_api_broken_config(self):
+        brokenconfig = os.path.join(os.path.dirname(__file__), 'data', 'broken.yaml')
+
+        # Broken file raises ValueError
         self.assertRaises(ValueError, api.API, 'example_screen_name', config_file=brokenconfig)
 
     def test_api_attributes(self):
