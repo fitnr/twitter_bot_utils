@@ -48,7 +48,7 @@ class test_twitter_bot_utils(unittest.TestCase):
         self.api = tweepy.API()
         self.status = tweepy.Status.parse(self.api, TWEET)
 
-        self.yaml = os.path.join(os.path.dirname(__file__), 'data/test.yaml')
+        self.yaml = os.path.join(os.path.dirname(__file__), 'data', 'test.yaml')
 
         self.screen_name = 'example_screen_name'
 
