@@ -9,7 +9,7 @@ except IOError:
 setup(
     name='twitter_bot_utils',
 
-    version='0.9.1',
+    version='0.9.1.post1',
 
     description='Python utilities for twitter bots',
 
@@ -44,7 +44,6 @@ setup(
 
     tests_require=[
         'coverage',
-        'tox',
         'mock'
     ],
 )

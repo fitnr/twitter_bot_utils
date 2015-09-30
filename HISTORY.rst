@@ -1,3 +1,8 @@
+0.9.1.post1
+-----------
+
+* OK, we don't want universal builds, whoops.
+
 0.9.1
 -----
 
