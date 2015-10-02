@@ -1,7 +1,7 @@
 from setuptools import setup
 
 try:
-    readme = open('./readme.rst', 'r').read()
+    readme = open('./README.rst', 'r').read()
 
 except IOError:
     readme = ''
@@ -9,7 +9,7 @@ except IOError:
 setup(
     name='twitter_bot_utils',
 
-    version='0.9.1.post1',
+    version='0.9.2',
 
     description='Python utilities for twitter bots',
 
@@ -21,7 +21,7 @@ setup(
 
     author_email='contact@fakeisthenewreal.org',
 
-    license='GPLv3',
+    license='GPL-3.0',
 
     packages=['twitter_bot_utils'],
 

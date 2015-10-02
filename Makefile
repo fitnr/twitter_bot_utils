@@ -1,4 +1,4 @@
-readme.rst: readme.md
+README.rst: README.md
 	pandoc $< -o $@
 
 .PHONY: test
