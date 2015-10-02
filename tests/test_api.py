@@ -68,7 +68,7 @@ class test_twitter_bot_utils(unittest.TestCase):
 
     def test_api_missing_config(self):
         # Missing file raises IO Error
-        self.assertRaises(IOError, api.API, 'example')
+        self.assertRaises(IOError, api.API, 'example', config_file='dfV35d/does/not/exist/982')
 
     def test_api_broken_config(self):
         brokenconfig = os.path.join(os.path.dirname(__file__), 'data', 'broken.yaml')
