@@ -9,4 +9,5 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 
+include README.md
 recursive-exclude . __pycache__ *.cpython-34.pyc
