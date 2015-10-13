@@ -47,8 +47,8 @@ def configure(screen_name, app=None, file_name=None, directories=None, bases=Non
     # config and keys dicts
     try:
         return setup(file_config, screen_name, app)
-    except KeyError:
-        raise KeyError("Config file {} missing keys".format(config_file))
+    except KeyError as e:
+        raise KeyError("Config file {} missing key: '{e}'".format(config_file, e=e))
 
 
 def parse(file_path):
