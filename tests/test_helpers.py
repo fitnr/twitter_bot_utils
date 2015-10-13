@@ -85,6 +85,10 @@ class test_tbu_helpers(unittest.TestCase):
         assert helpers.shorten('hello') == 'hello'
         assert helpers.shorten(hello, 500) == hello
 
+        assert helpers.shorten(hello, ellipsis=True) == (
+            "This is a long string that's longer than 140 characters, "
+            "yes it's quite long. It's so long that we need to shorten it…")
+
     def test_querize(self):
         query = ('hi', 'bye', 'wow', '-no', '-nah')
         self.assertEqual(helpers.queryize(query), 'hi+OR+bye+OR+wow+-no+-nah')

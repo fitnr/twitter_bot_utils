@@ -114,7 +114,7 @@ def shorten(string, length=140, ellipsis=None):
 
         L = length - len(ellipsis)
 
-        return ' '.join(string[:L].split(' ')[:-1]).strip(',;:') + ellipsis
+        return ' '.join(string[:L].split(' ')[:-1]).strip(',;:.') + ellipsis
 
     else:
         return string
