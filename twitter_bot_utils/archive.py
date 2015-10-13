@@ -14,11 +14,25 @@
 
 from os import path
 import json
+import csv
 from glob import iglob
 
+def read_csv(directory):
+    '''
+    Scrape a twitter archive csv, yielding tweet text.
+    '''
+    csvfile = path.join(directory, 'tweets.csv')
+
+    with open(csvfile, 'r') as f:
+        for tweet in csv.DictReader(f):
+            tweet['text'] = unicode(tweet['text'], 'utf-8')
+            yield tweet
 
 def read_json(directory, data_files='data/js/tweets/*.js'):
-    '''Scrape a twitter archive file. Inspiration from https://github.com/mshea/Parse-Twitter-Archive'''
+    '''
+    Scrape a twitter archive file.
+    Inspiration from https://github.com/mshea/Parse-Twitter-Archive
+    '''
     files = path.join(directory, data_files)
 
     for fname in iglob(files):
