@@ -21,7 +21,10 @@ def read_csv(directory):
     '''
     Scrape a twitter archive csv, yielding tweet text.
     '''
-    csvfile = path.join(directory, 'tweets.csv')
+    if path.isdir(directory):
+        csvfile = path.join(directory, 'tweets.csv')
+    else:
+        csvfile = directory
 
     with open(csvfile, 'r') as f:
         for tweet in csv.DictReader(f):

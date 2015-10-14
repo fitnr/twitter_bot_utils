@@ -1,3 +1,13 @@
+0.9.5.1
+-------
+
+* Fix a little bug in the `archive.read_csv` api. Now accepts directories or paths.
+
+0.9.5
+-----
+
+* Add abilty to read Twitter csv archive files with `archive.read_csv`
+
 0.9.1.post1
 -----------
 
