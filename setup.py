@@ -46,8 +46,6 @@ setup(
     test_suite="tests",
 
     tests_require=[
-        'setuptools>=17.1',
-        'pbr>=0.11,<1.0',
         'coverage',
         'mock'
     ],

@@ -11,8 +11,9 @@ test:
 	twitter-auto-follow --version
 
 deploy:
-	rm -r dist
+	rm -r dist build
 	$(PYTHON) setup.py sdist
+	rm -r build
 	$(PYTHON3) setup.py sdist bdist_wheel
 	twine upload dist/*
 	git push
