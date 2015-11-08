@@ -2,12 +2,8 @@ from setuptools import setup
 
 try:
     readme = open('./README.rst', 'r').read()
-
 except IOError:
-    try:
-        readme = open('./README.md', 'r').read()
-    except IOError:
-        readme = ''
+    readme = ''
 
 setup(
     name='twitter_bot_utils',
