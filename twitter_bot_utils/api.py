@@ -75,7 +75,7 @@ class API(tweepy.API):
         return self._config['app']
 
     def _sinces(self):
-        tl = self.user_timeline(self.screen_name, count=200, include_rts=True, exclude_replies=False)
+        tl = self.user_timeline(self.screen_name, count=1000, include_rts=True, exclude_replies=False)
 
         if len(tl) > 0:
             self._last_tweet = tl[0].id
