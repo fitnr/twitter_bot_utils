@@ -1,3 +1,11 @@
+0.9.7
+-----
+* Fix py3 error on reading archives
+
+0.9.6
+-----
+* Look farther back when picking recent tweets
+
 0.9.5.1
 -------
 
