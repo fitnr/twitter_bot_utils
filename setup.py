@@ -8,7 +8,7 @@ except IOError:
 setup(
     name='twitter_bot_utils',
 
-    version='0.9.6',
+    version='0.9.7',
 
     description='Python utilities for twitter bots',
 
