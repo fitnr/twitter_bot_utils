@@ -28,7 +28,12 @@ def read_csv(directory):
 
     with open(csvfile, 'r') as f:
         for tweet in csv.DictReader(f):
-            tweet['text'] = unicode(tweet['text'], 'utf-8')
+
+            try:
+                tweet['text'] = unicode(tweet['text'], 'utf-8')
+            except TypeError:
+                pass
+
             yield tweet
 
 def read_json(directory, data_files='data/js/tweets/*.js'):
