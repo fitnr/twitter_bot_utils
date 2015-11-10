@@ -70,7 +70,7 @@ class test_twitter_bot_utils(unittest.TestCase):
         arguments = self.parser.parse_args(self.arg_input)
 
         assert arguments.consumer_key == '123'
-        assert arguments.config is None
+        assert arguments.config_file is None
         assert arguments.dry_run
         assert arguments.verbose
 
