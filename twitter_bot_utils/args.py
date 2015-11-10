@@ -19,7 +19,7 @@ from sys import stdout
 
 
 def _add_boilerplate_args(parser, version=None):
-    parser.add_argument('-c', '--config', metavar='PATH', default=None, type=str, help='path to config file to parse (json or yaml)')
+    parser.add_argument('-c', '--config', dest='config_file', metavar='PATH', default=None, type=str, help='path to config file to parse (json or yaml)')
 
     parser.add_argument('-n', '--dry-run', action='store_true', help="Don't actually run")
     parser.add_argument('-v', '--verbose', action='store_true', help="Log to stdout")
