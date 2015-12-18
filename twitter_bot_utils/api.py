@@ -13,8 +13,8 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from time import sleep
-import tweepy
 from os import path
+import tweepy
 from . import confighelper
 
 CONFIG_DIRS = [

@@ -38,8 +38,8 @@ def _autofollow(API, action, dry_run):
         friends = API.friends_ids()
 
     except TweepError as e:
-        logger.error('{}: error getting followers/followers'.format(action))
-        logger.error("{}".format(e))
+        logger.error('%s: error getting followers/followers', action)
+        logger.error("%s", e)
         return
 
     if action == "unfollow":
@@ -52,7 +52,7 @@ def _autofollow(API, action, dry_run):
     else:
         raise IndexError("Unknown action: {}".format(action))
 
-    logger.info('{0}: found {1} friends, {2} followers'.format(action, len(friends), len(followers)))
+    logger.info('%s: found %s friends, %s followers', action, len(friends), len(followers))
 
     # auto-following:
     # for all my followers
@@ -67,11 +67,11 @@ def _autofollow(API, action, dry_run):
         try:
             if not dry_run:
                 method(id=uid)
-            logger.info('{0}: {1}'.format(action, uid))
+            logger.info('%s: %s', action, uid)
 
         except TweepError as e:
-            logger.warning('Error performing "{}" on {}'.format(action, uid))
-            logger.warning("{}".format(e))
+            logger.warning('Error performing "%s" on %s', action, uid)
+            logger.warning("%s", e)
 
 
 def fave_mentions(API, dry_run):
@@ -92,9 +92,8 @@ def fave_mentions(API, dry_run):
                 if not dry_run:
                     API.create_favorite(mention.id_str, include_entities=False)
 
-                logger.info('faved {0}: {1}'.format(mention.id_str, mention.text))
+                logger.info('faved %s: %s', mention.id_str, mention.text)
 
             except TweepError as e:
-                logger.warning('Error favoriting {}'.format(mention.id_str))
-                logger.warning("{}".format(e))
-
+                logger.warning('Error favoriting %s', mention.id_str)
+                logger.warning("%s", e)

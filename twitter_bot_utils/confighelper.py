@@ -12,9 +12,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import tweepy
 import itertools
-import yaml
 import json
 from os import path, getcwd
 # "FileNotFoundError" is a Py 3 thing. If we're in Py 2, we mimic it with a lambda expression.
@@ -24,6 +22,8 @@ except NameError:
     from errno import ENOENT
     FileNotFoundError = lambda x: IOError(ENOENT, x)
 
+import yaml
+import tweepy
 
 PROTECTED_INFO = [
     'apps',
