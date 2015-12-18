@@ -44,8 +44,13 @@ class API(tweepy.API):
 
         try:
             # get config file and parse it
-            self._config, keys = confighelper.configure(screen_name, app, file_name=config_file,
-                                                        directories=CONFIG_DIRS, bases=CONFIG_BASES, **kwargs)
+            self._config, keys = confighelper.configure(screen_name,
+                                                        app,
+                                                        file_name=config_file,
+                                                        directories=CONFIG_DIRS,
+                                                        bases=CONFIG_BASES,
+                                                        **kwargs
+                                                       )
 
             # setup auth
             auth = tweepy.OAuthHandler(consumer_key=keys['consumer_key'], consumer_secret=keys['consumer_secret'])

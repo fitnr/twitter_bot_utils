@@ -41,6 +41,8 @@ def configure(screen_name, app=None, file_name=None, directories=None, bases=Non
     config_file = find_file(file_name, directories, bases)
     file_config = parse(config_file)
 
+    kwargs = {k: v for k, v in kwargs.items() if v is not None}
+
     # kwargs take precendence over config file
     file_config.update(**kwargs)
 
