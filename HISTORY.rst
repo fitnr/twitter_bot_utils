@@ -1,3 +1,7 @@
+0.9.8
+-----
+* Add `helpers.chomp` method for progressively shortening strings.
+
 0.9.7
 -----
 * Fix py3 error on reading archives

@@ -13,8 +13,10 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 from __future__ import unicode_literals
+import re
 from urllib import quote_plus
 from HTMLParser import HTMLParser
+
 
 def has_url(status):
     return has_entity(status, 'urls')
@@ -130,3 +132,21 @@ def queryize(terms, exclude_screen_name=None):
     nots = (x for x in terms if x[0] == '-')
     sn = " -from:" + exclude_screen_name + ' ' if exclude_screen_name else ' '
     return quote_plus(' OR '.join(ors) + sn + ' '.join(nots))
+
+
+def chomp(text, max_len=140, split=None):
+    '''
+    Shorten a string so that it fits under max_len, splitting it at 'split'.
+    Not guaranteed to return a string under max_len, as it may not be possible
+    :text str String to shorten
+    :max_len int maximum length. default 140
+    :split str strings to split on (default is common punctuation: "-;,.")
+    '''
+    split = split or '—;,.'
+    while len(text) > max_len:
+        try:
+            text = re.split(r'[' + split + ']', text[::-1], 1)[1][::-1]
+        except IndexError:
+            return text
+
+    return text

@@ -94,5 +94,37 @@ class test_tbu_helpers(unittest.TestCase):
         self.assertEqual(helpers.queryize(query), 'hi+OR+bye+OR+wow+-no+-nah')
         self.assertEqual(helpers.queryize(query, 'user'), 'hi+OR+bye+OR+wow+-from%3Auser+-no+-nah')
 
+    def testChomp(self):
+        long_string = (
+            "It was the best of times, it was the worst of times, "
+            "it was the age of wisdom, it was the age of foolishness, "
+            "it was the epoch of belief, it was the epoch of incredulity, "
+            "it was the season of Light, it was the season of Darkness, "
+            "it was the spring of hope, it was the winter of despair, "
+            "we had everything before us, we had nothing before us, "
+            "we were all going direct to Heaven, we were all going direct the other way— in short, "
+            "the period was so far like the present period, "
+            "that some of its noisiest authorities insisted on its being received, "
+            "for good or for evil, in the superlative degree of comparison only."
+        )
+
+        self.assertEqual(helpers.chomp(long_string), ("It was the best of times, "
+                                                      "it was the worst of times, "
+                                                      "it was the age of wisdom, "
+                                                      "it was the age of foolishness, "
+                                                      "it was the epoch of belief")
+                        )
+
+        self.assertEqual(helpers.chomp(long_string, max_len=30), "It was the best of times")
+
+        self.assertEqual(helpers.chomp(long_string, split=' ,'), ("It was the best of times, "
+                                                                  "it was the worst of times, "
+                                                                  "it was the age of wisdom, "
+                                                                  "it was the age of foolishness, "
+                                                                  "it was the epoch of belief, it")
+                        )
+
+        self.assertEqual(helpers.chomp(long_string, split='9'), long_string)
+
 if __name__ == '__main__':
     unittest.main()
