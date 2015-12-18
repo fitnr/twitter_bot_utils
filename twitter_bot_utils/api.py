@@ -12,6 +12,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from time import sleep
 import tweepy
 from os import path
 from . import confighelper
@@ -110,3 +111,18 @@ class API(tweepy.API):
     @property
     def last_retweet(self, refresh=None):
         return self._last('_last_retweet', refresh)
+
+
+    def update_status(self, *args, **kwargs):
+        """
+        Wrapper for tweepy.api.update_status with a wait when twitter is over capacity
+        """
+        try:
+            super(API, self).update_status(*args, **kwargs)
+
+        except tweepy.TweepError as e:
+            if e.message[0]['code'] == 503:
+                sleep(5)
+                super(API, self).update_status(*args, **kwargs)
+            else:
+                raise e
