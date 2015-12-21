@@ -34,11 +34,20 @@ PROTECTED_INFO = [
     'secret',
 ]
 
+CONFIG_DIRS = [
+    '~',
+    path.join('~', 'bots'),
+]
 
-def configure(screen_name, app=None, file_name=None, directories=None, bases=None, **kwargs):
+CONFIG_BASES = [
+    'bots.yaml',
+    'bots.json'
+]
+
+def configure(screen_name, config_file=None, app=None, **kwargs):
     """Setup a TBU config dictionary"""
     # Use passed config file, or look for it in the paths above
-    config_file = find_file(file_name, directories, bases)
+    config_file = find_file(config_file, CONFIG_DIRS, CONFIG_BASES)
     file_config = parse(config_file)
 
     kwargs = {k: v for k, v in kwargs.items() if v is not None}
@@ -47,25 +56,26 @@ def configure(screen_name, app=None, file_name=None, directories=None, bases=Non
     file_config.update(**kwargs)
 
     # config and keys dicts
-    try:
-        return setup(file_config, screen_name, app)
-    except KeyError as e:
-        raise KeyError("Config file {} missing key: '{e}'".format(config_file, e=e))
+    return setup(file_config, screen_name, app)
 
 
 def parse(file_path):
+    '''Parse a YAML or JSON file'''
+
     with open(file_path, 'r') as f:
-        if file_path[-4:] == 'yaml':
+        _, ext = path.splitext(file_path)
+
+        if ext == '.yaml':
             return yaml.load(f.read())
 
-        elif file_path[-4:] == 'json':
+        elif ext == '.json':
             return json.load(f.read())
 
-    raise ValueError("Unrecognized config file type")
+    raise ValueError("Unrecognized config file type %s" % ext)
 
 
 def find_file(config_file=None, default_directories=None, default_bases=None):
-    '''Search for a file in a list of files'''
+    '''Search for a config file in a list of files'''
 
     if config_file:
         if path.exists(path.expanduser(config_file)):
@@ -76,7 +86,7 @@ def find_file(config_file=None, default_directories=None, default_bases=None):
     dirs = default_directories or [path.join('~', 'bots'), '~']
     dirs = [getcwd()] + dirs
 
-    bases = default_bases or ['bots.yaml', 'bots.json', 'botrc']
+    bases = default_bases or ['bots.yaml', 'bots.json']
 
     for directory, base in itertools.product(dirs, bases):
         filepath = path.expanduser(path.join(directory, base))
@@ -96,11 +106,8 @@ def setup(file_config, screen_name, app=None):
     # Pull user and app data from the file
     user_conf = file_config.get('users', {}).get(screen_name, {})
 
-    if app:
-        app_conf = file_config.get('apps', {}).get(app, {})
-
-    else:
-        app_conf = file_config.get('apps', {}).get(user_conf['app'], {})
+    app = app or user_conf.get('app')
+    app_conf = file_config.get('apps', {}).get(app, {})
 
     # Pull non-authentication settings from the file.
     # User, app, and general settings are included, in that order of preference
@@ -108,14 +115,21 @@ def setup(file_config, screen_name, app=None):
     update(config, app_conf)
     update(config, user_conf)
 
-    keys = {
-        'consumer_key': app_conf['consumer_key'],
-        'consumer_secret': app_conf['consumer_secret'],
-    }
+    try:
+        keys = {
+            'consumer_key': app_conf['consumer_key'],
+            'consumer_secret': app_conf['consumer_secret'],
+        }
+    except KeyError as e:
+        raise KeyError("App settings missing {}".format(e))
 
-    if user_conf:
-        keys['key'] = user_conf['key']
-        keys['secret'] = user_conf['secret']
+    try:
+        if user_conf:
+            keys['key'] = user_conf['key']
+            keys['secret'] = user_conf['secret']
+
+    except KeyError as e:
+        raise KeyError("User settings missing {}".format(e))
 
     return config, keys
 

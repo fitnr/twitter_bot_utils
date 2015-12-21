@@ -1,6 +1,8 @@
 0.9.8
 -----
 * Add `helpers.chomp` method for progressively shortening strings.
+* Remove app, secret, consumer-key and consumer-secret command line args. A bots.yaml config file now mandatory.
+* No longer urlencode when queryizing
 
 0.9.7
 -----

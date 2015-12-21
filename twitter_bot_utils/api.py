@@ -13,21 +13,8 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from time import sleep
-from os import path
 import tweepy
-from . import confighelper
-
-CONFIG_DIRS = [
-    '~',
-    path.join('~', 'bots'),
-]
-
-CONFIG_BASES = [
-    'botrc',
-    'bots.yaml',
-    'bots.json'
-]
-
+from .confighelper import configure
 
 class API(tweepy.API):
 
@@ -35,22 +22,13 @@ class API(tweepy.API):
 
     _last_tweet = _last_reply = _last_retweet = None
 
-    def __init__(self, screen_name=None, config_file=None, app=None, **kwargs):
-
-        if screen_name is None and app is None:
-            raise ValueError('Missing argument. Must have one of: screen_name, app.')
+    def __init__(self, screen_name, config_file=None, **kwargs):
 
         self._screen_name = screen_name
 
         try:
             # get config file and parse it
-            self._config, keys = confighelper.configure(screen_name,
-                                                        app,
-                                                        file_name=config_file,
-                                                        directories=CONFIG_DIRS,
-                                                        bases=CONFIG_BASES,
-                                                        **kwargs
-                                                       )
+            self._config, keys = configure(screen_name, config_file, **kwargs)
 
             # setup auth
             auth = tweepy.OAuthHandler(consumer_key=keys['consumer_key'], consumer_secret=keys['consumer_secret'])
