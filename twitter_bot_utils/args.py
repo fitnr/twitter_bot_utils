@@ -12,70 +12,46 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import sys
 import logging
 import argparse
-from os import environ, path
-from sys import stdout
 
 
 def add_default_args(parser, version=None):
     parser.add_argument('-c', '--config', dest='config_file', metavar='PATH', default=None,
                         type=str, help='path to config file to parse (json or yaml)')
 
+    parser.add_argument('-u', '--user', dest='screen_name', type=str, help="Twitter screen name")
     parser.add_argument('-n', '--dry-run', action='store_true', help="Don't actually run")
-    parser.add_argument('-v', '--verbose', action='store_true', help="Log to stdout")
+    parser.add_argument('-v', '--verbose', action='store_true', help="Log verbosely to stdout")
+    parser.add_argument('-q', '--quiet', action='store_true', help="Log only errors")
 
     if version:
         parser.add_argument('-V', '--version', action='version', version="%(prog)s " + version)
 
+
 def parent(version=None):
+    '''Return the default args as a parent parser, optionally adding a version'''
     parser = argparse.ArgumentParser(add_help=False)
-
     add_default_args(parser, version=version)
-
     return parser
 
 
-def add_logger(screen_name, verbose=None, **kwargs):
-    '''Interpret default args, set up logger'''
-    log = logger(screen_name, log_path=kwargs.get('logpath'))
+def add_logger(args):
+    '''Set up a stdout logger'''
+    log = logging.getLogger(args.user)
 
-    if verbose:
-        stdout_logger(screen_name)
+    ch = logging.StreamHandler(sys.stdout)
+    ch.setFormatter(logging.Formatter('%(name)-13s: %(filename)-10s %(lineno)-3d %(message)s'))
 
-    return log
-
-
-def _log_threshold():
-    if environ.get('DEVELOPMENT', False) and not environ.get('production', False):
-        # environment = 'development'
-        threshold = logging.DEBUG
+    if args.verbose:
+        ch.setLevel(logging.DEBUG)
     else:
-        # environment = 'production'
-        threshold = logging.INFO
+        ch.setLevel(logging.INFO)
 
-    return threshold
-
-
-def logger(logger_name, log_path=None):
-    log_path = log_path or path.join('~', 'bots', 'logs')
-    log = logging.getLogger(logger_name)
-    log.setLevel(_log_threshold())
-
-    log_file = path.expanduser(path.join(log_path, logger_name + '.log'))
-    fh = logging.FileHandler(log_file)
-    fh.setFormatter(logging.Formatter('%(asctime)s %(name)-13s line %(lineno)d %(levelname)-5s %(message)s'))
-
-    log.addHandler(fh)
-
-    return log
-
-
-def stdout_logger(logger_name):
-    log = logging.getLogger(logger_name)
-
-    ch = logging.StreamHandler(stdout)
-    ch.setLevel(logging.DEBUG)
-    ch.setFormatter(logging.Formatter('%(filename)-10s %(lineno)-3d %(message)s'))
+    if args.quiet:
+        ch.setLevel(logging.ERROR)
 
     log.addHandler(ch)
+
+    return log
