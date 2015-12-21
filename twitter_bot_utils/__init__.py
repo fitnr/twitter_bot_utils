@@ -12,9 +12,11 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-__version__ = '0.9.7.1'
+from . import api, args, archive, confighelper, helpers, tools
+from .api import API
+
+__version__ = '0.10.0'
 __author__ = 'Neil Freeman'
-__license__ = 'GPLv3'
+__license__ = 'GPL-3.0'
 __all__ = ['api', 'args', 'archive', 'confighelper', 'helpers', 'tools']
 
-from . import api, args, archive, confighelper, helpers, tools
