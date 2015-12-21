@@ -14,7 +14,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 from __future__ import unicode_literals
 import re
-from urllib import quote_plus
 from HTMLParser import HTMLParser
 
 
@@ -127,11 +126,14 @@ def queryize(terms, exclude_screen_name=None):
     but intelligently excluding terms beginning with '-' (Twitter's NOT operator).
     Optionally add -from:exclude_screen_name.
     Returns a string ready to be passed to tweepy.API.search
+
+    >>> helpers.queryize(['apple', 'orange', '-peach'])
+    u'apple OR orange -peach'
     '''
     ors = (x for x in terms if x[0] != '-')
     nots = (x for x in terms if x[0] == '-')
     sn = " -from:" + exclude_screen_name + ' ' if exclude_screen_name else ' '
-    return quote_plus(' OR '.join(ors) + sn + ' '.join(nots))
+    return ' OR '.join(ors) + sn + ' '.join(nots)
 
 
 def chomp(text, max_len=140, split=None):
