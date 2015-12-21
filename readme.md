@@ -122,6 +122,7 @@ Some useful command line flags are available by default:
 
 * `-n, --dry-run`: Don't tweet, just output to stdout
 * `-v, --verbose`: Log to stdout
+* `-q, --quiet`: Only log errors
 * `-c, --config`: path to a config file. This is a JSON or YAML file laid out according to the below format. 
 
 You can also pass authentication arguments with these arguments.
@@ -144,21 +145,24 @@ parser.add_argument('-m', '--my-arg')
 
 args = parser.parse_args()
 
-# Set up a logger named 'MyBot'
-# Parse the default args. For instance, if --verbose is set, the logger will output to stdout.
-# The default arguments include 'verbose', which will enable logger.debug() statements
-logger = tbu.args.add_logger('MyBot', args.verbose)
+# Set up the tweepy API
+twitter = tbu.API(args)
 
 # Generate a tweet somehow
 tweet = my_tweet_function(args.my_arg)
 
-twitter = tbu.api.API('MyBot', **vars(args))
-
-logger.info("Generated "+ tweet)
+# The API includes a logging instance
+# debug logs will output to stdout only if --verbose is set
+# info logs will output even without --verbose
+api.logger.debug("Generated %s", tweet)
 
 # Use args.dry_run to control tweeting
 if not args.dry_run:
-    twitter.update_status(tweet)
+    try:
+        twitter.update_status(tweet)
+    except Exception as e:
+        # Error logs will go to stdout even when --quiet is set
+        logger.error(e)
 ````
 
 Then on the command line:

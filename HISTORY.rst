@@ -3,7 +3,7 @@
 * Add `helpers.chomp` method for progressively shortening strings.
 * Remove app, secret, consumer-key and consumer-secret command line args. A bots.yaml config file now mandatory.
 * No longer urlencode when queryizing
-* Logging: Remove file logger, add silent option, start logger with args
+* Logging: Remove file logger, add silent option, start logger with args, add logger in api
 
 0.9.7
 -----

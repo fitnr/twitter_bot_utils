@@ -13,8 +13,10 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from time import sleep
+from argparse import Namespace
 import tweepy
 from .confighelper import configure
+from . import args
 
 class API(tweepy.API):
 
@@ -22,13 +24,21 @@ class API(tweepy.API):
 
     _last_tweet = _last_reply = _last_retweet = None
 
-    def __init__(self, screen_name, config_file=None, **kwargs):
+    def __init__(self, screen_name, **kwargs):
+
+        if isinstance(screen_name, Namespace):
+            # Accept an args object
+            kwargs.update(vars(screen_name))
+            screen_name = kwargs.pop('screen_name', None)
+
+        # Add a logger
+        self.logger = args.add_logger(screen_name, verbose=kwargs.get('verbose'), quiet=kwargs.get('silent'))
 
         self._screen_name = screen_name
 
         try:
             # get config file and parse it
-            self._config, keys = configure(screen_name, config_file, **kwargs)
+            self._config, keys = configure(screen_name, **kwargs)
 
             # setup auth
             auth = tweepy.OAuthHandler(consumer_key=keys['consumer_key'], consumer_secret=keys['consumer_secret'])
