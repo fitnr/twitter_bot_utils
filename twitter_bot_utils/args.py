@@ -17,14 +17,23 @@ import logging
 import argparse
 
 
-def add_default_args(parser, version=None):
-    parser.add_argument('-c', '--config', dest='config_file', metavar='PATH', default=None,
-                        type=str, help='path to config file to parse (json or yaml)')
+def add_default_args(parser, version=None, include=None):
+    include = include or ['config', 'user', 'dry-run', 'verbose', 'quiet']
 
-    parser.add_argument('-u', '--user', dest='screen_name', type=str, help="Twitter screen name")
-    parser.add_argument('-n', '--dry-run', action='store_true', help="Don't actually run")
-    parser.add_argument('-v', '--verbose', action='store_true', help="Log verbosely to stdout")
-    parser.add_argument('-q', '--quiet', action='store_true', help="Log only errors")
+    if 'config' in include:
+        parser.add_argument('-c', '--config', dest='config_file', metavar='PATH', default=None,
+                            type=str, help='bots config file (json or yaml)')
+    if 'user' in include:
+        parser.add_argument('-u', '--user', dest='screen_name', type=str, help="Twitter screen name")
+
+    if 'dry-run' in include:
+        parser.add_argument('-n', '--dry-run', action='store_true', help="Don't actually do anything")
+
+    if 'verbose' in include:
+        parser.add_argument('-v', '--verbose', action='store_true', help="Run talkatively")
+
+    if 'quiet' in include:
+        parser.add_argument('-q', '--quiet', action='store_true', help="Run quietly")
 
     if version:
         parser.add_argument('-V', '--version', action='version', version="%(prog)s " + version)

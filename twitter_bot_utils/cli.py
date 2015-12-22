@@ -13,31 +13,30 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from argparse import ArgumentParser
-from . import __version__
-from . import api
-from . import args
-from . import tools
+from . import __version__ as version
+from . import api, args, tools
+
+ARGS = ['config', 'dry-run', 'verbose', 'quiet']
 
 def fave_mentions():
-    parser = ArgumentParser(description='fave mentions', parents=[args.parent(__version__)])
-    parser.add_argument('screen_name', type=str, metavar='[screen-name]', help='User who will be doing the favoriting')
+    parser = ArgumentParser(description='fave mentions', usage='%(prog)s [options] screen_name')
+    parser.add_argument('screen_name', type=str)
+    args.add_default_args(parser, version=version, include=ARGS)
 
     arguments = parser.parse_args()
-    args.add_logger(arguments.screen_name, arguments.verbose)
+    twitter = api.API(arguments)
 
-    twitter = api.API(**vars(arguments))
     tools.fave_mentions(twitter, arguments.dry_run)
 
 
 def auto_follow():
-    parser = ArgumentParser(description="automatic following and unfollowing", parents=[args.parent(__version__)])
-    parser.add_argument('-u', '--unfollow', action='store_true', help="Unfollow those who don't follow you")
-    parser.add_argument('screen_name', type=str, metavar='[screen-name]', help='User who will be doing the (un)following')
+    parser = ArgumentParser(description="automatic following and unfollowing", usage='%(prog)s [options] screen_name')
+    parser.add_argument('screen_name', type=str)
+    parser.add_argument('-U', '--unfollow', action='store_true', help="Unfollow those who don't follow you")
+    args.add_default_args(parser, version=version, include=ARGS)
 
     arguments = parser.parse_args()
-    args.add_logger(arguments.screen_name, arguments.verbose)
-
-    twitter = api.API(**vars(arguments))
+    twitter = api.API(arguments)
 
     if arguments.unfollow:
         tools.unfollow(twitter, arguments.dry_run)
