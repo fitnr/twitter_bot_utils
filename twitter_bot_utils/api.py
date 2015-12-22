@@ -106,16 +106,16 @@ class API(tweepy.API):
         return self._last('_last_retweet', refresh)
 
 
-    def update_status(self, *args, **kwargs):
+    def update_status(self, *pargs, **kwargs):
         """
         Wrapper for tweepy.api.update_status with a 10s wait when twitter is over capacity
         """
         try:
-            super(API, self).update_status(*args, **kwargs)
+            super(API, self).update_status(*pargs, **kwargs)
 
         except tweepy.TweepError as e:
             if e.message[0]['code'] == 503:
                 sleep(10)
-                super(API, self).update_status(*args, **kwargs)
+                super(API, self).update_status(*pargs, **kwargs)
             else:
                 raise e
