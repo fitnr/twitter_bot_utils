@@ -6,18 +6,24 @@ README.rst: README.md
 	@touch $@
 	python setup.py check --restructuredtext --strict
 
-.PHONY: test deploy
+.PHONY: test deploy clean cov
 test:
 	$(PYTHON) setup.py test
 	$(PYTHON) setup.py --version --url
 	fave-mentions --version
 	auto-follow --version
 
-deploy: README.rst
-	rm -rf dist build
+deploy: README.rst | clean
 	$(PYTHON) setup.py sdist
-	rm -rf dist build
+	$(MAKE) clean
 	$(PYTHON3) setup.py sdist bdist_wheel
 	twine upload dist/*
 	git push
 	git push --tags
+
+cov:
+	coverage run setup.py test
+	coverage html
+	open htmlcov/index.html
+
+clean: ; rm -rf build dist
