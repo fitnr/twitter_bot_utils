@@ -1,4 +1,4 @@
-0.10.1
+0.10.post1
 ------
 * Fix missing handler on `API.logger`.
 * Change internal api for logger, now accepts a `logging` level.
