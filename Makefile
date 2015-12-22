@@ -10,8 +10,8 @@ README.rst: README.md
 test:
 	$(PYTHON) setup.py test
 	$(PYTHON) setup.py --version --url
-	twitter-fave-mentions --version
-	twitter-auto-follow --version
+	fave-mentions --version
+	auto-follow --version
 
 deploy: README.rst
 	rm -rf dist build

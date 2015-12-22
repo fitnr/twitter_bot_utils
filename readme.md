@@ -227,5 +227,5 @@ twitter_bot_utils.helpers.remove_entities(results[0], ['urls', 'hashtags', 'medi
 ````
 
 ### Command Line Utilities
-* `twitter-auto-follow`: Follow accounts that follow your bot
-* `twitter-fave-mentions`: Favorite your bots' mentions
+* `auto-follow`: Follow accounts that follow your bot
+* `fave-mentions`: Favorite your bot's mentions
