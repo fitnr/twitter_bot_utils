@@ -120,17 +120,11 @@ twitter.search('#botALLY', since_id=twitter.last_tweet)
 
 Some useful command line flags are available by default:
 
+* `-u, --user`: Screen name to run as
 * `-n, --dry-run`: Don't tweet, just output to stdout
 * `-v, --verbose`: Log to stdout
 * `-q, --quiet`: Only log errors
-* `-c, --config`: path to a config file. This is a JSON or YAML file laid out according to the below format. 
-
-You can also pass authentication arguments with these arguments.
-
-* `--key`: Twitter user key
-* `--secret`: Twitter user secret
-* `--consumer-key`: Twitter application consumer key
-* `--consumer-secret`: Twitter application consumer secret
+* `-c, --config`: path to a config file. This is a JSON or YAML file laid out according to the above format. This option isn't needed if the config file is in one of the default places.
 
 Say this is `yourapp.py`:
 
