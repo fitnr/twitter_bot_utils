@@ -15,6 +15,7 @@ test:
 
 deploy: README.rst | clean
 	$(PYTHON) setup.py sdist
+	twine upload dist/*
 	$(MAKE) clean
 	$(PYTHON3) setup.py sdist bdist_wheel
 	twine upload dist/*
