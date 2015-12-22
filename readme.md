@@ -4,7 +4,7 @@ Twitter bot utils make it a little easier to set up a Twitter bot, with an eye t
 
 This package is intended to assist with the creation of bots for artistic or personal projects. Don't use it to spam or harrass people.
 
-Works with Python 2.7 and 3.4 (2.6 & 3.3 probably work, too).
+Works with Python 2.7, 3.4 and 3.5 (2.6 & 3.3 probably work, too).
 
 Install with `pip install twitter_bot_utils`.
 
@@ -12,20 +12,27 @@ Install with `pip install twitter_bot_utils`.
 
 The main goal of Twitter bot utils is to create Tweepy instances with authentication data stored in a simple conf file. This gives botmakers a simple, reusable place to store keys outside of source control.
 
-By default, twitter_bot_utils will read settings from a YAML or JSON config file. By default, it looks in the ~/ and ~/bots directories for files named "bots.yaml", "bots.json", or "botrc". Custom config files can be set, too, of course.
+By default, `twitter_bot_utils` will read settings from a YAML or JSON config file. By default, it looks in the `~/` and `~/bots` directories for files named "bots.yaml" or "bots.json". Custom config locations can be set, too, of course.
 
 ````python
-from twitter_bot_utils import api
+import twitter_bot_utils as tbu
 
 # Automatically check for a config file in the above-named directories
-twitter = api.API('MyBotName')
+twitter = tbu.API('MyBotName')
 
 # Specify a specific config file
-twitter = api.API('MyBotName', config='path/to/config.yaml')
+twitter = tbu.API('MyBotName', config_file='path/to/config.yaml')
 
-# This is possible, although you should consider just using Tweepy directly
-twitter = api.API('MyBotName', consumer_key='...', consumer_secret='...', key='...', secret='...')
+# This is possible, although you should probably just using Tweepy directly
+twitter = tbu.API('MyBotName', consumer_key='...', consumer_secret='...', key='...', secret='...')
 ````
+
+The `bots` config file is also useful for storing keys and parameters for other APIs, or for your own bots, keep reading!
+
+The `tbu.API` object also extends the `tweepy.API` object with some methods useful for bots:
+
+* Methods to check for the ID of recent tweets: `last_tweet`, `last_reply`, `last_retweet`. These are useful if your bot searches twitter and wants to avoid ingesting the same material.
+* A retry in `update_status` when Twitter is over capacity. If `update_status` gets a 503 error from Twitter, it will wait 10 seconds and try again.
 
 Twitter bot utils comes with some built-in command line parsers, and the API object will also happily consume the result of `argparse.parser.parse_args()` (see below for details).
 
@@ -54,6 +61,7 @@ users:
 
 apps:
     my_app_name:
+        app_setting: "apple juice"
         consumer_key: ...
         consumer_secret: ...
 
@@ -64,24 +72,28 @@ foo: bar
 Using the config settings:
 
 ````python
-import twitter_bot_utils
+import twitter_bot_utils as tbu
 
 # Look for config in the default places mentioned above:
-twitter = twitter_bot_utils.api.API('MyBotName')
+twitter = tbu.API('MyBotName')
 
+# Get a general config setting. This might be the key for a third-party API
 twitter.config['foo']
-# returns 'bar'
+# 'bar'
 
-# The current user and app are also available:
+# Settings from the user and app section are also available:
 twitter.user['custom_setting']
-# hello world
+# "hello world"
+
+twitter.user['app_setting']
+# "apple juice"
 ````
 
-Setting a custom config file is simple:
+Setting a custom config file can be done with the `config_file` argument:
 
 ````python
 # The config keyword argument will set a custom file location
-twitter = twitter_bot_utils.api.API('MyBotName', config='special/file/path.yaml')
+twitter = twitter_bot_utils.api.API('MyBotName', config_file='special/file/path.yaml')
 ````
 
 ### Without user authentication
@@ -89,9 +101,7 @@ twitter = twitter_bot_utils.api.API('MyBotName', config='special/file/path.yaml'
 Some Twitter API queries don't require user authentication. To set up an Tweepy API instance without user authentication, set up a bots.yaml file as above, but omit the `users` section. Then use the app keyword argument:
 
 ````python
-import twitter_bot_utils
-
-twitter = twitter_bot_utils.api.API(app='my_app_name', config_file='path/to/config.yaml')
+twitter = tbu.API(app='my_app_name', config_file='path/to/config.yaml')
 
 twitter.search(q="Twitter searches don't require user authentication")
 ````
@@ -101,7 +111,7 @@ twitter.search(q="Twitter searches don't require user authentication")
 Basically, the `twitter_bot_utils.api.API` object is a wrapper for Tweepy with some configuration reading options added. It also adds three convenience methods for finding recent tweets, since it's often useful to know what a bot has done recently without setting up a whole backend for saving the bot's tweets.
 
 ````python
-twitter = api.API('MyBotName')
+twitter = tbu.API('MyBotName')
 
 twitter.last_tweet
 # id of most recent tweet from MyBotName
@@ -117,6 +127,8 @@ twitter.search('#botALLY', since_id=twitter.last_tweet)
 ````
 
 ## Default Command Line Options
+
+It's useful to package bots as command line apps so that they can be easily run with `cron`. Twitter bot utils includes some helpers for working with `argparse`.
 
 Some useful command line flags are available by default:
 
@@ -134,18 +146,19 @@ import twitter_bot_utils as tbu
 
 # This sets up an argparse.ArgumentParser with the default arguments
 parent = tbu.args.parent()
-parser = argparse.ArgumentParser('Description', parents=[parent])
-parser.add_argument('-m', '--my-arg')
+parser = argparse.ArgumentParser('My Example Bot', parents=[parent])
+parser.add_argument('--my-arg', type=str, help='A custom argument')
 
 args = parser.parse_args()
 
 # Set up the tweepy API
+# Note that you can pass the argparse.Namespace object
 twitter = tbu.API(args)
 
 # Generate a tweet somehow
 tweet = my_tweet_function(args.my_arg)
 
-# The API includes a logging instance
+# The API includes an instance of logging
 # debug logs will output to stdout only if --verbose is set
 # info logs will output even without --verbose
 api.logger.debug("Generated %s", tweet)
@@ -161,13 +174,29 @@ if not args.dry_run:
 
 Then on the command line:
 ````bash
+> python yourapp.py --help
+usage: yourapp.py [options]
+
+My Example Bot
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -c PATH, --config PATH
+                        bots config file (json or yaml)
+  -u SCREEN_NAME, --user SCREEN_NAME
+                        Twitter screen name
+  -n, --dry-run         Don't actually do anything
+  -v, --verbose         Run talkatively
+  -q, --quiet           Run quietly
+  --my-arg MY_ARG       A custom argument
+
 # Looks for settings in a config file (e.g. bots.yaml, see config section above)
-# Outputs results to stdout, doesn't publish anything 
-$ python yourapp.py --dry-run --verbose
+# Prints results to stdout and doesn't publish anything 
+> python yourapp.py  --dry-run --verbose
 Generated <EXAMPLE TWEET>
 
-# Authenicate with these values instead of the config file
-$ python yourapp.py --verbose --consumer-key $ck --consumer-secret $cs --key $user_key --secret $user_secret
+# Run quietly, say in a crontab file
+> python yourapp.py --user MyBotName --quiet
 Generated <EXAMPLE TWEET 2>
 ````
 
