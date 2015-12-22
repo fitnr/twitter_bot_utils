@@ -1,3 +1,8 @@
+0.10.1
+------
+* Fix missing handler on `API.logger`.
+* Change internal api for logger, now accepts a `logging` level.
+
 0.10.0
 ------
 * Add `helpers.chomp` method for progressively shortening strings.

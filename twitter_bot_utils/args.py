@@ -46,24 +46,16 @@ def parent(version=None):
     return parser
 
 
-def add_logger(args, verbose=None, quiet=None):
+def add_logger(name, level=None, format=None):
     '''Set up a stdout logger'''
-    try:
-        log = logging.getLogger(args.user)
-    except AttributeError:
-        log = logging.getLogger(args)
+    format = format or '%(filename)-11s %(lineno)-3d: %(message)s'
+    log = logging.getLogger(name)
+
+    # Set logging level.
+    log.setLevel(level or logging.INFO)
 
     ch = logging.StreamHandler(sys.stdout)
-    ch.setFormatter(logging.Formatter('%(name)-13s: %(filename)-10s %(lineno)-3d %(message)s'))
-
-    if getattr(args, 'verbose', None) or verbose:
-        ch.setLevel(logging.DEBUG)
-    else:
-        ch.setLevel(logging.INFO)
-
-    if getattr(args, 'quiet', None) or quiet:
-        ch.setLevel(logging.ERROR)
-
+    ch.setFormatter(logging.Formatter(format))
     log.addHandler(ch)
 
     return log

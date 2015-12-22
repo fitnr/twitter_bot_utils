@@ -14,9 +14,11 @@
 
 from time import sleep
 from argparse import Namespace
+import logging
 import tweepy
 from .confighelper import configure
 from . import args
+
 
 class API(tweepy.API):
 
@@ -32,7 +34,10 @@ class API(tweepy.API):
             screen_name = kwargs.pop('screen_name', None)
 
         # Add a logger
-        self.logger = args.add_logger(screen_name, verbose=kwargs.get('verbose'), quiet=kwargs.get('silent'))
+        level = None
+        level = logging.DEBUG if kwargs.pop('verbose', None) else level
+        level = logging.ERROR if kwargs.get('silent', None) else level
+        self.logger = args.add_logger(screen_name, level, kwargs.pop('format', None))
 
         self._screen_name = screen_name
 
@@ -104,7 +109,6 @@ class API(tweepy.API):
     @property
     def last_retweet(self, refresh=None):
         return self._last('_last_retweet', refresh)
-
 
     def update_status(self, *pargs, **kwargs):
         """
