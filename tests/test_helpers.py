@@ -91,8 +91,8 @@ class test_tbu_helpers(unittest.TestCase):
 
     def test_querize(self):
         query = ('hi', 'bye', 'wow', '-no', '-nah')
-        self.assertEqual(helpers.queryize(query), 'hi+OR+bye+OR+wow+-no+-nah')
-        self.assertEqual(helpers.queryize(query, 'user'), 'hi+OR+bye+OR+wow+-from%3Auser+-no+-nah')
+        self.assertEqual(helpers.queryize(query), 'hi OR bye OR wow -no -nah')
+        self.assertEqual(helpers.queryize(query, 'user'), 'hi OR bye OR wow -from:user -no -nah')
 
     def testChomp(self):
         long_string = (

@@ -1,9 +1,9 @@
+import sys
 import os
 import unittest
-import tweepy
-import logging
-import argparse
 import inspect
+import argparse
+import tweepy
 from twitter_bot_utils import archive, confighelper
 from twitter_bot_utils import args
 
@@ -52,42 +52,22 @@ class test_twitter_bot_utils(unittest.TestCase):
 
         self.screen_name = 'example_screen_name'
 
-        parent = args.parent()
+        parent = args.parent(version='1.2.3')
         self.parser = argparse.ArgumentParser(description='desc', parents=[parent])
 
-        self.arg_input = ['--consumer-key', '123', '-n', '-v']
-        self.args = self.parser.parse_args(self.arg_input)
+        sys.argv = ['test', '--dry-run', '-v', '-c', self.yaml]
+        self.args = self.parser.parse_args()
 
         self.txtfile = os.path.join(os.path.dirname(__file__), 'data', 'tweets.txt')
         self.archive = os.path.dirname(__file__)
 
     def test_setup(self):
-
         assert isinstance(self.parser, argparse.ArgumentParser)
         assert self.parser.description == 'desc'
 
     def test_parsing_args(self):
-        arguments = self.parser.parse_args(self.arg_input)
-
-        assert arguments.consumer_key == '123'
-        assert arguments.config_file is None
-        assert arguments.dry_run
-        assert arguments.verbose
-
-    def test_add_logger(self):
-        args.add_logger('test', self.args.verbose, logpath='tests')
-
-        l = logging.getLogger('test')
-        assert isinstance(l, logging.Logger)
-
-        assert l.name == 'test'
-
-        assert len(l.handlers) == 2
-        assert isinstance(l.handlers[1], logging.StreamHandler)
-
-        testpath = os.path.join('tests', 'test.log')
-        assert os.path.exists(testpath)
-        os.remove(testpath)
+        assert self.args.dry_run
+        assert self.args.verbose
 
     def test_find_conf_file(self):
         assert confighelper.find_file(self.yaml) == self.yaml
