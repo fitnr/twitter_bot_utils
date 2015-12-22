@@ -46,8 +46,11 @@ CONFIG_BASES = [
 
 def configure(screen_name, config_file=None, app=None, **kwargs):
     """Setup a TBU config dictionary"""
-    # Use passed config file, or look for it in the paths above
-    config_file = find_file(config_file, CONFIG_DIRS, CONFIG_BASES)
+    # Use passed config file, or look for it in the default path.
+    # Super-optionally, accept a different place to look for the file
+    dirs = kwargs.pop('default_directories', None)
+    bases = kwargs.pop('default_bases', None)
+    config_file = find_file(config_file, dirs, bases)
     file_config = parse(config_file)
 
     kwargs = {k: v for k, v in kwargs.items() if v is not None}
@@ -62,16 +65,19 @@ def configure(screen_name, config_file=None, app=None, **kwargs):
 def parse(file_path):
     '''Parse a YAML or JSON file'''
 
+    _, ext = path.splitext(file_path)
+
+    if ext == '.yaml':
+        func = yaml.load
+
+    elif ext == '.json':
+        func = json.load
+
+    else:
+        raise ValueError("Unrecognized config file type %s" % ext)
+
     with open(file_path, 'r') as f:
-        _, ext = path.splitext(file_path)
-
-        if ext == '.yaml':
-            return yaml.load(f.read())
-
-        elif ext == '.json':
-            return json.load(f.read())
-
-    raise ValueError("Unrecognized config file type %s" % ext)
+        return func(f.read())
 
 
 def find_file(config_file=None, default_directories=None, default_bases=None):
@@ -83,10 +89,10 @@ def find_file(config_file=None, default_directories=None, default_bases=None):
         else:
             raise FileNotFoundError('Custom config file not found: {}'.format(config_file))
 
-    dirs = default_directories or [path.join('~', 'bots'), '~']
+    dirs = default_directories or CONFIG_DIRS
     dirs = [getcwd()] + dirs
 
-    bases = default_bases or ['bots.yaml', 'bots.json']
+    bases = default_bases or CONFIG_BASES
 
     for directory, base in itertools.product(dirs, bases):
         filepath = path.expanduser(path.join(directory, base))
