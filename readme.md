@@ -38,21 +38,29 @@ Twitter bot utils comes with some built-in command line parsers, and the API obj
 
 ### Config file setup
 
-Custom settings in the config are available at runtime, so use the config file for any special settings you want.
+Custom settings in the config are available at runtime, so use the config file for any special settings you want. (These examples are in YAML, JSON works, too.)
 
-Example config file layout (This is YAML, JSON works, too):
-
+These are two ways to set up a config file. The simple way covers just one user and one app:
 ````yaml
-# ~/bots.yaml
+key: LONGSTRINGOFLETTERS-ANDNUMBERS
+secret: LETTERSANDNUMBERS
+consumer_key: LOL123...
+consumer_secret: OMG456...
+my_setting: "bots are good"
+````
+
+If you have more than one bot or app, you may find this more involved syntax useful:
+````yaml
+general_setting: "all bots share this setting"
 
 users:
     # twitter screen_name
     MyBotName:
-        key: $oauth_key
-        secret: $oauth_key_secret
+        key: LONGSTRINGOFLETTERS-ANDNUMBERS
+        secret: LETTERSANDNUMBERS
         # The app key should match a key in apps below
         app: my_app_name
-        custom_setting: 'hello world'
+        custom_setting: "hello world"
 
     other_bot:
         key: ...
@@ -64,36 +72,43 @@ apps:
         app_setting: "apple juice"
         consumer_key: ...
         consumer_secret: ...
-
-foo: bar
-
 ````
 
-Using the config settings:
+TBU will automatically look for a `bots.yaml` in the current directoy, your home directory (`~/`), or `~/bots`. Of course, you can also specify another location or file name.
 
+Using a basic bots.yaml config file:
 ````python
 import twitter_bot_utils as tbu
 
-# Look for config in the default places mentioned above:
-twitter = tbu.API('MyBotName')
+# Look for simple config in the default places mentioned above:
+twitter = tbu.API()
 
 # Get a general config setting. This might be the key for a third-party API
-twitter.config['foo']
-# 'bar'
+twitter.config['my_setting']
+# "bots are good"
+```
+
+Using the syntax for multiple bots and apps:
+```
+twitter = tbu.API(screen_name='MyBotName')
+
+# Use a general setting
+twitter.config['general_setting']
+# "all bots share this setting"
 
 # Settings from the user and app section are also available:
-twitter.user['custom_setting']
+twitter.config['custom_setting']
 # "hello world"
 
-twitter.user['app_setting']
+twitter.config['app_setting']
 # "apple juice"
 ````
 
-Setting a custom config file can be done with the `config_file` argument:
+Set a custom config file with the `config_file` argument:
 
 ````python
 # The config keyword argument will set a custom file location
-twitter = twitter_bot_utils.api.API('MyBotName', config_file='special/file/path.yaml')
+twitter = twitter_bot_utils.api.API(screen_name='MyBotName', config_file='special/config.yaml')
 ````
 
 ### Without user authentication
@@ -111,7 +126,7 @@ twitter.search(q="Twitter searches don't require user authentication")
 Basically, the `twitter_bot_utils.api.API` object is a wrapper for Tweepy with some configuration reading options added. It also adds three convenience methods for finding recent tweets, since it's often useful to know what a bot has done recently without setting up a whole backend for saving the bot's tweets.
 
 ````python
-twitter = tbu.API('MyBotName')
+twitter = tbu.API(screen_name='MyBotName')
 
 twitter.last_tweet
 # id of most recent tweet from MyBotName
