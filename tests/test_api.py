@@ -53,7 +53,7 @@ class test_twitter_bot_utils(unittest.TestCase):
 
     def testConfigKwargPassing(self):
         conf = confighelper.parse(self.yaml)
-        config = confighelper.configure(self.yaml, **conf)
+        config = confighelper.configure(config_file=self.yaml, **conf)
         assert conf['custom'] == config['custom']
 
     def test_config_setup(self):
