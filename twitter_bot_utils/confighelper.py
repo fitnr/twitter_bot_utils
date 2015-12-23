@@ -12,7 +12,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import itertools
+from itertools import product
 import json
 from os import path, getcwd
 # "FileNotFoundError" is a Py 3 thing. If we're in Py 2, we mimic it with a lambda expression.
@@ -25,14 +25,6 @@ except NameError:
 import yaml
 import tweepy
 
-PROTECTED_INFO = [
-    'apps',
-    'users',
-    'consumer_key',
-    'consumer_secret',
-    'key',
-    'secret',
-]
 
 CONFIG_DIRS = [
     '~',
@@ -45,8 +37,15 @@ CONFIG_BASES = [
     'bots.json'
 ]
 
-def configure(screen_name, config_file=None, app=None, **kwargs):
-    """Setup a TBU config dictionary"""
+def configure(screen_name=None, config_file=None, app=None, **kwargs):
+    """
+    Set up a config dictionary using a bots.yaml config file and optional keyword args.
+    :screen_name string screen_name of user to search for in config file
+    :config_file string Path to read for the config file
+    :app string Name of the app to look for in the config file. Defaults to the one set in users.{screen_name}.
+    :default_directories string Directories to read for the bots.yaml/json file. Defaults to CONFIG_DIRS.
+    :default_bases string File names to look for in the directories. Defaults to CONFIG_BASES.
+    """
     # Use passed config file, or look for it in the default path.
     # Super-optionally, accept a different place to look for the file
     dirs = kwargs.pop('default_directories', None)
@@ -54,13 +53,24 @@ def configure(screen_name, config_file=None, app=None, **kwargs):
     config_file = find_file(config_file, dirs, bases)
     file_config = parse(config_file)
 
-    kwargs = {k: v for k, v in kwargs.items() if v is not None}
+    # config and keys dicts
+    # Pull non-authentication settings from the file.
+    # Kwargs, user, app, and general settings are included, in that order of preference
+    # Exclude apps and users sections from config
+    config = {k: v for k, v in file_config.items() if k not in ('apps', 'users')}
+
+    user_conf = file_config.get('users', {}).get(screen_name, {})
+    app = app or user_conf.get('app')
+    app_conf = file_config.get('apps', {}).get(app, {})
+
+    # Pull user and app data from the file
+    config.update(app_conf)
+    config.update(user_conf)
 
     # kwargs take precendence over config file
-    file_config.update(**kwargs)
+    config.update({k: v for k, v in kwargs.items() if v is not None})
 
-    # config and keys dicts
-    return setup(file_config, screen_name, app)
+    return config
 
 
 def parse(file_path):
@@ -88,61 +98,19 @@ def find_file(config_file=None, default_directories=None, default_bases=None):
         if path.exists(path.expanduser(config_file)):
             return config_file
         else:
-            raise FileNotFoundError('Custom config file not found: {}'.format(config_file))
+            raise FileNotFoundError('Config file not found: {}'.format(config_file))
 
     dirs = default_directories or CONFIG_DIRS
     dirs = [getcwd()] + dirs
 
     bases = default_bases or CONFIG_BASES
 
-    for directory, base in itertools.product(dirs, bases):
+    for directory, base in product(dirs, bases):
         filepath = path.expanduser(path.join(directory, base))
         if path.exists(filepath):
             return filepath
 
-    raise FileNotFoundError('Config file not found in: ' + str([path.join(a, b) for a, b in itertools.product(dirs, bases)]))
-
-
-def setup(file_config, screen_name, app=None):
-    '''Return object that holds config settings.
-    If screen_name is or missing, no user key/secret will be returned,
-    and API object won't have an auth token for certain Twitter queries.
-    '''
-    config = dict()
-
-    # Pull user and app data from the file
-    user_conf = file_config.get('users', {}).get(screen_name, {})
-
-    app = app or user_conf.get('app')
-    app_conf = file_config.get('apps', {}).get(app, {})
-
-    # Pull non-authentication settings from the file.
-    # User, app, and general settings are included, in that order of preference
-    update(config, file_config)
-    update(config, app_conf)
-    update(config, user_conf)
-
-    try:
-        keys = {
-            'consumer_key': app_conf['consumer_key'],
-            'consumer_secret': app_conf['consumer_secret'],
-        }
-    except KeyError as e:
-        raise KeyError("App settings missing {}".format(e))
-
-    try:
-        if user_conf:
-            keys['key'] = user_conf['key']
-            keys['secret'] = user_conf['secret']
-
-    except KeyError as e:
-        raise KeyError("User settings missing {}".format(e))
-
-    return config, keys
-
-
-def update(config, updated):
-    config.update({k: v for k, v in list(updated.items()) if k not in PROTECTED_INFO})
+    raise FileNotFoundError('Config file not found in {}'.format(dirs))
 
 
 def setup_auth(**keys):

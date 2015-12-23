@@ -19,6 +19,13 @@ import tweepy
 from .confighelper import configure
 from . import args
 
+PROTECTED_INFO = [
+    'consumer_key',
+    'consumer_secret',
+    'key',
+    'secret',
+]
+
 
 class API(tweepy.API):
 
@@ -40,11 +47,12 @@ class API(tweepy.API):
         self.logger = args.add_logger(screen_name, level, kwargs.pop('format', None))
 
         self._screen_name = screen_name
+        # get config file and parse it
+        config = configure(self._screen_name, **kwargs)
+        self._config = {k: v for k, v in config.items() if k not in PROTECTED_INFO}
+        keys = {k: v for k, v in config.items() if k in PROTECTED_INFO}
 
         try:
-            # get config file and parse it
-            self._config, keys = configure(screen_name, **kwargs)
-
             # setup auth
             auth = tweepy.OAuthHandler(consumer_key=keys['consumer_key'], consumer_secret=keys['consumer_secret'])
 
@@ -55,8 +63,9 @@ class API(tweepy.API):
                 # API won't have an access key
                 pass
 
-        except KeyError as e:
-            raise ValueError("Incomplete config file: {}".format(e))
+        except KeyError:
+            missing = [p for p in PROTECTED_INFO if p not in keys]
+            raise ValueError("Incomplete config. Missing {}".format(missing))
 
         # initiate api connection
         super(API, self).__init__(auth)
