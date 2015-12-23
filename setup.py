@@ -8,7 +8,7 @@ except IOError:
 setup(
     name='twitter_bot_utils',
 
-    version='0.10.post1',
+    version='0.10.2',
 
     description='Python utilities for twitter bots',
 
@@ -36,7 +36,6 @@ setup(
     install_requires=[
         'tweepy >=3.1.0, <4',
         'PyYAML==3.11',
-        'argparse>=1.1',
     ],
 
     test_suite="tests",
