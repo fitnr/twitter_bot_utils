@@ -14,10 +14,9 @@ test:
 	auto-follow --version
 
 deploy: README.rst | clean
+	python setup.py register
 	$(PYTHON) setup.py sdist
-	twine upload dist/*
-	$(MAKE) clean
-	$(PYTHON3) setup.py sdist bdist_wheel
+	$(PYTHON3) setup.py bdist_wheel
 	twine upload dist/*
 	git push
 	git push --tags
