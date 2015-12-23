@@ -17,7 +17,7 @@ from argparse import Namespace
 import logging
 import tweepy
 from .confighelper import configure
-from . import args
+from . import args as tbu_args
 
 PROTECTED_INFO = [
     'consumer_key',
@@ -33,20 +33,31 @@ class API(tweepy.API):
 
     _last_tweet = _last_reply = _last_retweet = None
 
-    def __init__(self, screen_name, **kwargs):
+    def __init__(self, args=None, **kwargs):
+        '''
+        Construct the tbu.API object.
+        :args Namespace argparse.Namespace to read.
+        :screen_name str Twitter screen name
+        :config_file str Config file. Defaults to bots.json or bots.yaml in ~/ or ~/bots/.
+        :logger_name str Use a logger with this name. Defaults to screen_name
+        :format str Format for logger. Defaults to 'file lineno: message'
+        :verbose bool Set logging level to DEBUG
+        :quiet bool Set logging level to ERROR. Overrides verbose.
+        :kwargs Other settings will be passed to the config
+        '''
+        # Update the kwargs with contents of args
+        if isinstance(args, Namespace):
+            kwargs.update(vars(args))
 
-        if isinstance(screen_name, Namespace):
-            # Accept an args object
-            kwargs.update(vars(screen_name))
-            screen_name = kwargs.pop('screen_name', None)
+        self._screen_name = kwargs.pop('screen_name', None)
 
         # Add a logger
         level = None
         level = logging.DEBUG if kwargs.pop('verbose', None) else level
-        level = logging.ERROR if kwargs.get('silent', None) else level
-        self.logger = args.add_logger(screen_name, level, kwargs.pop('format', None))
+        level = logging.ERROR if kwargs.get('quiet', None) else level
+        self.logger = tbu_args.add_logger(kwargs.pop('logger_name', self._screen_name), level,
+                                          kwargs.pop('format', None))
 
-        self._screen_name = screen_name
         # get config file and parse it
         config = configure(self._screen_name, **kwargs)
         self._config = {k: v for k, v in config.items() if k not in PROTECTED_INFO}

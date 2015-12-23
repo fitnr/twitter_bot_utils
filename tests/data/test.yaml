@@ -3,13 +3,13 @@ users:
         key: INDIA
         secret: LIMA
         app: example_app_name
-        custom: foo
+        custom: user
 
 apps:
     example_app_name:
         consumer_key: NOVEMBER
         consumer_secret: ECHO
-        custom: baz
+        custom: app
 
 
-custom: bar
+custom: general

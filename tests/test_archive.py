@@ -81,7 +81,8 @@ class test_twitter_bot_utils(unittest.TestCase):
     def test_parse(self):
         parsed = confighelper.parse(self.yaml)
         assert parsed['users']['example_screen_name']['key'] == 'INDIA'
-        assert parsed['custom'] == 'bar'
+        self.assertEqual(parsed['custom'], 'general')
+        self.assertEqual(parsed['users']['example_screen_name']['custom'], 'user')
 
     def test_loading_archive_data(self):
         archives = archive.read_json(self.archive)

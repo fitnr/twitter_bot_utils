@@ -1,8 +1,8 @@
 import os
+import argparse
 import unittest
 import mock
 import tweepy
-import argparse
 from twitter_bot_utils import api, confighelper
 
 TIMELINE = [
@@ -34,6 +34,7 @@ class test_twitter_bot_utils(unittest.TestCase):
         self.api = tweepy.API()
 
         self.yaml = os.path.join(os.path.dirname(__file__), 'data', 'test.yaml')
+        self.simple = os.path.join(os.path.dirname(__file__), 'data', 'simple.yml')
 
         self.screen_name = 'example_screen_name'
 
@@ -47,21 +48,26 @@ class test_twitter_bot_utils(unittest.TestCase):
         self.txtfile = os.path.join(os.path.dirname(__file__), 'data', 'tweets.txt')
         self.archive = os.path.dirname(__file__)
 
+    def testDefaultDirs(self):
+        assert '~' in confighelper.CONFIG_DIRS
+
+    def testConfigKwargPassing(self):
+        conf = confighelper.parse(self.yaml)
+        config = confighelper.configure(self.yaml, **conf)
+        assert conf['custom'] == config['custom']
+
     def test_config_setup(self):
-        fileconfig = confighelper.parse(self.yaml)
-        config, keys = confighelper.setup(fileconfig, self.screen_name)
+        config = confighelper.configure(self.screen_name, config_file=self.yaml, random='foo')
 
-        assert config['custom'] == 'foo'
-        assert keys['secret'] == 'LIMA'
-        assert keys['consumer_key'] == 'NOVEMBER'
+        assert config['secret'] == 'LIMA'
+        assert config['consumer_key'] == 'NOVEMBER'
+        assert config['random'] == 'foo'
 
-    def test_update_config(self):
-        a = {'foo': 'bar'}
-        b = {'foo': 'mux', 'key': 'a'}
-        confighelper.update(a, b)
-
-        self.assertEqual(a['foo'], b['foo'])
-        self.assertIsNone(a.get('key'))
+    def testSimpleConfig(self):
+        config = confighelper.configure(config_file=self.simple, random='foo')
+        assert config['secret'] == 'LIMA'
+        assert config['consumer_key'] == 'NOVEMBER'
+        assert config['random'] == 'foo'
 
     def test_api_creation(self):
         twitter = api.API(**vars(self.args))
@@ -82,10 +88,7 @@ class test_twitter_bot_utils(unittest.TestCase):
 
     def test_api_attributes(self):
         twitter = api.API(**vars(self.args))
-        twitter2 = api.API(self.args)
-
-        assert twitter.config['custom'] == 'foo'
-        assert twitter2.config['custom'] == 'foo'
+        self.assertEqual(twitter.config['custom'], 'user')
 
         try:
             key = twitter.config['key']
@@ -95,9 +98,15 @@ class test_twitter_bot_utils(unittest.TestCase):
         assert key is False
 
         assert twitter.screen_name == 'example_screen_name'
-        assert twitter2.screen_name == 'example_screen_name'
         assert twitter.app == 'example_app_name'
-        assert twitter2.app == 'example_app_name'
+
+    def testApiAttributesNamespace(self):
+        twitter = api.API(self.args)
+
+        assert twitter.config['custom'] == 'user'
+        assert twitter.screen_name == 'example_screen_name'
+        assert twitter.app == 'example_app_name'
+
 
     @mock.patch.object(tweepy.API, 'user_timeline', return_value=fake_timeline())
     def test_recent_tweets(self, _):
