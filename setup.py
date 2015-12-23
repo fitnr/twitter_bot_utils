@@ -27,7 +27,8 @@ setup(
     entry_points={
         'console_scripts': [
             'fave-mentions=twitter_bot_utils.cli:fave_mentions',
-            'auto-follow=twitter_bot_utils.cli:auto_follow'
+            'auto-follow=twitter_bot_utils.cli:auto_follow',
+            'twitter-auth=twitter_bot_utils.cli:authenticate'
         ],
     },
 

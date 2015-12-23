@@ -38,6 +38,7 @@ CONFIG_BASES = [
     'bots.json'
 ]
 
+
 def configure(screen_name=None, config_file=None, app=None, **kwargs):
     """
     Set up a config dictionary using a bots.yaml config file and optional keyword args.
@@ -121,3 +122,21 @@ def setup_auth(**keys):
     auth.set_access_token(key=keys['key'], secret=keys['secret'])
 
     return auth
+
+
+def dump(contents, file_path):
+    _, ext = path.splitext(file_path)
+
+    if ext in ('.yaml', '.yml'):
+        func = yaml.dump
+        kwargs = {'canonical': False, 'default_flow_style': False, 'indent': 4}
+
+    elif ext == '.json':
+        func = json.dump
+        kwargs = {'sort_keys': True, 'indent': 4}
+
+    else:
+        raise ValueError("Unrecognized config file type %s" % ext)
+
+    with open(file_path, 'w') as f:
+        func(contents, f, **kwargs)

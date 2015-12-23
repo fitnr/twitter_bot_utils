@@ -10,9 +10,70 @@ Install with `pip install twitter_bot_utils`.
 
 ## Setting up a tweepy API
 
-The main goal of Twitter bot utils is to create Tweepy instances with authentication data stored in a simple conf file. This gives botmakers a simple, reusable place to store keys outside of source control.
+One hurdle with setting up bots is getting the proper authentication keys. It can be a bit of a pain to log in and out of Twitter's app site. Twitter bot utils comes with `twitter-auth`, a command line helper for this:
+````
+$ twitter-auth --consumer-key 1233... --consumer-key 345...
+````
 
-By default, `twitter_bot_utils` will read settings from a YAML or JSON config file. By default, it looks in the `~/` and `~/bots` directories for files named "bots.yaml" or "bots.json". Custom config locations can be set, too, of course.
+This will prompt you with an url. Open this in a browser where your bot is logged in, click "Authorize". Twitter will show you an authorization code, enter this on the command line. Your keys will be shown. Copy them somewhere safe and continue on your botmaking! It looks like this:
+
+````
+https://api.twitter.com/oauth/authorize?oauth_token=lKECZQAAAAAAD6laAAABUdEkalo
+Please visit this url, click "Authorize app" and enter in the PIN:
+> 1234567
+key: 9823742342-abc123abc123abc123abc123abc123
+secret: def456def456def456def456def456def456
+````
+
+## Config files
+
+One goal of Twitter bot utils is to create Tweepy instances with authentication data stored in a simple config file. This gives botmakers a simple, reusable place to store keys outside of source control.
+
+These are two ways to lay out a bots config file. The basic way covers just one user and one app:
+
+````yaml
+key: LONGSTRINGOFLETTERS-ANDNUMBERS
+secret: LETTERSANDNUMBERS
+consumer_key: LOL123...
+consumer_secret: OMG456...
+my_setting: "bots are good"
+````
+
+If you have more than one bot or app, use the multi-bot layout useful:
+````yaml
+general_setting: "all bots share this setting"
+
+users:
+    # twitter screen_name
+    MyBotName:
+        key: LONGSTRINGOFLETTERS-ANDNUMBERS
+        secret: LETTERSANDNUMBERS
+        # The app key should match a key in apps below
+        app: my_app_name
+        custom_setting: "hello world"
+
+    other_bot:
+        ...
+apps:
+    my_app_name:
+        app_setting: "apple juice"
+        consumer_key: ...
+        consumer_secret: ...
+````
+
+The `twitter-auth` utility will happily read settings from a `bots.yaml` file:
+
+````
+# basic layout
+twitter-auth -c ~/bots.json
+
+# multi-bot layout
+twitter-auth -c ~/bots.yaml --app my_app_name
+````
+
+## Using config files
+
+By default, `twitter_bot_utils` will read settings from a YAML or JSON config file. By default, it looks in the `~/` and `~/bots` directories for files named "bots.yaml" or "bots.json". Custom config locations can be set, too.
 
 ````python
 import twitter_bot_utils as tbu
@@ -36,45 +97,10 @@ The `tbu.API` object also extends the `tweepy.API` object with some methods usef
 
 Twitter bot utils comes with some built-in command line parsers, and the API object will also happily consume the result of `argparse.parser.parse_args()` (see below for details).
 
-### Config file setup
-
 Custom settings in the config are available at runtime, so use the config file for any special settings you want. (These examples are in YAML, JSON works, too.)
 
-These are two ways to set up a config file. The simple way covers just one user and one app:
-````yaml
-key: LONGSTRINGOFLETTERS-ANDNUMBERS
-secret: LETTERSANDNUMBERS
-consumer_key: LOL123...
-consumer_secret: OMG456...
-my_setting: "bots are good"
-````
 
-If you have more than one bot or app, you may find this more involved syntax useful:
-````yaml
-general_setting: "all bots share this setting"
-
-users:
-    # twitter screen_name
-    MyBotName:
-        key: LONGSTRINGOFLETTERS-ANDNUMBERS
-        secret: LETTERSANDNUMBERS
-        # The app key should match a key in apps below
-        app: my_app_name
-        custom_setting: "hello world"
-
-    other_bot:
-        key: ...
-        secret: ...
-        app: my_app_name
-
-apps:
-    my_app_name:
-        app_setting: "apple juice"
-        consumer_key: ...
-        consumer_secret: ...
-````
-
-TBU will automatically look for a `bots.yaml` in the current directoy, your home directory (`~/`), or `~/bots`. Of course, you can also specify another location or file name.
+TBU will automatically look for a `bots.yaml` in the current directory, your home directory (`~/`), or `~/bots`. Of course, you can also specify another location or file name.
 
 Using a basic bots.yaml config file:
 ````python
