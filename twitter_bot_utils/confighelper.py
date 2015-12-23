@@ -27,6 +27,7 @@ import tweepy
 
 
 CONFIG_DIRS = [
+    getcwd(),
     '~',
     path.join('~', 'bots'),
 ]
