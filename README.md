@@ -8,7 +8,7 @@ Works with Python 2.7, 3.4 and 3.5 (2.6 & 3.3 probably work, too).
 
 Install with `pip install twitter_bot_utils`.
 
-## Setting up a tweepy API
+## Setting up credentials
 
 One hurdle with setting up bots is getting the proper authentication keys. It can be a bit of a pain to log in and out of Twitter's app site. Twitter bot utils comes with `twitter-auth`, a command line helper for this:
 ````
@@ -25,9 +25,13 @@ key: 9823742342-abc123abc123abc123abc123abc123
 secret: def456def456def456def456def456def456
 ````
 
+`twitter-auth` is inspired by a feature of [`twurl`](https://github.com/twitter/twurl), Twitter's full-fledged command line tool.
+
 ## Config files
 
 One goal of Twitter bot utils is to create Tweepy instances with authentication data stored in a simple config file. This gives botmakers a simple, reusable place to store keys outside of source control.
+
+By default, Twitter bot utils looks for a file called `bots.yaml` or `bots.json` in the current directory, your home directory (`~/`) or the `~/bots` directory. Custom config locations can be set, too.
 
 These are two ways to lay out a bots config file. The basic way covers just one user and one app:
 
@@ -50,7 +54,7 @@ users:
         secret: LETTERSANDNUMBERS
         # The app key should match a key in apps below
         app: my_app_name
-        custom_setting: "hello world"
+        custom_setting: "bots are great"
 
     other_bot:
         ...
@@ -71,76 +75,49 @@ twitter-auth -c ~/bots.json
 twitter-auth -c ~/bots.yaml --app my_app_name
 ````
 
-## Using config files
+## Using config files to talk to Twitter
 
-By default, `twitter_bot_utils` will read settings from a YAML or JSON config file. By default, it looks in the `~/` and `~/bots` directories for files named "bots.yaml" or "bots.json". Custom config locations can be set, too.
+Using a config file in one of the default locations doesn't require any extra settings:
 
 ````python
 import twitter_bot_utils as tbu
 
 # Automatically check for a config file in the above-named directories
-twitter = tbu.API('MyBotName')
-
-# Specify a specific config file
-twitter = tbu.API('MyBotName', config_file='path/to/config.yaml')
-
-# This is possible, although you should probably just using Tweepy directly
-twitter = tbu.API('MyBotName', consumer_key='...', consumer_secret='...', key='...', secret='...')
+twitter = tbu.API(screen_name='MyBotName')
 ````
 
-The `bots` config file is also useful for storing keys and parameters for other APIs, or for your own bots, keep reading!
-
-The `tbu.API` object also extends the `tweepy.API` object with some methods useful for bots:
-
-* Methods to check for the ID of recent tweets: `last_tweet`, `last_reply`, `last_retweet`. These are useful if your bot searches twitter and wants to avoid ingesting the same material.
-* A retry in `update_status` when Twitter is over capacity. If `update_status` gets a 503 error from Twitter, it will wait 10 seconds and try again.
-
-Twitter bot utils comes with some built-in command line parsers, and the API object will also happily consume the result of `argparse.parser.parse_args()` (see below for details).
-
-Custom settings in the config are available at runtime, so use the config file for any special settings you want. (These examples are in YAML, JSON works, too.)
-
-
-TBU will automatically look for a `bots.yaml` in the current directory, your home directory (`~/`), or `~/bots`. Of course, you can also specify another location or file name.
-
-Using a basic bots.yaml config file:
+The `twitter` object is a fully-authenticated tweepy API object. So you can now do this:
 ````python
-import twitter_bot_utils as tbu
+twitter.update_status(status='hello world')
+````
 
-# Look for simple config in the default places mentioned above:
-twitter = tbu.API()
+The `bots` config file is also useful for storing keys and parameters for other APIs, or for your own bots.
 
-# Get a general config setting. This might be the key for a third-party API
-twitter.config['my_setting']
-# "bots are good"
-```
-
-Using the syntax for multiple bots and apps:
-```
-twitter = tbu.API(screen_name='MyBotName')
-
+````python
+# Get a config settings from your bots config file. This might be the key for a third-party API
 # Use a general setting
 twitter.config['general_setting']
 # "all bots share this setting"
 
 # Settings from the user and app section are also available:
 twitter.config['custom_setting']
-# "hello world"
+# "bots are great"
 
 twitter.config['app_setting']
 # "apple juice"
 ````
 
 Set a custom config file with the `config_file` argument:
-
-````python
-# The config keyword argument will set a custom file location
-twitter = twitter_bot_utils.api.API(screen_name='MyBotName', config_file='special/config.yaml')
 ````
+# Specify a specific config file
+twitter = tbu.API(screen_name='MyBotName', config_file='path/to/config.yaml')
+````
+
+Twitter bot utils comes with some built-in command line parsers, and the API object will also happily consume the result of `argparse.parser.parse_args()` (see below for details).
 
 ### Without user authentication
 
-Some Twitter API queries don't require user authentication. To set up an Tweepy API instance without user authentication, set up a bots.yaml file as above, but omit the `users` section. Then use the app keyword argument:
-
+Some Twitter API queries don't require user authentication. To set up an Tweepy API instance without user authentication, set up a bots.yaml file as above, but omit the `users` section. Use the app keyword argument:
 ````python
 twitter = tbu.API(app='my_app_name', config_file='path/to/config.yaml')
 
@@ -149,7 +126,9 @@ twitter.search(q="Twitter searches don't require user authentication")
 
 ## Recent tweets
 
-Basically, the `twitter_bot_utils.api.API` object is a wrapper for Tweepy with some configuration reading options added. It also adds three convenience methods for finding recent tweets, since it's often useful to know what a bot has done recently without setting up a whole backend for saving the bot's tweets.
+The `twitter_bot_utils.API` object extends `tweepy.API` with some methods useful for bots:
+
+* Methods to check for the ID of recent tweets: `last_tweet`, `last_reply`, `last_retweet`. These are useful if your bot searches twitter and wants to avoid ingesting the same material.
 
 ````python
 twitter = tbu.API(screen_name='MyBotName')
@@ -167,6 +146,8 @@ twitter.last_retweet
 twitter.search('#botALLY', since_id=twitter.last_tweet)
 ````
 
+Twitter bot utils also adds a retry in `update_status` when Twitter is over capacity. If `update_status` gets a 503 error from Twitter, it will wait 10 seconds and try again.
+
 ## Default Command Line Options
 
 It's useful to package bots as command line apps so that they can be easily run with `cron`. Twitter bot utils includes some helpers for working with `argparse`.
@@ -179,7 +160,7 @@ Some useful command line flags are available by default:
 * `-q, --quiet`: Only log errors
 * `-c, --config`: path to a config file. This is a JSON or YAML file laid out according to the above format. This option isn't needed if the config file is in one of the default places.
 
-Say this is `yourapp.py`:
+Say this is `mybot.py`:
 
 ````python
 import argparse
@@ -206,17 +187,13 @@ api.logger.debug("Generated %s", tweet)
 
 # Use args.dry_run to control tweeting
 if not args.dry_run:
-    try:
-        twitter.update_status(tweet)
-    except Exception as e:
-        # Error logs will go to stdout even when --quiet is set
-        logger.error(e)
+    twitter.update_status(tweet)
 ````
 
 Then on the command line:
 ````bash
-> python yourapp.py --help
-usage: yourapp.py [options]
+> python mybot.py --help
+usage: mybot.py [options]
 
 My Example Bot
 
@@ -267,35 +244,36 @@ twitter_bot_utils.helpers.has_entities(status)
 # returns True if status has any entities
 
 # These also exist:
-# twitter_bot_utils.helpers.has_url
-# twitter_bot_utils.helpers.has_symbol
+twitter_bot_utils.helpers.has_url
+twitter_bot_utils.helpers.has_symbol
 ````
 
 ### Filtering out entities
 
-Easily remove entities from a tweet's text.
+These helpers remove entities from a tweet's text.
 
 ````python
-import twitter_bot_utils
+import twitter_bot_utils as tbu
 
-api = twitter_bot_utils.api.API('MyBotName')
+api = tbu.API(screen_name='MyBotName')
 
 results = api.search("special topic")
 
 results[0].text
 # 'This is an example tweet with a #hashtag and a link http://foo.com'
 
-twitter_bot_utils.helpers.remove_entity(results[0], 'hashtags')
+tbu.helpers.remove_entity(results[0], 'hashtags')
 # 'This is an example tweet with a  and a link http://foo.com'
 
-twitter_bot_utils.helpers.remove_entity(results[0], 'urls')
+tbu.helpers.remove_entity(results[0], 'urls')
 # 'This is an example tweet with a #hashtag and a link '
 
 # Remove multiple entities with remove_entities.
-twitter_bot_utils.helpers.remove_entities(results[0], ['urls', 'hashtags', 'media'])
+tbu.helpers.remove_entities(results[0], ['urls', 'hashtags', 'media'])
 # 'This is an example tweet with a  and a link '
 ````
 
 ### Command Line Utilities
 * `auto-follow`: Follow accounts that follow your bot
 * `fave-mentions`: Favorite your bot's mentions
+* `twitter-auth`: Authenticate and account with a Twitter app.
