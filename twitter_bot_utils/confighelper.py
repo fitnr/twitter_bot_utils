@@ -40,6 +40,7 @@ CONFIG_DIRS = [
 ]
 
 CONFIG_BASES = [
+    'bots.yml',
     'bots.yaml',
     'bots.json'
 ]
@@ -67,7 +68,7 @@ def parse(file_path):
 
     _, ext = path.splitext(file_path)
 
-    if ext == '.yaml':
+    if ext in ('.yaml', '.yml'):
         func = yaml.load
 
     elif ext == '.json':
