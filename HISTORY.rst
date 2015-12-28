@@ -1,3 +1,8 @@
+0.10.3
+------
+* Simplify config section
+* Add twitter-auth command line tool
+
 0.10.post1
 ------
 * Fix missing handler on `API.logger`.
