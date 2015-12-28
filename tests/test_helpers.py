@@ -16,7 +16,8 @@ TWEET = {
         }],
         "media": [],
         "hashtags": [],
-        "urls": []
+        "urls": [],
+        "symbols": []
     },
     "in_reply_to_status_id_str": "318563540590010368",
     "id_str": "318565861172600832",
@@ -48,6 +49,12 @@ class test_tbu_helpers(unittest.TestCase):
     def test_has_entities(self):
         assert helpers.has_entities(self.status) is True
         assert helpers.has_entities(TWEET) is True
+
+        assert helpers.has_media(TWEET) is False
+        assert helpers.has_media(self.status) is False
+
+        assert helpers.has_symbol(self.status) is False
+        assert helpers.has_symbol(TWEET) is False
 
     def test_has_hashtag(self):
         assert helpers.has_hashtag(self.status) is False

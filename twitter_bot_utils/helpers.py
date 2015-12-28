@@ -44,9 +44,6 @@ def has_entity(status, entitykey):
     except AttributeError:
         return len(status['entities'][entitykey]) > 0
 
-    except KeyError:
-        return False
-
 
 def has_entities(status):
     """
@@ -58,15 +55,8 @@ def has_entities(status):
             return True
 
     except AttributeError:
-        try:
-            if sum(len(v) for v in status['entities'].values()) > 0:
-                return True
-
-        except KeyError:
-            raise
-
-    except KeyError:
-        pass
+        if sum(len(v) for v in status['entities'].values()) > 0:
+            return True
 
     return False
 
@@ -98,6 +88,7 @@ def remove_entities(status, entitylist):
 
     for start, end in indices:
         text = text[:start] + text[end:]
+
     return text
 
 
