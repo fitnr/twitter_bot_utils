@@ -47,12 +47,15 @@ class test_tbu_helpers(unittest.TestCase):
 
     def test_has_entities(self):
         assert helpers.has_entities(self.status) is True
+        assert helpers.has_entities(TWEET) is True
 
     def test_has_hashtag(self):
         assert helpers.has_hashtag(self.status) is False
+        assert helpers.has_hashtag(TWEET) is False
 
     def test_has_mention(self):
         assert helpers.has_mention(self.status)
+        assert helpers.has_mention(TWEET)
 
     def test_remove_entities(self):
         assert helpers.remove_entity(self.status, 'hashtags') == self.status.text
@@ -60,6 +63,8 @@ class test_tbu_helpers(unittest.TestCase):
             self.status, 'user_mentions') == " example tweet example tweet example tweet"
         assert helpers.remove_entities(
             self.status, ['hashtags', 'user_mentions']) == " example tweet example tweet example tweet"
+        assert helpers.remove_entities(
+            TWEET, ['hashtags', 'user_mentions']) == " example tweet example tweet example tweet"
 
     def test_replace_urls(self):
         assert helpers.replace_urls(self.status) == TWEET['text']

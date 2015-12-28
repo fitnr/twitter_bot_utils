@@ -40,16 +40,32 @@ def has_symbol(status):
 def has_entity(status, entitykey):
     try:
         return len(status.entities[entitykey]) > 0
-    except (AttributeError, KeyError):
+
+    except AttributeError:
+        return len(status['entities'][entitykey]) > 0
+
+    except KeyError:
         return False
 
 
 def has_entities(status):
+    """
+    Returns true if a Status object has entities.
+    status - either a tweepy.Status object or a dict returned from Twitter API
+    """
     try:
-        if len([i for v in list(status.entities.values()) for i in v]) > 0:
+        if sum(len(v) for v in status.entities.values()) > 0:
             return True
 
-    except (AttributeError, KeyError):
+    except AttributeError:
+        try:
+            if sum(len(v) for v in status['entities'].values()) > 0:
+                return True
+
+        except KeyError:
+            raise
+
+    except KeyError:
         pass
 
     return False
