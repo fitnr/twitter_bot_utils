@@ -66,7 +66,7 @@ def format_status(status):
 
 
 def format_text(text):
-    return HTMLParser().unescape(text).replace('\n', ' ').strip()
+    return HTMLParser().unescape(text).strip()
 
 
 def remove_entity(status, entitytype):
