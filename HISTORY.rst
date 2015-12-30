@@ -1,3 +1,10 @@
+0.10.4
+------
+* Add `include` argument to `args.parent`
+* Bump required `tweepy` to take advantage of `TweepError.api_code`
+* In Py 3, don't read config files as strings, not bytes
+* Check rate limits in follow/fave tools
+
 0.10.3
 ------
 * Simplify config section
