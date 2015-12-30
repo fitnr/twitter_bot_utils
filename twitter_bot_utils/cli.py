@@ -56,6 +56,7 @@ def authenticate():
 
     parser.add_argument('--consumer-key', metavar='key', type=str, help='consumer key (aka consumer token)')
     parser.add_argument('--consumer-secret', metavar='secret', type=str, help='consumer secret')
+    parser.add_argument('-V', '--version', action='version', version="%(prog)s " + version)
 
     arguments = parser.parse_args()
 

@@ -12,6 +12,7 @@ test:
 	$(PYTHON) setup.py --version --url
 	fave-mentions --version
 	auto-follow --version
+	twitter-auth --version
 
 deploy: README.rst | clean
 	python setup.py register
