@@ -18,6 +18,11 @@ import argparse
 
 
 def add_default_args(parser, version=None, include=None):
+    '''
+    Add default arguments to a parser.
+    :version str version to return on <cli> --version
+    :include sequence default arguments to add to cli. Default: (config, user, dry-run, verbose, quiet)
+    '''
     include = include or ['config', 'user', 'dry-run', 'verbose', 'quiet']
 
     if 'config' in include:
@@ -39,10 +44,14 @@ def add_default_args(parser, version=None, include=None):
         parser.add_argument('-V', '--version', action='version', version="%(prog)s " + version)
 
 
-def parent(version=None):
-    '''Return the default args as a parent parser, optionally adding a version'''
+def parent(version=None, include=None):
+    '''
+    Return the default args as a parent parser, optionally adding a version
+    :version str version to return on <cli> --version
+    :include sequence default arguments to add to cli. Default: (config, user, dry-run, verbose, quiet)
+    '''
     parser = argparse.ArgumentParser(add_help=False)
-    add_default_args(parser, version=version)
+    add_default_args(parser, version=version, include=include)
     return parser
 
 
