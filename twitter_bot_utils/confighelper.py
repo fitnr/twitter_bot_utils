@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # Copyright 2014 Neil Freeman
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -90,7 +91,7 @@ def parse(file_path):
         raise ValueError("Unrecognized config file type %s" % ext)
 
     with open(file_path, 'r') as f:
-        return func(f.read())
+        return func(f)
 
 
 def find_file(config_file=None, default_directories=None, default_bases=None):
