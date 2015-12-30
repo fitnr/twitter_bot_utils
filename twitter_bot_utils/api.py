@@ -52,8 +52,7 @@ class API(tweepy.API):
         self._screen_name = kwargs.pop('screen_name', None)
 
         # Add a logger
-        level = None
-        level = logging.DEBUG if kwargs.pop('verbose', None) else level
+        level = logging.DEBUG if kwargs.pop('verbose', None) else None
         level = logging.ERROR if kwargs.get('quiet', None) else level
         self.logger = tbu_args.add_logger(kwargs.pop('logger_name', self._screen_name), level,
                                           kwargs.pop('format', None))
@@ -138,7 +137,7 @@ class API(tweepy.API):
             super(API, self).update_status(*pargs, **kwargs)
 
         except tweepy.TweepError as e:
-            if e.message[0]['code'] == 503:
+            if e.api_code == 503:
                 sleep(10)
                 super(API, self).update_status(*pargs, **kwargs)
             else:
