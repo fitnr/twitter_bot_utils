@@ -23,7 +23,7 @@ deploy: README.rst | clean
 	git push --tags
 
 cov:
-	coverage run setup.py test
+	coverage run --include=twitter_bot_utils/* setup.py test
 	coverage html
 	open htmlcov/index.html
 
