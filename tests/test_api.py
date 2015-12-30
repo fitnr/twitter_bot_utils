@@ -1,5 +1,12 @@
+#!/usr/bin/env python
 import os
 import argparse
+try:
+    FileNotFoundError
+except NameError:
+    from errno import ENOENT
+    FileNotFoundError = lambda x: IOError(ENOENT, x)
+
 import unittest
 import mock
 import tweepy
@@ -8,18 +15,24 @@ from twitter_bot_utils import api, confighelper
 TIMELINE = [
     {
         "id": 1235,
+        "id_str": "1235",
         "in_reply_to_user_id": None,
-        "retweeted": False
+        "retweeted": False,
+        "text": "Asperiores libero distinctio cum laboriosam."
     },
     {
         "id": 1234,
+        "id_str": "1234",
         "in_reply_to_user_id": 1,
-        "retweeted": False
+        "retweeted": False,
+        "text": "consectetur adipisicing elit"
     },
     {
         "id": 1233,
+        "id_str": "1233",
         "retweeted": True,
         "in_reply_to_user_id": None,
+        "text": "Lorem ipsum dolor sit amet"
     },
 ]
 
@@ -34,6 +47,7 @@ class test_twitter_bot_utils(unittest.TestCase):
         self.api = tweepy.API()
 
         self.yaml = os.path.join(os.path.dirname(__file__), 'data', 'test.yaml')
+        self.json = os.path.join(os.path.dirname(__file__), 'data', 'test.json')
         self.simple = os.path.join(os.path.dirname(__file__), 'data', 'simple.yml')
 
         self.screen_name = 'example_screen_name'
@@ -55,6 +69,35 @@ class test_twitter_bot_utils(unittest.TestCase):
         conf = confighelper.parse(self.yaml)
         config = confighelper.configure(config_file=self.yaml, **conf)
         assert conf['custom'] == config['custom']
+
+    def testConfigKwargPassingJSON(self):
+        conf = confighelper.parse(self.json)
+        config = confighelper.configure(config_file=self.json, **conf)
+        assert conf['custom'] == config['custom']
+
+    def testConfigBadFileType(self):
+        with self.assertRaises(ValueError):
+            confighelper.parse(self.txtfile)
+
+    def testDumpConfig(self):
+        conf = confighelper.parse(self.json)
+        sink = 'a.json'
+        confighelper.dump(conf, sink)
+
+        dumped = confighelper.parse(sink)
+
+        assert dumped['custom'] == conf['custom']
+        assert 'users' in dumped
+
+        os.remove(sink)
+
+    def testDumpConfigBadFileType(self):
+        with self.assertRaises(ValueError):
+            confighelper.dump({}, 'foo.whatever')
+
+    def testMissingConfig(self):
+        with self.assertRaises(Exception):
+            confighelper.find_file('imaginary.yaml', (os.path.dirname(__file__),))
 
     def test_config_setup(self):
         config = confighelper.configure(self.screen_name, config_file=self.yaml, random='foo')
@@ -107,7 +150,6 @@ class test_twitter_bot_utils(unittest.TestCase):
         assert twitter.screen_name == 'example_screen_name'
         assert twitter.app == 'example_app_name'
 
-
     @mock.patch.object(tweepy.API, 'user_timeline', return_value=fake_timeline())
     def test_recent_tweets(self, _):
 
@@ -125,15 +167,17 @@ class test_twitter_bot_utils(unittest.TestCase):
         assert twitter.last_retweet is None
         assert twitter.last_reply is None
 
-    # @mock.patch.object(tweepy.API, 'user_timeline', return_value=[])
-    # def test_recent_tweets_no_tl(self, _):
+    @mock.patch.object(tweepy.OAuthHandler, 'set_access_token')
+    def testSetupAuth(self, *_):
+        keys = {
+            "consumer_key": 'AAA',
+            "consumer_secret": "BBB",
+            "key": "CCC",
+            "secret": "DDD"
+        }
 
-    #     twitter = api.API(self.args)
-
-    #     self.assertEqual(twitter.last_tweet, None)
-    #     assert twitter.last_retweet is None
-    #     assert twitter.last_reply is None
-
+        auth = confighelper.setup_auth(**keys)
+        assert isinstance(auth, tweepy.OAuthHandler)
 
 if __name__ == '__main__':
     unittest.main()

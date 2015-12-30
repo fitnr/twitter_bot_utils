@@ -1,0 +1,19 @@
+{
+    "users": {
+        "example_screen_name": {
+            "key": "INDIA",
+            "secret": "LIMA",
+            "app": "example_app_name",
+            "custom": "user"
+        }
+    },
+    "apps": {
+        "example_app_name": {
+            "consumer_key": "NOVEMBER",
+            "consumer_secret": "ECHO",
+            "custom": "app"
+        }
+    },
+    "custom": "general",
+    "utf8": "åéîøü and ¥"
+}
