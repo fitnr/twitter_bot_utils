@@ -22,7 +22,7 @@ ARGS = ['config', 'dry-run', 'verbose', 'quiet']
 AUTHORIZATION_FAILED_MESSAGE = "Authorization failed. Check that the consumer key and secret are correct."
 
 def fave_mentions():
-    parser = ArgumentParser(description='fave mentions', usage='%(prog)s [options] screen_name')
+    parser = ArgumentParser(description='fave/like mentions', usage='%(prog)s [options] screen_name')
     parser.add_argument('screen_name', type=str)
     args.add_default_args(parser, version=version, include=ARGS)
 
