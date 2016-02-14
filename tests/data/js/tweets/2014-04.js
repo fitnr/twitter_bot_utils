@@ -92,7 +92,7 @@ Grailbird.data.tweets_2014_04 =
             "media": [],
             "hashtags": [
                 {
-                    "text": "fuck",
+                    "text": "ééé",
                     "indices": [
                         0,
                         5
@@ -110,7 +110,7 @@ Grailbird.data.tweets_2014_04 =
         },
         "geo": {},
         "id_str": "6132827606",
-        "text": "#fuck #buttons",
+        "text": "#ééé #buttons",
         "id": 6132827606,
         "created_at": "2009-11-28 00:00:00 +0000",
         "user": {

@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 import sys
 import os
 import unittest
@@ -87,12 +89,26 @@ class test_twitter_bot_utils(unittest.TestCase):
     def test_loading_archive_data(self):
         archives = archive.read_json(self.archive)
         assert inspect.isgenerator(archives)
-        self.assertEqual(len(list(archives)), 3)
+        a = list(archives)
+        self.assertEqual(len(a), 3)
+
+        self.assertEqual(a[2]['text'], u"#ééé #buttons")
 
     def test_loading_text_data(self):
         txt = archive.read_text(self.txtfile)
         assert inspect.isgenerator(txt)
-        assert len(list(txt)) == 4
+        tweets = list(txt)
+
+        try:
+            self.assertIsInstance(tweets[0], unicode)
+            assert isinstance(tweets[4], unicode)
+        except NameError:
+            assert isinstance(tweets[0], str)
+            assert isinstance(tweets[4], str)
+
+        self.assertEqual(len(tweets), 6)
+        self.assertEqual(tweets[4], u'Tweet with an åccent')
+        self.assertEqual(tweets[5], u'Tweet with an 😀 emoji')
 
 
 if __name__ == '__main__':
