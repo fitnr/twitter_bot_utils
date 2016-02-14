@@ -15,7 +15,7 @@
 from . import api, args, archive, confighelper, helpers, tools
 from .api import API
 
-__version__ = '0.10.4'
+__version__ = '0.10.5'
 __author__ = 'Neil Freeman'
 __license__ = 'GPL-3.0'
 __all__ = ['api', 'args', 'archive', 'confighelper', 'helpers', 'tools']

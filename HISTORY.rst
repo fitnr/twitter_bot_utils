@@ -1,3 +1,9 @@
+0.10.5
+------
+
+* Fix encoding bug when reading non-ASCII text from archives.
+* Add docs
+
 0.10.4
 ------
 * Add `include` argument to `args.parent`
