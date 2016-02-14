@@ -8,28 +8,22 @@ Works with Python 2.7, 3.4 and 3.5 (2.6 & 3.3 probably work, too).
 
 Install with `pip install twitter_bot_utils`.
 
-## Setting up credentials
+See a basic run through in the [Hello World](https://pythonhosted.org/twitter_bot_utils/helloworld.html) section of the [documentation](https://pythonhosted.org/twitter_bot_utils).
+
+## Authenticating
 
 One hurdle with setting up bots is getting the proper authentication keys. It can be a bit of a pain to log in and out of Twitter's app site. Twitter bot utils comes with `twitter-auth`, a command line helper for this:
 ````
 $ twitter-auth --consumer-key 1233... --consumer-key 345...
 ````
 
-This will prompt you with an url. Open this in a browser where your bot is logged in, click "Authorize". Twitter will show you an authorization code, enter this on the command line. Your keys will be shown. Copy them somewhere safe and continue on your botmaking! It looks like this:
-
-````
-https://api.twitter.com/oauth/authorize?oauth_token=lKECZQAAAAAAD6laAAABUdEkalo
-Please visit this url, click "Authorize app" and enter in the PIN:
-> 1234567
-key: 9823742342-abc123abc123abc123abc123abc123
-secret: def456def456def456def456def456def456
-````
+This will prompt you with an url. Open this in a browser where your bot is logged in, click "Authorize". Twitter will show you an authorization code, enter this on the command line, and presto! your keys will be displayed.
 
 `twitter-auth` is inspired by a feature of [`twurl`](https://github.com/twitter/twurl), Twitter's full-fledged command line tool.
 
 ## Config files
 
-One goal of Twitter bot utils is to create Tweepy instances with authentication data stored in a simple config file. This gives botmakers a simple, reusable place to store keys outside of source control.
+One goal of Twitter Bot Utils is to create Tweepy instances with authentication data stored in a simple config file. This gives botmakers a simple, reusable place to store keys outside of source control.
 
 By default, Twitter bot utils looks for a file called `bots.yaml` or `bots.json` in the current directory, your home directory (`~/`) or the `~/bots` directory. Custom config locations can be set, too.
 
@@ -68,10 +62,6 @@ apps:
 The `twitter-auth` utility will happily read settings from a `bots.yaml` file:
 
 ````
-# basic layout
-twitter-auth -c ~/bots.json
-
-# multi-bot layout
 twitter-auth -c ~/bots.yaml --app my_app_name
 ````
 
@@ -273,7 +263,7 @@ tbu.helpers.remove_entities(results[0], ['urls', 'hashtags', 'media'])
 # 'This is an example tweet with a  and a link '
 ````
 
-### Command Line Utilities
+### Command line utilities
 * `auto-follow`: Follow accounts that follow your bot
 * `fave-mentions`: Favorite your bot's mentions
 * `twitter-auth`: Authenticate and account with a Twitter app.

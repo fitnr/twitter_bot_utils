@@ -12,6 +12,11 @@ Twitter bot utils is somewhat opinionated: it assumes that you want to
 create command line tools, and that you can store your keys in a basic text
 configuration files. See :doc:`./helloworld` for a basic run-through.
 
+Some additional documentation is in the `readme <https://github.com/fitnr/twitter_bot_utils/blob/master/README.md>`__.
+
+This package is intended to assist with the creation of bots for artistic
+or personal projects. Don't use it to spam or harrass people.
+
 .. toctree::
    :maxdepth: 2
 
@@ -19,10 +24,8 @@ configuration files. See :doc:`./helloworld` for a basic run-through.
    API
    cli
 
-
-Indices and tables
-==================
+Index
+======
 
 * :ref:`genindex`
 * :ref:`modindex`
-
