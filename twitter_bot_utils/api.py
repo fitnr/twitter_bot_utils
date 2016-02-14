@@ -142,7 +142,7 @@ class API(tweepy.API):
             super(API, self).update_status(*pargs, **kwargs)
 
         except tweepy.TweepError as e:
-            if e.api_code == 503:
+            if getattr(e, 'api_code', None) == 503:
                 sleep(10)
                 super(API, self).update_status(*pargs, **kwargs)
             else:

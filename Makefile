@@ -13,8 +13,10 @@ docs.zip: $(wildcard docs/*.rst docs/*/*.rst)
 
 .PHONY: test deploy clean cov
 test:
-	$(PYTHON) setup.py test
 	$(PYTHON) setup.py --version --url
+	coverage run --include=twitter_bot_utils/*,build/lib/* setup.py -q test
+	coverage report
+	coverage html
 	fave-mentions --version
 	auto-follow --version
 	twitter-auth --version
@@ -26,10 +28,5 @@ deploy: README.rst | clean
 	twine upload dist/*
 	git push
 	git push --tags
-
-cov:
-	coverage run --include=twitter_bot_utils/*,build/lib/* setup.py -q test
-	coverage report
-	coverage html
 
 clean: ; rm -rf build dist

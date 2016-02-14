@@ -113,10 +113,11 @@ class test_twitter_bot_utils(unittest.TestCase):
         assert config['consumer_key'] == 'NOVEMBER'
         assert config['random'] == 'foo'
 
-    def test_api_creation(self):
+    def test_api_creation_kws(self):
         twitter = api.API(**vars(self.args))
         assert isinstance(twitter, api.API)
 
+    def test_api_creation_ns(self):
         twitter = api.API(self.args, config_file=self.yaml)
         assert isinstance(twitter, api.API)
 
