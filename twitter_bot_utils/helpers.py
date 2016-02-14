@@ -48,7 +48,9 @@ def has_entity(status, entitykey):
 def has_entities(status):
     """
     Returns true if a Status object has entities.
-    status - either a tweepy.Status object or a dict returned from Twitter API
+
+    Args:
+        status: either a tweepy.Status object or a dict returned from Twitter API
     """
     try:
         if sum(len(v) for v in status.entities.values()) > 0:
@@ -75,7 +77,7 @@ def remove_entity(status, entitytype):
 
 
 def remove_entities(status, entitylist):
-    '''Remove entities for a list of items'''
+    '''Remove entities for a list of items.'''
     try:
         entities = status.entities
         text = status.text
@@ -93,7 +95,15 @@ def remove_entities(status, entitylist):
 
 
 def replace_urls(status):
-    '''replace URLS with expanded urls'''
+    '''
+    Replace shorturls in a status with expanded urls.
+
+    Args:
+        status (tweepy.status): A tweepy status object
+
+    Returns:
+        str
+    '''
     text = status.text
 
     if not has_url(status):
@@ -109,9 +119,11 @@ def replace_urls(status):
 
 
 def shorten(string, length=140, ellipsis=None):
-    '''Shorten a string to 140 characters without breaking words.
+    '''
+    Shorten a string to 140 characters without breaking words.
     Optionally add an ellipsis character: '…' if ellipsis=True, or a given string
-    e.g. ellipsis=' (cut)' '''
+    e.g. ellipsis=' (cut)'
+    '''
     string = string.strip()
 
     if len(string) > length:
@@ -129,13 +141,19 @@ def shorten(string, length=140, ellipsis=None):
 
 
 def queryize(terms, exclude_screen_name=None):
-    '''Create query from list of terms, using OR
+    '''
+    Create query from list of terms, using OR
     but intelligently excluding terms beginning with '-' (Twitter's NOT operator).
     Optionally add -from:exclude_screen_name.
-    Returns a string ready to be passed to tweepy.API.search
 
     >>> helpers.queryize(['apple', 'orange', '-peach'])
     u'apple OR orange -peach'
+
+    Args:
+        terms (list): Search terms.
+        exclude_screen_name (str): A single screen name to exclude from the search.
+    Returns:
+        A string ready to be passed to tweepy.API.search
     '''
     ors = (x for x in terms if x[0] != '-')
     nots = (x for x in terms if x[0] == '-')
@@ -147,9 +165,11 @@ def chomp(text, max_len=140, split=None):
     '''
     Shorten a string so that it fits under max_len, splitting it at 'split'.
     Not guaranteed to return a string under max_len, as it may not be possible
-    :text str String to shorten
-    :max_len int maximum length. default 140
-    :split str strings to split on (default is common punctuation: "-;,.")
+
+    Args:
+        text (str): String to shorten
+        max_len (int): maximum length. default 140
+        split (str): strings to split on (default is common punctuation: "-;,.")
     '''
     split = split or '—;,.'
     while len(text) > max_len:

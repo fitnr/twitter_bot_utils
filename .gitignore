@@ -8,3 +8,5 @@ readme.rst
 .eggs
 *.egg
 bots.yaml
+
+docs/_build

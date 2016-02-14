@@ -19,11 +19,19 @@ import argparse
 
 def add_default_args(parser, version=None, include=None):
     '''
-    Add default arguments to a parser.
-    :version str version to return on <cli> --version
-    :include sequence default arguments to add to cli. Default: (config, user, dry-run, verbose, quiet)
+    Add default arguments to a parser. These are:
+        - config: argument for specifying a configuration file.
+        - user: argument for specifying a user.
+        - dry-run: option for running without side effects.
+        - verbose: option for running verbosely.
+        - quiet: option for running quietly.
+        - version: option for spitting out version information.
+
+    Args:
+        version (str): version to return on <cli> --version
+        include (Sequence): default arguments to add to cli. Default: (config, user, dry-run, verbose, quiet)
     '''
-    include = include or ['config', 'user', 'dry-run', 'verbose', 'quiet']
+    include = include or ('config', 'user', 'dry-run', 'verbose', 'quiet')
 
     if 'config' in include:
         parser.add_argument('-c', '--config', dest='config_file', metavar='PATH', default=None,
@@ -47,8 +55,10 @@ def add_default_args(parser, version=None, include=None):
 def parent(version=None, include=None):
     '''
     Return the default args as a parent parser, optionally adding a version
-    :version str version to return on <cli> --version
-    :include sequence default arguments to add to cli. Default: (config, user, dry-run, verbose, quiet)
+
+    Args:
+        version (str): version to return on <cli> --version
+        include (Sequence): default arguments to add to cli. Default: (config, user, dry-run, verbose, quiet)
     '''
     parser = argparse.ArgumentParser(add_help=False)
     add_default_args(parser, version=version, include=include)
@@ -56,7 +66,18 @@ def parent(version=None, include=None):
 
 
 def add_logger(name, level=None, format=None):
-    '''Set up a stdout logger'''
+    '''
+    Set up a stdout logger.
+
+    Args:
+        name (str): name of the logger
+        level: defaults to logging.INFO
+        format (str): format string for logging output.
+                      defaults to ``%(filename)-11s %(lineno)-3d: %(message)s``.
+
+    Returns:
+        The logger object.
+    '''
     format = format or '%(filename)-11s %(lineno)-3d: %(message)s'
     log = logging.getLogger(name)
 

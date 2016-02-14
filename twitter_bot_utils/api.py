@@ -29,21 +29,26 @@ PROTECTED_INFO = [
 
 class API(tweepy.API):
 
-    '''Extends the tweepy API with config-file handling'''
+    '''
+    Extends the tweepy API with config-file handling.
+
+    Args:
+        args (Namespace): argparse.Namespace to read.
+        screen_name (str): Twitter screen name
+        config_file (str): Config file. Defaults to bots.json or bots.yaml in ~/ or ~/bots/.
+        logger_name (str): Use a logger with this name. Defaults to screen_name
+        format (str): Format for logger. Defaults to 'file lineno: message'
+        verbose (bool): Set logging level to DEBUG
+        quiet (bool): Set logging level to ERROR. Overrides verbose.
+        kwargs: Other settings will be passed to the config
+    '''
 
     _last_tweet = _last_reply = _last_retweet = None
 
     def __init__(self, args=None, **kwargs):
         '''
         Construct the tbu.API object.
-        :args Namespace argparse.Namespace to read.
-        :screen_name str Twitter screen name
-        :config_file str Config file. Defaults to bots.json or bots.yaml in ~/ or ~/bots/.
-        :logger_name str Use a logger with this name. Defaults to screen_name
-        :format str Format for logger. Defaults to 'file lineno: message'
-        :verbose bool Set logging level to DEBUG
-        :quiet bool Set logging level to ERROR. Overrides verbose.
-        :kwargs Other settings will be passed to the config
+
         '''
         # Update the kwargs with contents of args
         if isinstance(args, Namespace):

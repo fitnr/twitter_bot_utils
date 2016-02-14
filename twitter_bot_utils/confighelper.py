@@ -43,11 +43,13 @@ CONFIG_BASES = [
 def configure(screen_name=None, config_file=None, app=None, **kwargs):
     """
     Set up a config dictionary using a bots.yaml config file and optional keyword args.
-    :screen_name string screen_name of user to search for in config file
-    :config_file string Path to read for the config file
-    :app string Name of the app to look for in the config file. Defaults to the one set in users.{screen_name}.
-    :default_directories string Directories to read for the bots.yaml/json file. Defaults to CONFIG_DIRS.
-    :default_bases string File names to look for in the directories. Defaults to CONFIG_BASES.
+
+    Args:
+        screen_name (str): screen_name of user to search for in config file
+        config_file (str): Path to read for the config file
+        app (str): Name of the app to look for in the config file. Defaults to the one set in users.{screen_name}.
+        default_directories (str): Directories to read for the bots.yaml/json file. Defaults to CONFIG_DIRS.
+        default_bases (str): File names to look for in the directories. Defaults to CONFIG_BASES.
     """
     # Use passed config file, or look for it in the default path.
     # Super-optionally, accept a different place to look for the file
@@ -77,7 +79,7 @@ def configure(screen_name=None, config_file=None, app=None, **kwargs):
 
 
 def parse(file_path):
-    '''Parse a YAML or JSON file'''
+    '''Parse a YAML or JSON file.'''
 
     _, ext = path.splitext(file_path)
 
@@ -95,7 +97,7 @@ def parse(file_path):
 
 
 def find_file(config_file=None, default_directories=None, default_bases=None):
-    '''Search for a config file in a list of files'''
+    '''Search for a config file in a list of files.'''
 
     if config_file:
         if path.exists(path.expanduser(config_file)):
@@ -117,7 +119,7 @@ def find_file(config_file=None, default_directories=None, default_bases=None):
 
 
 def setup_auth(**keys):
-    '''Setup tweepy authentication using passed args or config file settings'''
+    '''Set up Tweepy authentication using passed args or config file settings.'''
 
     auth = tweepy.OAuthHandler(consumer_key=keys['consumer_key'], consumer_secret=keys['consumer_secret'])
     auth.set_access_token(key=keys['key'], secret=keys['secret'])
