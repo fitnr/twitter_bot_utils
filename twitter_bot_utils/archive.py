@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # Copyright 2014 Neil Freeman contact@fakeisthenewreal.org
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -17,6 +18,7 @@ import json
 import csv
 from glob import iglob
 
+
 def read_csv(directory):
     '''
     Scrape a twitter archive csv, yielding tweet text.
@@ -28,13 +30,13 @@ def read_csv(directory):
 
     with open(csvfile, 'r') as f:
         for tweet in csv.DictReader(f):
-
             try:
                 tweet['text'] = unicode(tweet['text'], 'utf-8')
             except TypeError:
                 pass
 
             yield tweet
+
 
 def read_json(directory, data_files='data/js/tweets/*.js'):
     '''
@@ -59,4 +61,7 @@ def read_text(data_file):
         data = f.readlines()
 
     for tweet in data:
-        yield tweet.rstrip()
+        try:
+            yield unicode(tweet.rstrip(), 'utf-8')
+        except TypeError:
+            yield tweet.rstrip()
