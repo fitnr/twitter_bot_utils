@@ -21,7 +21,7 @@ or personal projects. Don't use it to spam or harrass people.
    :maxdepth: 2
 
    helloworld
-   API
+   api
    cli
 
 Index

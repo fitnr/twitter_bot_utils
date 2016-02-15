@@ -6,7 +6,7 @@ README.rst: README.md
 	@touch $@
 	python setup.py check --restructuredtext --strict
 
-docs.zip: $(wildcard docs/*.rst docs/*/*.rst)
+docs.zip: docs/source/conf.py $(wildcard docs/*.rst docs/*/*.rst)
 	$(MAKE) -C docs html
 	cd docs/_build/html; \
 	zip -qr ../../../$@ . -x '*/.DS_Store' .DS_Store
