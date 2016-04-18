@@ -1,39 +1,39 @@
 Command line tools
 ==================
 
-Twitter Bot Utils comes with three command line tools:
+Twitter Bot Utils comes with the ``tbu`` command line tool, which has several subcommands:
 
-- fave-mentions
-- auto-follow
-- twitter-auth
+- tbu auth
+- tbu follow
+- tbu like
+- tbu post
 
-fave-mentions
--------------
+tbu auth
+------------
 
-.. code:: bash
+::
 
-    usage: fave-mentions [options] screen_name
+    usage: tbu auth [-h] [-c file] [--app app] [-s] [--consumer-key key]
+                        [--consumer-secret secret] [-V]
 
-    fave/like mentions
-
-    positional arguments:
-      screen_name
+    Authorize an account with a twitter application.
 
     optional arguments:
       -h, --help            show this help message and exit
-      -c PATH, --config PATH
-                            bots config file (json or yaml)
-      -n, --dry-run         Don't actually do anything
-      -v, --verbose         Run talkatively
-      -q, --quiet           Run quietly
+      -c file               config file
+      --app app             app name in config file
+      -s, --save            Save details to config file
+      --consumer-key key    consumer key (aka consumer token)
+      --consumer-secret secret
+                            consumer secret
       -V, --version         show program's version number and exit
 
-auto-follow
+tbu follow
 -----------
 
-.. code:: bash
+::
 
-    usage: auto-follow [options] screen_name
+    usage: tbu follow [options] screen_name
 
     automatic following and unfollowing
 
@@ -50,22 +50,46 @@ auto-follow
       -q, --quiet           Run quietly
       -V, --version         show program's version number and exit
 
-twitter-auth
-------------
+tbu like
+--------
 
-.. code:: bash
+::
 
-    usage: twitter-auth [-h] [-c file] [--app app] [-s] [--consumer-key key]
-                        [--consumer-secret secret] [-V]
+    usage: tbu like [options] screen_name
 
-    Authorize an account with a twitter application.
+    fave/like mentions
+
+    positional arguments:
+      screen_name
 
     optional arguments:
       -h, --help            show this help message and exit
-      -c file               config file
-      --app app             app name in config file
-      -s, --save            Save details to config file
-      --consumer-key key    consumer key (aka consumer token)
-      --consumer-secret secret
-                            consumer secret
+      -c PATH, --config PATH
+                            bots config file (json or yaml)
+      -n, --dry-run         Don't actually do anything
+      -v, --verbose         Run talkatively
+      -q, --quiet           Run quietly
       -V, --version         show program's version number and exit
+
+
+tbu post
+--------
+
+::
+
+    usage: tbu post screen_name "update" [options]
+
+    Post text to a given twitter account
+
+    positional arguments:
+      screen_name
+      update
+
+    optional arguments:
+      -h, --help            show this help message and exit
+      -m MEDIA_FILE, --media-file MEDIA_FILE
+      -c PATH, --config PATH
+                            bots config file (json or yaml)
+      -n, --dry-run         Don't actually do anything
+      -v, --verbose         Run talkatively
+      -q, --quiet           Run quietly

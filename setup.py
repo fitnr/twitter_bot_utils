@@ -44,6 +44,8 @@ setup(
 
     tests_require=[
         'coverage',
-        'mock'
+        'mock',
+        'sphinx',
+        'sphinx_rtd_theme'
     ],
 )

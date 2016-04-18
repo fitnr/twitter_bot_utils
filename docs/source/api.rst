@@ -8,6 +8,7 @@ The ``api.API`` object is a wrapper around ``tweepy.API`` with some additional m
 
 .. automodule:: twitter_bot_utils.api
    :members:
+   :undoc-members:
 
 args
 ----
@@ -18,6 +19,7 @@ See the :doc:`helloworld` for a fleshed-out example.
 
 .. automodule:: twitter_bot_utils.args
    :members:
+   :undoc-members:
 
 helpers
 -------
@@ -26,3 +28,4 @@ These helpers are useful for interacting with the metadata in a Tweepy tweet obj
 
 .. automodule:: twitter_bot_utils.helpers
    :members:
+   :undoc-members:

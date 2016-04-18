@@ -88,3 +88,22 @@ To tweet, run this:
     I just tweeted!
 
 Now you can go ahead and add this command to ``cron``, and you're good to go!
+
+Another approach
+----------------
+
+Create the ``bots.yaml`` file as above, but when creating your bot, just set it to print a tweet:
+
+.. code:: python
+
+   def main():
+       print('This is a tweet!')
+
+    if __name__ == '__main__':
+        main()
+
+Now, pipe your scripts output to the ``tbu post`` command:
+
+.. code:: bash
+
+    $ python3 my_twitter_bot.py | tbu post MyBotName
