@@ -28,7 +28,8 @@ setup(
         'console_scripts': [
             'fave-mentions=twitter_bot_utils.cli:fave_mentions',
             'auto-follow=twitter_bot_utils.cli:auto_follow',
-            'twitter-auth=twitter_bot_utils.cli:authenticate'
+            'twitter-auth=twitter_bot_utils.cli:authenticate',
+            'tbu=twitter_bot_utils.cli:main',
         ],
     },
 

@@ -12,14 +12,14 @@ See a basic run through in the [Hello World](https://pythonhosted.org/twitter_bo
 
 ## Authenticating
 
-One hurdle with setting up bots is getting the proper authentication keys. It can be a bit of a pain to log in and out of Twitter's app site. Twitter bot utils comes with `twitter-auth`, a command line helper for this:
+One hurdle with setting up bots is getting the proper authentication keys. It can be a bit of a pain to log in and out of Twitter's app site. Twitter bot utils comes with `tbu auth`, a command line helper for this:
 ````
 $ twitter-auth --consumer-key 1233... --consumer-key 345...
 ````
 
 This will prompt you with an url. Open this in a browser where your bot is logged in, click "Authorize". Twitter will show you an authorization code, enter this on the command line, and presto! your keys will be displayed.
 
-`twitter-auth` is inspired by a feature of [`twurl`](https://github.com/twitter/twurl), Twitter's full-fledged command line tool.
+`tbu auth` is inspired by a feature of [`twurl`](https://github.com/twitter/twurl), Twitter's full-fledged command line tool.
 
 ## Config files
 
@@ -264,6 +264,10 @@ tbu.helpers.remove_entities(results[0], ['urls', 'hashtags', 'media'])
 ````
 
 ### Command line utilities
-* `auto-follow`: Follow accounts that follow your bot
-* `fave-mentions`: Favorite your bot's mentions
-* `twitter-auth`: Authenticate and account with a Twitter app.
+
+Twitter bot utils includes a command line tool with a few useful subcommands:
+
+* `tbu auth`: Authenticate and account with a Twitter app.
+* `tbu follow`: Follow accounts that follow your bot
+* `tbu like`: Like (aka favorite) your bot's mentions
+* `tbu post`: Basic command line for posting text and images

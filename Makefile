@@ -20,9 +20,10 @@ test:
 	coverage run --include=twitter_bot_utils/*,build/lib/* setup.py -q test
 	coverage report
 	coverage html
-	fave-mentions --version
-	auto-follow --version
-	twitter-auth --version
+	tbu --version
+	tbu like --help
+	tbu follow --help
+	tbu auth --help
 
 deploy: README.rst | clean
 	python setup.py register
