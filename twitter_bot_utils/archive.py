@@ -19,14 +19,15 @@ import csv
 from glob import iglob
 
 
-def read_csv(directory, header=True):
+def read_csv(directory):
     '''
     Scrape a twitter archive csv, yielding tweet text.
 
     Args:
         directory (str): CSV file or (directory containing tweets.csv).
-        header (boolean): pass False if input CSV has no headers and contains
-                          one tweet per line (default: True).
+        field (str): Field with the tweet's text (default: text).
+        fieldnames (list): The column names for a csv with no header. Must contain <field>.
+                            Leave as None to read CSV header (default: None).
 
     Returns:
         generator
@@ -37,10 +38,7 @@ def read_csv(directory, header=True):
         csvfile = directory
 
     with open(csvfile, 'r') as f:
-        if not header:
-            fieldnames = ['text']
-
-        for tweet in csv.DictReader(f, fieldnames=fieldnames):
+        for tweet in csv.DictReader(f):
             try:
                 tweet['text'] = unicode(tweet['text'], 'utf-8')
             except TypeError:

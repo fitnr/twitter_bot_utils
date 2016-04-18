@@ -46,22 +46,22 @@ TWEET = {
 
 class test_twitter_bot_utils(unittest.TestCase):
 
+    screen_name = 'example_screen_name'
+
+    archive = os.path.dirname(__file__)
+    csvfile = os.path.join(os.path.dirname(__file__), 'data', 'tweets.csv')
+    txtfile = os.path.join(os.path.dirname(__file__), 'data', 'tweets.txt')
+    yaml = os.path.join(os.path.dirname(__file__), 'data', 'test.yaml')
+
     def setUp(self):
         self.api = tweepy.API()
         self.status = tweepy.Status.parse(self.api, TWEET)
-
-        self.yaml = os.path.join(os.path.dirname(__file__), 'data', 'test.yaml')
-
-        self.screen_name = 'example_screen_name'
 
         parent = args.parent(version='1.2.3')
         self.parser = argparse.ArgumentParser(description='desc', parents=[parent])
 
         sys.argv = ['test', '--dry-run', '-v', '-c', self.yaml]
         self.args = self.parser.parse_args()
-
-        self.txtfile = os.path.join(os.path.dirname(__file__), 'data', 'tweets.txt')
-        self.archive = os.path.dirname(__file__)
 
     def test_setup(self):
         assert isinstance(self.parser, argparse.ArgumentParser)
@@ -93,6 +93,22 @@ class test_twitter_bot_utils(unittest.TestCase):
         self.assertEqual(len(a), 3)
 
         self.assertEqual(a[2]['text'], u"#ééé #buttons")
+
+    def test_loading_csv_data(self):
+        txt = archive.read_csv(self.csvfile)
+        assert inspect.isgenerator(txt)
+        tweets = list(txt)
+
+        try:
+            self.assertIsInstance(tweets[0]['text'], unicode)
+            assert isinstance(tweets[4]['text'], unicode)
+        except NameError:
+            assert isinstance(tweets[0]['text'], str)
+            assert isinstance(tweets[4]['text'], str)
+
+        self.assertEqual(len(tweets), 6)
+        self.assertEqual(tweets[4]['text'], u'Tweet with an åccent')
+        self.assertEqual(tweets[5]['text'], u'Tweet with an 😀 emoji')
 
     def test_loading_text_data(self):
         txt = archive.read_text(self.txtfile)
