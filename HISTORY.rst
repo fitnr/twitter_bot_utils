@@ -1,3 +1,8 @@
+0.11.1
+------
+
+* Remove (no)header option.
+
 0.11.0
 ------
 
