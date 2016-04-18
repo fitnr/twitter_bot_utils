@@ -1,3 +1,9 @@
+0.11.0
+------
+
+* Consolidated command line tools to subcommands of `tbu`. Added deprecation warnings to earlier versions of commands.
+* Add (no)header option to archive reading.
+
 0.10.5
 ------
 
