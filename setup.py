@@ -5,10 +5,13 @@ try:
 except IOError:
     readme = ''
 
+with open('twitter_bot_utils/__init__.py') as i:
+    version = next(r for r in i.readlines() if '__version__' in r).split('=')[1].strip('"\' \n')
+
 setup(
     name='twitter_bot_utils',
 
-    version='0.10.5',
+    version=version,
 
     description='Python utilities for twitter bots',
 
