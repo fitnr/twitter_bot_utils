@@ -1,12 +1,15 @@
 PYTHON=python
 PYTHON3=python3
 
+.PHONY: all
+all: README.rst docs.zip
+
 README.rst: README.md
 	- pandoc $< -o $@
 	@touch $@
 	python setup.py check --restructuredtext --strict
 
-docs.zip: docs/source/conf.py $(wildcard docs/*.rst docs/*/*.rst)
+docs.zip: docs/source/conf.py $(wildcard docs/*.rst docs/*/*.rst twitter_bot_utils/*.py) 
 	$(MAKE) -C docs html
 	cd docs/_build/html; \
 	zip -qr ../../../$@ . -x '*/.DS_Store' .DS_Store
