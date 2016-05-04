@@ -72,8 +72,8 @@ def authenticate(arguments=None):
 
     # Use passed credentials.
     if arguments.consumer_key and arguments.consumer_secret:
-        consumer_secret = arguments.consumer_key
-        consumer_key = arguments.consumer_secret
+        consumer_key = arguments.consumer_key
+        consumer_secret = arguments.consumer_secret
 
     # Go find credentials.
     else:
