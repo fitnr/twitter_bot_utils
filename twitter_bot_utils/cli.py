@@ -70,6 +70,14 @@ def authenticate(arguments=None):
         arguments = parser.parse_args()
         print(DEPRECATION, file=sys.stderr)
 
+    # it's possible to pass keys and then save them to the files
+    if arguments.config_file:
+        file_name = confighelper.find_file(arguments.config_file)
+        config = confighelper.parse(file_name)
+    else:
+        file_name = None
+        config = {}
+
     # Use passed credentials.
     if arguments.consumer_key and arguments.consumer_secret:
         consumer_key = arguments.consumer_key
@@ -77,9 +85,6 @@ def authenticate(arguments=None):
 
     # Go find credentials.
     else:
-        file_name = confighelper.find_file(arguments.config_file)
-        config = confighelper.parse(file_name)
-
         try:
             conf = config['apps'][arguments.app] if arguments.app else config
 
@@ -101,21 +106,29 @@ def authenticate(arguments=None):
         print(AUTHORIZATION_FAILED_MESSAGE)
         return
 
+    # True is the const passed when no file name is given
+    if arguments.save is not True:
+        file_name = arguments.save
+
     # Save the keys back to the config file
-    if arguments.save:
-        if arguments.app:
-            try:
-                section = config['users'][auth.get_username()]
-            except KeyError:
-                section = config['users'][auth.get_username()] = {}
+    if arguments.save and file_name:
+        apps = config['apps'] = config.get('apps', {})
+        users = config['users'] = config.get('users', {})
 
-            section['app'] = arguments.app
+        app = arguments.app or 'default'
+        screen_name = auth.get_username().encode('utf-8')
 
-        else:
-            section = config
-
-        section['key'] = auth.access_token.encode('utf-8')
-        section['secret'] = auth.access_token_secret.encode('utf-8')
+        apps[app] = apps.get(app, {})
+        apps[app].update({
+            'consumer_key': consumer_key,
+            'consumer_secret': consumer_secret,
+        })
+        users[screen_name] = users.get(screen_name, {})
+        users[screen_name].update({
+            'key': auth.access_token.encode('utf-8'),
+            'secret': auth.access_token_secret.encode('utf-8'),
+            'app': (arguments.app or 'default')
+        })
 
         confighelper.dump(config, file_name)
 
@@ -173,7 +186,8 @@ def main():
                                  usage='%(prog)s [options]')
     auth.add_argument('-c', metavar='file', type=str, default=None, dest='config_file', help='config file')
     auth.add_argument('--app', metavar='app', type=str, help='app name in config file')
-    auth.add_argument('-s', '--save', action='store_true', help='Save details to config file')
+    auth.add_argument('-s', '--save', nargs='?', const=True,
+                      help='Save details to config file. If no file is given, uses file in --config.')
     auth.add_argument('--consumer-key', metavar='key', type=str, help='consumer key (aka consumer token)')
     auth.add_argument('--consumer-secret', metavar='secret', type=str, help='consumer secret')
     auth.set_defaults(func=authenticate)
