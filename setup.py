@@ -39,7 +39,7 @@ setup(
     use_2to3=True,
 
     install_requires=[
-        'tweepy >=3.5.0, <4',
+        'tweepy >=3.4.0, <4',
         'PyYAML==3.11',
     ],
 
