@@ -1,3 +1,8 @@
+0.11.2
+------
+* Fixes and expands `tbu auth` interface (issues #4 and #5)
+* Allow install for a greater range of twitter_bot_utils versions
+
 0.11.1
 ------
 
