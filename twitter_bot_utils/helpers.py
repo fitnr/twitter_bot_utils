@@ -152,13 +152,14 @@ def queryize(terms, exclude_screen_name=None):
     Args:
         terms (list): Search terms.
         exclude_screen_name (str): A single screen name to exclude from the search.
+
     Returns:
         A string ready to be passed to tweepy.API.search
     '''
-    ors = (x for x in terms if x[0] != '-')
-    nots = (x for x in terms if x[0] == '-')
-    sn = " -from:" + exclude_screen_name + ' ' if exclude_screen_name else ' '
-    return ' OR '.join(ors) + sn + ' '.join(nots)
+    ors = ' OR '.join('"{}"'.format(x) for x in terms if not x.startswith('-'))
+    nots = ' '.join('-"{}"'.format(x[1:]) for x in terms if x.startswith('-'))
+    sn = "-from:{}".format(exclude_screen_name) if exclude_screen_name else ''
+    return ' '.join((ors, nots, sn))
 
 
 def chomp(text, max_len=140, split=None):
