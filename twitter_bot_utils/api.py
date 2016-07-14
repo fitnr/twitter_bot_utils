@@ -139,7 +139,7 @@ class API(tweepy.API):
         Wrapper for tweepy.api.update_status with a 10s wait when twitter is over capacity
         """
         try:
-            super(API, self).update_status(*pargs, **kwargs)
+            return super(API, self).update_status(*pargs, **kwargs)
 
         except tweepy.TweepError as e:
             if getattr(e, 'api_code', None) == 503:
