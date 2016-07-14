@@ -103,9 +103,9 @@ class test_tbu_helpers(unittest.TestCase):
             "yes it's quite long. It's so long that we need to shorten it…")
 
     def test_querize(self):
-        query = ('hi', 'bye', 'wow', '-no', '-nah')
-        self.assertEqual(helpers.queryize(query), 'hi OR bye OR wow -no -nah')
-        self.assertEqual(helpers.queryize(query, 'user'), 'hi OR bye OR wow -from:user -no -nah')
+        query = ('hi', 'bye', 'oh wow', '-no', '-nuh uh')
+        self.assertEqual(helpers.queryize(query).strip(), '"hi" OR "bye" OR "oh wow" -"no" -"nuh uh"')
+        self.assertEqual(helpers.queryize(query, 'user'), '"hi" OR "bye" OR "oh wow" -"no" -"nuh uh" -from:user')
 
     def testChomp(self):
         long_string = (
