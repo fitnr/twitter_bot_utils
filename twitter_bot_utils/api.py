@@ -11,7 +11,7 @@
 
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+from os import environ
 from time import sleep
 from argparse import Namespace
 import logging
@@ -66,6 +66,10 @@ class API(tweepy.API):
         config = configure(self._screen_name, **kwargs)
         self._config = {k: v for k, v in config.items() if k not in PROTECTED_INFO}
         keys = {k: v for k, v in config.items() if k in PROTECTED_INFO}
+        keys.update({
+            k: environ['TWITTER_' + k.upper()] for k in PROTECTED_INFO
+            if k not in keys and 'TWITTER_' + k.upper() in environ
+        })
 
         try:
             # setup auth

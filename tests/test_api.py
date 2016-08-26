@@ -131,6 +131,20 @@ class test_twitter_bot_utils(unittest.TestCase):
         # Broken file raises ValueError
         self.assertRaises(ValueError, api.API, 'example_screen_name', config_file=brokenconfig)
 
+    def test_api_environ_vars(self):
+        os.environ['TWITTER_CONSUMER_KEY'] = 'value1'
+        os.environ['TWITTER_CONSUMER_SECRET'] = 'value2'
+        os.environ['TWITTER_KEY'] = 'value3'
+        os.environ['TWITTER_SECRET'] = 'value4'
+
+        twitter = api.API(screen_name='fake')
+
+        # Strange that two of these are bytes and two are str.
+        self.assertEqual(twitter.auth.consumer_key.decode('utf8'), os.environ['TWITTER_CONSUMER_KEY'])
+        assert twitter.auth.consumer_secret.decode('utf8') == os.environ['TWITTER_CONSUMER_SECRET']
+        assert twitter.auth.access_token == os.environ['TWITTER_KEY']
+        assert twitter.auth.access_token_secret == os.environ['TWITTER_SECRET']
+
     def test_api_attributes(self):
         twitter = api.API(**vars(self.args))
         self.assertEqual(twitter.config['custom'], 'user')
