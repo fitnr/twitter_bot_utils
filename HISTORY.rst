@@ -1,3 +1,7 @@
+0.11.4
+------
+* Add ability to read auth keys from environment variables: TWITTER_CONSUMER_KEY, TWITTER_CONSUMER_SECRET, TWITTER_KEY, TWITTER_SECRET
+
 0.11.2
 ------
 * Fixes and expands `tbu auth` interface (issues #4 and #5)

@@ -137,7 +137,7 @@ class test_twitter_bot_utils(unittest.TestCase):
         os.environ['TWITTER_KEY'] = 'value3'
         os.environ['TWITTER_SECRET'] = 'value4'
 
-        twitter = api.API(screen_name='fake')
+        twitter = api.API(screen_name='fake', config_file='.travis.yml')
 
         # Strange that two of these are bytes and two are str.
         self.assertEqual(twitter.auth.consumer_key.decode('utf8'), os.environ['TWITTER_CONSUMER_KEY'])

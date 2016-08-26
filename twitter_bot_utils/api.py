@@ -48,11 +48,11 @@ class API(tweepy.API):
     def __init__(self, args=None, **kwargs):
         '''
         Construct the tbu.API object.
-
         '''
-        # Update the kwargs with contents of args
+
+        # Update the kwargs with non-None contents of args
         if isinstance(args, Namespace):
-            kwargs.update(vars(args))
+            kwargs.update({k: v for k, v in vars(args).items() if v is not None})
 
         self._screen_name = kwargs.pop('screen_name', None)
 
