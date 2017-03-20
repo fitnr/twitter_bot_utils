@@ -42,6 +42,10 @@ def fake_timeline():
     return [tweepy.Status.parse(tweepy.api, t) for t in TIMELINE]
 
 
+def fake_status():
+    return tweepy.Status.parse(tweepy.api, TIMELINE[0])
+
+
 class test_twitter_bot_utils(unittest.TestCase):
 
     def setUp(self):
@@ -168,12 +172,25 @@ class test_twitter_bot_utils(unittest.TestCase):
 
     @mock.patch.object(tweepy.API, 'user_timeline', return_value=fake_timeline())
     def test_recent_tweets(self, _):
-
         twitter = api.API(self.args)
 
         self.assertEqual(twitter.last_tweet, 1235)
         assert twitter.last_retweet == 1233
         assert twitter.last_reply == 1234
+
+    @mock.patch.object(tweepy.API, 'update_status', return_value=fake_status())
+    def test_user_status(self, _):
+        twitter = api.API(self.args)
+        mock_status = TIMELINE[0]
+
+        status1 = super(api.API, twitter).update_status(text=mock_status['text'])
+        self.assertIsNotNone(status1)
+
+        status = twitter.update_status(text=mock_status['text'])
+        self.assertIsNotNone(status, 'Returned status object is None')
+
+        assert status.id == mock_status['id']
+        assert status.text == mock_status['text']
 
     @mock.patch.object(tweepy.API, 'user_timeline', return_value=[fake_timeline()[0]])
     def test_recent_tweets_no_rts(self, _):
