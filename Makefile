@@ -7,7 +7,7 @@ all: README.rst docs.zip
 README.rst: README.md
 	- pandoc $< -o $@
 	@touch $@
-	python setup.py check --restructuredtext --strict
+	- python setup.py check --restructuredtext --strict
 
 docs.zip: docs/source/conf.py $(wildcard docs/*.rst docs/*/*.rst twitter_bot_utils/*.py) 
 	$(MAKE) -C docs html
