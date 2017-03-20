@@ -1,3 +1,8 @@
+0.11.5
+------
+* Fix a bug that would prevent proper return of a Status object with API.update_status in some cases.
+* Expand tests to include latest with Tweepy from Github.
+
 0.11.4
 ------
 * Add ability to read auth keys from environment variables: TWITTER_CONSUMER_KEY, TWITTER_CONSUMER_SECRET, TWITTER_KEY, TWITTER_SECRET
