@@ -50,7 +50,7 @@ setup(
         ],
     },
 
-    use_2to3=True,
+    use_2to3=False,
 
     install_requires=[
         'tweepy >=3.4.0, <4',

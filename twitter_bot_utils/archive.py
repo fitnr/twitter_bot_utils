@@ -40,8 +40,8 @@ def read_csv(directory):
     with open(csvfile, 'r') as f:
         for tweet in csv.DictReader(f):
             try:
-                tweet['text'] = unicode(tweet['text'], 'utf-8')
-            except TypeError:
+                tweet['text'] = tweet['text'].decode('utf-8')
+            except AttributeError:
                 pass
 
             yield tweet
@@ -71,6 +71,6 @@ def read_text(data_file):
 
     for tweet in data:
         try:
-            yield unicode(tweet.rstrip(), 'utf-8')
-        except TypeError:
+            yield tweet.rstrip().decode('utf-8')
+        except AttributeError:
             yield tweet.rstrip()

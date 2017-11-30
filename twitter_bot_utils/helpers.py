@@ -14,7 +14,10 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 from __future__ import unicode_literals
 import re
-from HTMLParser import HTMLParser
+try:
+    from HTMLParser import HTMLParser
+except ImportError:
+    import html.parser as HTMLParser
 
 
 def has_url(status):
