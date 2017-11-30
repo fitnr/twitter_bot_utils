@@ -5,5 +5,5 @@ credentials = dict(
     consumer_key=os.environ.get('TWITTER_CONSUMER_KEY'),
     consumer_secret=os.environ.get('TWITTER_CONSUMER_SECRET'),
     secret=os.environ.get('TWITTER_OAUTH_SECRET'),
-    key=os.environ.get('TWITTER_OAUTH_TOKEN')
+    token=os.environ.get('TWITTER_OAUTH_TOKEN')
 )
