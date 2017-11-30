@@ -107,6 +107,28 @@ class test_tbu_helpers(unittest.TestCase):
         self.assertEqual(helpers.queryize(query).strip(), '"hi" OR "bye" OR "oh wow" -"no" -"nuh uh"')
         self.assertEqual(helpers.queryize(query, 'user'), '"hi" OR "bye" OR "oh wow" -"no" -"nuh uh" -from:user')
 
+    def testLength(self):
+        # equal len and length
+        strings = [
+            'happy 123', # ascii
+            'ქართული ენა', # Georgian
+            '˗˖˭ʰ', # Spacing modifiers
+            'āz̪u̾ì' # Combining diacretics
+        ]
+        for s in strings:
+            self.assertEqual(len(s), helpers.length(s))
+
+        # characters that count as "2"
+        strings = [
+            'ᏣᎳᎩᎦᏬᏂᎯᏍᏗ', # Cherokee language
+            # Phonetic extensions
+            ''.join(chr(x) for x in range(int('1D00', 16), int('1DBF', 16))),
+            # generally a bunch of higher-level unicode
+            ''.join(chr(x) for x in range(int('1100', 16), int('2F96C', 16), 200)),
+        ]
+        for s in strings:
+            self.assertEqual(len(s) * 2, helpers.length(s))
+
     def testChomp(self):
         long_string = (
             "It was the best of times, it was the worst of times, "
@@ -121,7 +143,7 @@ class test_tbu_helpers(unittest.TestCase):
             "for good or for evil, in the superlative degree of comparison only."
         )
 
-        self.assertEqual(helpers.chomp(long_string), ("It was the best of times, "
+        self.assertEqual(helpers.chomp(long_string, max_len=140), ("It was the best of times, "
                                                       "it was the worst of times, "
                                                       "it was the age of wisdom, "
                                                       "it was the age of foolishness, "
@@ -130,7 +152,7 @@ class test_tbu_helpers(unittest.TestCase):
 
         self.assertEqual(helpers.chomp(long_string, max_len=30), "It was the best of times")
 
-        self.assertEqual(helpers.chomp(long_string, split=' ,'), ("It was the best of times, "
+        self.assertEqual(helpers.chomp(long_string, split=' ,', max_len=140), ("It was the best of times, "
                                                                   "it was the worst of times, "
                                                                   "it was the age of wisdom, "
                                                                   "it was the age of foolishness, "

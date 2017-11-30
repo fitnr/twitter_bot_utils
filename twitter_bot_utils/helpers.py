@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2014-16 Neil Freeman
+# Copyright 2014-17 Neil Freeman contact@fakeisthenewreal.org
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
@@ -165,7 +165,7 @@ def queryize(terms, exclude_screen_name=None):
     return ' '.join((ors, nots, sn))
 
 
-def chomp(text, max_len=140, split=None):
+def chomp(text, max_len=280, split=None):
     '''
     Shorten a string so that it fits under max_len, splitting it at 'split'.
     Not guaranteed to return a string under max_len, as it may not be possible
@@ -176,10 +176,27 @@ def chomp(text, max_len=140, split=None):
         split (str): strings to split on (default is common punctuation: "-;,.")
     '''
     split = split or '—;,.'
-    while len(text) > max_len:
+    while length(text) > max_len:
         try:
             text = re.split(r'[' + split + ']', text[::-1], 1)[1][::-1]
         except IndexError:
             return text
 
     return text
+
+
+def length(text, maxval=None):
+    '''
+    Count the length of a str the way Twitter does,
+    double-counting "wide" characters (e.g. ideographs, emoji)
+
+    Args:
+        text (str): Text to count
+        maxval (int): The maximum encoding that will be counted as 1 character.
+            Defaults to 4351 (ჿ GEORGIAN LETTER LABIAL SIGN, U+10FF)
+
+    Returns:
+        int
+    '''
+    maxval = maxval or 4351
+    return sum(2 if ord(x) > maxval else 1 for x in text)
