@@ -61,8 +61,8 @@ setup(
 
     tests_require=[
         'coverage',
-        'mock',
         'sphinx',
-        'sphinx_rtd_theme'
+        'sphinx_rtd_theme',
+        'vcrpy==1.11.1'
     ],
 )

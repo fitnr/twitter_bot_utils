@@ -1,40 +1,38 @@
 language: python
-
 os:
- - linux
-
+- linux
 python:
- - pypy
- - 2.7
- - 3.4
- - 3.5
- - 3.6
-
+- pypy
+- 2.7
+- 3.4
+- 3.5
+- 3.6
 env:
- - TWEEPY=tweepy==3.4.0
- - TWEEPY=tweepy==3.5.0
- - TWEEPY="-e git://github.com/tweepy/tweepy.git#egg=tweepy"
-
+  matrix:
+  - TWEEPY=tweepy==3.4.0
+  - TWEEPY=tweepy==3.5.0
+  - TWEEPY="-e git://github.com/tweepy/tweepy.git#egg=tweepy"
+  global:
+  - secure: G4h01ZU3jG8TetQD8v+MHb1zqXriIhTTkSmnnJ/XohgeYlx52AIGIg8IR43DtZ+JiJUU4mVFcDdH/s3JDX5K/597nUNa7xU/awyPBmxrVOBUlz7o6EL/8McRy5RvANm84o05FgPWW66wTGkcL8BMLKvF51lt2GtiX71UH6ZvwJc=
+  - secure: RtFfEDcEYNZWzpljAg8VuF2OXOtiKuzbsY322WeCP3XFKoJ7ZmXV87KnQl+rLE9Nchhdk+EBDT5NHvvrmbAeeg12q8ufyuLFp335hB6HFfXDaQE4VJXQhd6WnwiYxO3ULGNOHtZ/xPDCnl5/qfC6TB0SUDacjvCA+1H8tYMQPo8=
+  - secure: t9PWBn+Gstkzv55u0hoVxUJFuEGxgyEAD0b2QjnNoIslFjHSiDhlpulJqfRHjF5AQiCFORLYYAcGy0tV1vbI4o/FUcg4xG0nYu7m9ycAof68YpkOGXeQK7zHBD2vqBtI35yXxW8HMOt+ro2ltCxzjpaGjKoqZiEaXUtCL6o2efk=
+  - secure: TYbZT1DybR4/XljRzaGuBqup27A3tpC7nFsBlKgC1px6F2K4LVsNe+e/FZ4vMLCCSOevRwZOkTjawKcKosmVWR20Xc3mj2j2nV4O0CKkAplQ624fksuclYGR8K06/KAZsYR/BNV8YiWKFC4scMMjzkz2xqMzmVDKXXkVAzVXaQc=
+  - secure: pAavcNJS9AgFDVkOOoLMDyUMbeIgkqNX4yj4Onmtit9T5b0NgTxU7XKhq1MRhgSJvX9OpbFUHDb6bhz2g/jvOJRYjq7xswsW9Y7Kn2Qw5G10qOK6desE1i5EqANEpM90VVYjgUMsyIfOECzjA8zho0QuqRJa7ztiWkhHmQQrafA=
 matrix:
   fast_finish: true
-
   exclude:
-    - env: TWEEPY=tweepy==3.4.0
-      python: 3.4
-
+  - env: TWEEPY=tweepy==3.4.0
+    python: 3.4
   allow_failures:
-    - env: TWEEPY="-e git://github.com/tweepy/tweepy.git#egg=tweepy"
-
+  - env: TWEEPY="-e git://github.com/tweepy/tweepy.git#egg=tweepy"
 before_install:
- - export PATH=$PATH:~/.local/bin:~/bin
- - if [[ $TRAVIS_OS_NAME == "osx" ]]; then brew update; fi
- - if [[ $TRAVIS_OS_NAME == "osx" ]]; then brew install python; fi
- - if [[ $TRAVIS_OS_NAME == "osx" ]]; then pip install -U setuptools virtualenv; fi
- - pip install coverage
-
+- export PATH=$PATH:~/.local/bin:~/bin
+- if [[ $TRAVIS_OS_NAME == "osx" ]]; then brew update; fi
+- if [[ $TRAVIS_OS_NAME == "osx" ]]; then brew install python; fi
+- if [[ $TRAVIS_OS_NAME == "osx" ]]; then pip install -U setuptools virtualenv; fi
+- pip install coverage
 install:
- - pip install $TWEEPY
- - python setup.py install
-
+- pip install $TWEEPY
+- python setup.py install
 script:
- - make test
+- make test
