@@ -1,12 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-import os
-try:
-    FileNotFoundError
-except NameError:
-    from errno import ENOENT
-    FileNotFoundError = lambda x: IOError(ENOENT, x)
-
 import unittest
 from vcr import VCR
 from twitter_bot_utils import tools, API
@@ -17,8 +10,7 @@ vcr = VCR(filter_headers=['Authorization'])
 class testTools(unittest.TestCase):
 
     def setUp(self):
-        self.yaml = os.path.join(os.path.dirname(__file__), 'data', 'test.yaml')
-        self.api = API(**credentials)
+        self.api = API(config_file=False, **credentials)
 
     @vcr.use_cassette('tests/fixtures/followback.yaml')
     def testAutofollow(self):
