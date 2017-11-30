@@ -55,8 +55,10 @@ def configure(screen_name=None, config_file=None, app=None, **kwargs):
     # Super-optionally, accept a different place to look for the file
     dirs = kwargs.pop('default_directories', None)
     bases = kwargs.pop('default_bases', None)
-    config_file = find_file(config_file, dirs, bases)
-    file_config = parse(config_file)
+    file_config = {}
+    if config_file is not False:
+        config_file = find_file(config_file, dirs, bases)
+        file_config = parse(config_file)
 
     # config and keys dicts
     # Pull non-authentication settings from the file.
@@ -120,10 +122,11 @@ def find_file(config_file=None, default_directories=None, default_bases=None):
 
 def setup_auth(**keys):
     '''Set up Tweepy authentication using passed args or config file settings.'''
-
     auth = tweepy.OAuthHandler(consumer_key=keys['consumer_key'], consumer_secret=keys['consumer_secret'])
-    auth.set_access_token(key=keys['key'], secret=keys['secret'])
-
+    auth.set_access_token(
+        key=keys.get('token', keys.get('key', keys.get('oauth_token'))),
+        secret=keys.get('secret', keys.get('oauth_secret'))
+    )
     return auth
 
 

@@ -34,7 +34,10 @@ PROTECTED_INFO = [
     'consumer_key',
     'consumer_secret',
     'key',
+    'token',
+    'oauth_token',
     'secret',
+    'oauth_secret',
 ]
 
 IMAGE_MIMETYPES = ('image/gif', 'image/jpeg', 'image/png', 'image/webp')
@@ -63,11 +66,12 @@ class API(tweepy.API):
     Args:
         args (Namespace): argparse.Namespace to read.
         screen_name (str): Twitter screen name
-        config_file (str): Config file. Defaults to bots.json or bots.yaml in ~/ or ~/bots/.
+        config_file (str): Config file. When False, don't read any config files. Defaults to bots.json or bots.yaml in ~/ or ~/bots/.
         logger_name (str): Use a logger with this name. Defaults to screen_name
         format (str): Format for logger. Defaults to 'file lineno: message'
         verbose (bool): Set logging level to DEBUG
         quiet (bool): Set logging level to ERROR. Overrides verbose.
+        use_env (bool): Allow environment variables to override settings. Default: True
         kwargs: Other settings will be passed to the config
     '''
 
@@ -97,17 +101,21 @@ class API(tweepy.API):
         config = configure(self._screen_name, **kwargs)
         self._config = {k: v for k, v in config.items() if k not in PROTECTED_INFO}
         keys = {k: v for k, v in config.items() if k in PROTECTED_INFO}
-        keys.update({
-            k: os.environ['TWITTER_' + k.upper()] for k in PROTECTED_INFO
-            if k not in keys and 'TWITTER_' + k.upper() in os.environ
-        })
+        if kwargs.get('use_env', True):
+            keys.update({
+                k: os.environ['TWITTER_' + k.upper()] for k in PROTECTED_INFO
+                if k not in keys and 'TWITTER_' + k.upper() in os.environ
+            })
 
         try:
             # setup auth
             auth = tweepy.OAuthHandler(consumer_key=keys['consumer_key'], consumer_secret=keys['consumer_secret'])
 
             try:
-                auth.set_access_token(key=keys['key'], secret=keys['secret'])
+                auth.set_access_token(
+                    key=keys.get('token', keys.get('key', keys.get('oauth_token'))),
+                    secret=keys.get('secret', keys.get('oauth_secret'))
+                )
 
             except KeyError:
                 # API won't have an access key
