@@ -6,6 +6,9 @@ import tweepy
 from twitter_bot_utils import helpers
 import six
 
+if six.PY2:
+    chr = unichr
+
 TWEET = {
     "source": "\u003Ca href=\"http:\/\/twitter.com\/download\/iphone\" rel=\"nofollow\"\u003ETwitter for iPhone\u003C\/a\u003E",
     "entities": {
@@ -109,9 +112,6 @@ class test_tbu_helpers(unittest.TestCase):
         self.assertEqual(helpers.queryize(query, 'user'), '"hi" OR "bye" OR "oh wow" -"no" -"nuh uh" -from:user')
 
     def testLength(self):
-        if six.PY2:
-            chr = unichr
-
         # equal len and length
         strings = [
             'happy 123', # ascii

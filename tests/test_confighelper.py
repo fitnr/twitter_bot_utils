@@ -43,7 +43,7 @@ class test_confighelper(unittest.TestCase):
         with self.assertRaises(ValueError):
             confighelper.parse('foo.unknown')
 
-        with self.assertRaises(OSError):
+        with self.assertRaises((IOError, OSError)):
             confighelper.parse('unknown.json')
 
     def testConfigKwargPassing(self):
