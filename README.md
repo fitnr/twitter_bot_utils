@@ -30,21 +30,21 @@ By default, Twitter bot utils looks for a file called `bots.yaml` or `bots.json`
 These are two ways to lay out a bots config file. The basic way covers just one user and one app:
 
 ````yaml
-key: LONGSTRINGOFLETTERS-ANDNUMBERS
+token: LONGSTRINGOFLETTERS-ANDNUMBERS
 secret: LETTERSANDNUMBERS
 consumer_key: LOL123...
 consumer_secret: OMG456...
 my_setting: "bots are good"
 ````
 
-If you have more than one bot or app, use the multi-bot layout useful:
+If you have more than one bot or app, use the multi-bot layout:
 ````yaml
 general_setting: "all bots share this setting"
 
 users:
     # twitter screen_name
     MyBotName:
-        key: LONGSTRINGOFLETTERS-ANDNUMBERS
+        token: LONGSTRINGOFLETTERS-ANDNUMBERS
         secret: LETTERSANDNUMBERS
         # The app key should match a key in apps below
         app: my_app_name
