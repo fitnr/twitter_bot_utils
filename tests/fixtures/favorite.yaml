@@ -1,0 +1,74 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Host: [api.twitter.com]
+    method: GET
+    uri: https://api.twitter.com/1.1/favorites/list.json?include_entities=False&count=150
+  response:
+    body: {string: '[]'}
+    headers:
+      cache-control: ['no-cache, no-store, must-revalidate, pre-check=0, post-check=0']
+      content-disposition: [attachment; filename=json.json]
+      content-length: ['2']
+      content-type: [application/json;charset=utf-8]
+      date: ['Thu, 30 Nov 2017 19:41:15 GMT']
+      expires: ['Tue, 31 Mar 1981 05:00:00 GMT']
+      last-modified: ['Thu, 30 Nov 2017 19:41:14 GMT']
+      pragma: [no-cache]
+      server: [tsa_b]
+      set-cookie: ['personalization_id="v1_eHdv8hsFSqHLvdxnd2SQSg=="; Expires=Sat,
+          30 Nov 2019 19:41:15 UTC; Path=/; Domain=.twitter.com', lang=en; Path=/,
+        'guest_id=v1%3A151207087494775911; Expires=Sat, 30 Nov 2019 19:41:14 UTC;
+          Path=/; Domain=.twitter.com']
+      status: [200 OK]
+      strict-transport-security: [max-age=631138519]
+      x-access-level: [read-write]
+      x-connection-hash: [08af3ea9d9981da5fe3dc8e6f93f94e8]
+      x-content-type-options: [nosniff]
+      x-frame-options: [SAMEORIGIN]
+      x-rate-limit-limit: ['75']
+      x-rate-limit-remaining: ['73']
+      x-rate-limit-reset: ['1512071735']
+      x-response-time: ['68']
+      x-transaction: [005200ef0001a47f]
+      x-twitter-response-tags: [BouncerCompliant]
+      x-xss-protection: [1; mode=block]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Host: [api.twitter.com]
+    method: GET
+    uri: https://api.twitter.com/1.1/statuses/mentions_timeline.json?include_entities=False&trim_user=True&count=75
+  response:
+    body: {string: '[]'}
+    headers:
+      cache-control: ['no-cache, no-store, must-revalidate, pre-check=0, post-check=0']
+      content-disposition: [attachment; filename=json.json]
+      content-length: ['2']
+      content-type: [application/json;charset=utf-8]
+      date: ['Thu, 30 Nov 2017 19:41:15 GMT']
+      expires: ['Tue, 31 Mar 1981 05:00:00 GMT']
+      last-modified: ['Thu, 30 Nov 2017 19:41:15 GMT']
+      pragma: [no-cache]
+      server: [tsa_b]
+      set-cookie: ['personalization_id="v1_0rthq95O9jr5f+1SQ+rAOQ=="; Expires=Sat,
+          30 Nov 2019 19:41:15 UTC; Path=/; Domain=.twitter.com', lang=en; Path=/,
+        'guest_id=v1%3A151207087530787332; Expires=Sat, 30 Nov 2019 19:41:15 UTC;
+          Path=/; Domain=.twitter.com']
+      status: [200 OK]
+      strict-transport-security: [max-age=631138519]
+      x-access-level: [read-write]
+      x-connection-hash: [2593e3d6edc88c780b65605ae30424a3]
+      x-content-type-options: [nosniff]
+      x-frame-options: [SAMEORIGIN]
+      x-rate-limit-limit: ['75']
+      x-rate-limit-remaining: ['73']
+      x-rate-limit-reset: ['1512071735']
+      x-response-time: ['175']
+      x-transaction: [00b6738c00a4a2a9]
+      x-twitter-response-tags: [BouncerCompliant]
+      x-xss-protection: [1; mode=block]
+    status: {code: 200, message: OK}
+version: 1

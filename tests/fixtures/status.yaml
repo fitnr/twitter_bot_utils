@@ -1,0 +1,82 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Content-Length: ['0']
+      Host: [api.twitter.com]
+    method: POST
+    uri: https://api.twitter.com/1.1/statuses/update.json?status=Just+running+some+tests...
+  response:
+    body: {string: '{"created_at":"Thu Nov 30 19:45:47 +0000 2017","id":936320374022856704,"id_str":"936320374022856704","text":"Just
+        running some tests...","truncated":false,"entities":{"hashtags":[],"symbols":[],"user_mentions":[],"urls":[]},"source":"\u003ca
+        href=\"http:\/\/fakeisthenewreal.org\/strangeallure\" rel=\"nofollow\"\u003estrange
+        allure\u003c\/a\u003e","in_reply_to_status_id":null,"in_reply_to_status_id_str":null,"in_reply_to_user_id":null,"in_reply_to_user_id_str":null,"in_reply_to_screen_name":null,"user":{"id":936312048459374592,"id_str":"936312048459374592","name":"bot
+        utils","screen_name":"botutils","location":"","description":"","url":"https:\/\/t.co\/nsX8IijSfN","entities":{"url":{"urls":[{"url":"https:\/\/t.co\/nsX8IijSfN","expanded_url":"http:\/\/github.com\/fitnr\/twitter_bot_utils","display_url":"github.com\/fitnr\/twitter_\u2026","indices":[0,23]}]},"description":{"urls":[]}},"protected":false,"followers_count":0,"friends_count":1,"listed_count":0,"created_at":"Thu
+        Nov 30 19:12:42 +0000 2017","favourites_count":0,"utc_offset":-28800,"time_zone":"Pacific
+        Time (US & Canada)","geo_enabled":false,"verified":false,"statuses_count":2,"lang":"en","contributors_enabled":false,"is_translator":false,"is_translation_enabled":false,"profile_background_color":"F5F8FA","profile_background_image_url":null,"profile_background_image_url_https":null,"profile_background_tile":false,"profile_image_url":"http:\/\/pbs.twimg.com\/profile_images\/936315057100558336\/o6-BGpHe_normal.jpg","profile_image_url_https":"https:\/\/pbs.twimg.com\/profile_images\/936315057100558336\/o6-BGpHe_normal.jpg","profile_link_color":"1DA1F2","profile_sidebar_border_color":"C0DEED","profile_sidebar_fill_color":"DDEEF6","profile_text_color":"333333","profile_use_background_image":true,"has_extended_profile":false,"default_profile":true,"default_profile_image":false,"following":false,"follow_request_sent":false,"notifications":false,"translator_type":"none"},"geo":null,"coordinates":null,"place":null,"contributors":null,"is_quote_status":false,"retweet_count":0,"favorite_count":0,"favorited":false,"retweeted":false,"lang":"en"}'}
+    headers:
+      cache-control: ['no-cache, no-store, must-revalidate, pre-check=0, post-check=0']
+      content-disposition: [attachment; filename=json.json]
+      content-length: ['2125']
+      content-type: [application/json;charset=utf-8]
+      date: ['Thu, 30 Nov 2017 19:45:47 GMT']
+      expires: ['Tue, 31 Mar 1981 05:00:00 GMT']
+      last-modified: ['Thu, 30 Nov 2017 19:45:47 GMT']
+      pragma: [no-cache]
+      server: [tsa_b]
+      set-cookie: ['personalization_id="v1_1548yRkcyqHLnrZ2lsxVRQ=="; Expires=Sat,
+          30 Nov 2019 19:45:47 UTC; Path=/; Domain=.twitter.com', lang=en; Path=/,
+        'guest_id=v1%3A151207114779371796; Expires=Sat, 30 Nov 2019 19:45:47 UTC;
+          Path=/; Domain=.twitter.com']
+      status: [200 OK]
+      strict-transport-security: [max-age=631138519]
+      x-access-level: [read-write]
+      x-connection-hash: [d5cb5dfd34e30b909921aae04b1d9946]
+      x-content-type-options: [nosniff]
+      x-frame-options: [SAMEORIGIN]
+      x-response-time: ['202']
+      x-transaction: [006e4fab0069b1cb]
+      x-twitter-response-tags: [BouncerCompliant]
+      x-xss-protection: [1; mode=block]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Content-Length: ['0']
+      Host: [api.twitter.com]
+    method: POST
+    uri: https://api.twitter.com/1.1/statuses/update.json?status=Just+running+some+more+tests...
+  response:
+    body: {string: '{"created_at":"Thu Nov 30 19:45:48 +0000 2017","id":936320375775989762,"id_str":"936320375775989762","text":"Just
+        running some more tests...","truncated":false,"entities":{"hashtags":[],"symbols":[],"user_mentions":[],"urls":[]},"source":"\u003ca
+        href=\"http:\/\/fakeisthenewreal.org\/strangeallure\" rel=\"nofollow\"\u003estrange
+        allure\u003c\/a\u003e","in_reply_to_status_id":null,"in_reply_to_status_id_str":null,"in_reply_to_user_id":null,"in_reply_to_user_id_str":null,"in_reply_to_screen_name":null,"user":{"id":936312048459374592,"id_str":"936312048459374592","name":"bot
+        utils","screen_name":"botutils","location":"","description":"","url":"https:\/\/t.co\/nsX8IijSfN","entities":{"url":{"urls":[{"url":"https:\/\/t.co\/nsX8IijSfN","expanded_url":"http:\/\/github.com\/fitnr\/twitter_bot_utils","display_url":"github.com\/fitnr\/twitter_\u2026","indices":[0,23]}]},"description":{"urls":[]}},"protected":false,"followers_count":0,"friends_count":1,"listed_count":0,"created_at":"Thu
+        Nov 30 19:12:42 +0000 2017","favourites_count":0,"utc_offset":-28800,"time_zone":"Pacific
+        Time (US & Canada)","geo_enabled":false,"verified":false,"statuses_count":3,"lang":"en","contributors_enabled":false,"is_translator":false,"is_translation_enabled":false,"profile_background_color":"F5F8FA","profile_background_image_url":null,"profile_background_image_url_https":null,"profile_background_tile":false,"profile_image_url":"http:\/\/pbs.twimg.com\/profile_images\/936315057100558336\/o6-BGpHe_normal.jpg","profile_image_url_https":"https:\/\/pbs.twimg.com\/profile_images\/936315057100558336\/o6-BGpHe_normal.jpg","profile_link_color":"1DA1F2","profile_sidebar_border_color":"C0DEED","profile_sidebar_fill_color":"DDEEF6","profile_text_color":"333333","profile_use_background_image":true,"has_extended_profile":false,"default_profile":true,"default_profile_image":false,"following":false,"follow_request_sent":false,"notifications":false,"translator_type":"none"},"geo":null,"coordinates":null,"place":null,"contributors":null,"is_quote_status":false,"retweet_count":0,"favorite_count":0,"favorited":false,"retweeted":false,"lang":"en"}'}
+    headers:
+      cache-control: ['no-cache, no-store, must-revalidate, pre-check=0, post-check=0']
+      content-disposition: [attachment; filename=json.json]
+      content-length: ['2130']
+      content-type: [application/json;charset=utf-8]
+      date: ['Thu, 30 Nov 2017 19:45:48 GMT']
+      expires: ['Tue, 31 Mar 1981 05:00:00 GMT']
+      last-modified: ['Thu, 30 Nov 2017 19:45:48 GMT']
+      pragma: [no-cache]
+      server: [tsa_b]
+      set-cookie: ['personalization_id="v1_VskhtuxY5Hz33ZqD2SUx2Q=="; Expires=Sat,
+          30 Nov 2019 19:45:48 UTC; Path=/; Domain=.twitter.com', lang=en; Path=/,
+        'guest_id=v1%3A151207114821891231; Expires=Sat, 30 Nov 2019 19:45:48 UTC;
+          Path=/; Domain=.twitter.com']
+      status: [200 OK]
+      strict-transport-security: [max-age=631138519]
+      x-access-level: [read-write]
+      x-connection-hash: [81c0c5e226af76afddc71aab3ef87d3c]
+      x-content-type-options: [nosniff]
+      x-frame-options: [SAMEORIGIN]
+      x-response-time: ['145']
+      x-transaction: [004445b5006b5eb9]
+      x-twitter-response-tags: [BouncerCompliant]
+      x-xss-protection: [1; mode=block]
+    status: {code: 200, message: OK}
+version: 1

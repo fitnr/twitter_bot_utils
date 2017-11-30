@@ -8,9 +8,11 @@ except NameError:
     FileNotFoundError = lambda x: IOError(ENOENT, x)
 
 import unittest
-import vcr
+from vcr import VCR
 from twitter_bot_utils import tools, API
 from .config import credentials
+
+vcr = VCR(filter_headers=['Authorization'])
 
 class testTools(unittest.TestCase):
 
@@ -19,13 +21,13 @@ class testTools(unittest.TestCase):
         self.api = API(**credentials)
 
     @vcr.use_cassette('tests/fixtures/followback.yaml')
-    def testAutofollow(self, *_):
-        tools.follow_back(self.api)
+    def testAutofollow(self):
+        tools.follow_back(self.api, dry_run=True)
 
     @vcr.use_cassette('tests/fixtures/unfollow.yaml')
-    def testAutoUnfollow(self, *_):
-        tools.unfollow(self.api)
+    def testAutoUnfollow(self):
+        tools.unfollow(self.api, dry_run=True)
 
     @vcr.use_cassette('tests/fixtures/favorite.yaml')
-    def testFaveMentions(self, *_):
-        tools.fave_mentions(self.api)
+    def testFaveMentions(self):
+        tools.fave_mentions(self.api, dry_run=True)
