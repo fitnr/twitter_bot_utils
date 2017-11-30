@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 import unittest
 import tweepy
 from twitter_bot_utils import helpers
+import six
 
 TWEET = {
     "source": "\u003Ca href=\"http:\/\/twitter.com\/download\/iphone\" rel=\"nofollow\"\u003ETwitter for iPhone\u003C\/a\u003E",
@@ -108,19 +109,22 @@ class test_tbu_helpers(unittest.TestCase):
         self.assertEqual(helpers.queryize(query, 'user'), '"hi" OR "bye" OR "oh wow" -"no" -"nuh uh" -from:user')
 
     def testLength(self):
+        if six.PY2:
+            chr = unichr
+
         # equal len and length
         strings = [
             'happy 123', # ascii
-            'ქართული ენა', # Georgian
-            '˗˖˭ʰ', # Spacing modifiers
-            'āz̪u̾ì' # Combining diacretics
+            u'ქართული ენა', # Georgian
+            u'˗˖˭ʰ', # Spacing modifiers
+            u'āz̪u̾ì' # Combining diacretics
         ]
         for s in strings:
             self.assertEqual(len(s), helpers.length(s))
 
         # characters that count as "2"
         strings = [
-            'ᏣᎳᎩᎦᏬᏂᎯᏍᏗ', # Cherokee language
+            u'ᏣᎳᎩᎦᏬᏂᎯᏍᏗ', # Cherokee language
             # Phonetic extensions
             ''.join(chr(x) for x in range(int('1D00', 16), int('1DBF', 16))),
             # generally a bunch of higher-level unicode
@@ -128,6 +132,9 @@ class test_tbu_helpers(unittest.TestCase):
         ]
         for s in strings:
             self.assertEqual(len(s) * 2, helpers.length(s))
+
+        s = ''.join(x+y for x, y in zip(u'ᏣᎳᎩᎦᏬᏂᎯᏍᏗ', u'abcdefghi'))
+        self.assertEqual(int(len(s) * 1.5), helpers.length(s))
 
     def testChomp(self):
         long_string = (

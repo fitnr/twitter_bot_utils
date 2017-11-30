@@ -63,6 +63,7 @@ setup(
         'coverage',
         'sphinx',
         'sphinx_rtd_theme',
-        'vcrpy==1.11.1'
+        'vcrpy==1.11.1',
+        'six>=1.10.0'
     ],
 )
