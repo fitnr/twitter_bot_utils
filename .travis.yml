@@ -9,7 +9,6 @@ python:
 - 3.6
 env:
   matrix:
-  - TWEEPY=tweepy==3.4.0
   - TWEEPY=tweepy==3.5.0
   - TWEEPY="-e git://github.com/tweepy/tweepy.git#egg=tweepy"
   global:
@@ -20,9 +19,6 @@ env:
   - secure: yWhc1YW5Pr2Bjf4Yr0upoIz+YOlSjMd/4fscphl+gDdy/5uKzLC0zWzyd3HTxDKhk/YW2KHpk/ryPPNAl/WfbFJpZQbWF/aCMad8xHZkq5wnwAUm9+atM6zE/hMFODECrIGpK6wW9hFPCQHEHzckgeA7tV1TISujINNVHqScyU0=
 matrix:
   fast_finish: true
-  exclude:
-  - env: TWEEPY=tweepy==3.4.0
-    python: 3.4
   allow_failures:
   - env: TWEEPY="-e git://github.com/tweepy/tweepy.git#egg=tweepy"
 before_install:
