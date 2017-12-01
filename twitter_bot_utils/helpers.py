@@ -14,6 +14,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 from __future__ import unicode_literals
 import re
+import unicodedata
 try:
     from HTMLParser import HTMLParser
 except ImportError:
@@ -199,4 +200,4 @@ def length(text, maxval=None):
         int
     '''
     maxval = maxval or 4351
-    return sum(2 if ord(x) > maxval else 1 for x in text)
+    return sum(2 if ord(x) > maxval else 1 for x in unicodedata.normalize('NFC', text))

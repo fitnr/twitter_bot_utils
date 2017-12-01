@@ -114,13 +114,16 @@ class test_tbu_helpers(unittest.TestCase):
     def testLength(self):
         # equal len and length
         strings = [
-            'happy 123', # ascii
-            u'ქართული ენა', # Georgian
-            u'˗˖˭ʰ', # Spacing modifiers
-            u'āz̪u̾ì' # Combining diacretics
+            'happy 123',  # ascii
+            u'ქართული ენა',  # Georgian
+            u'˗˖˭ʰ',  # Spacing modifiers
+            u'āz̪u̾ìì'  # diacretics
         ]
         for s in strings:
             self.assertEqual(len(s), helpers.length(s))
+
+        # compare non-normalized with normalized forms
+        self.assertEqual(helpers.length('café'), helpers.length('café'))
 
         # characters that count as "2"
         strings = [
