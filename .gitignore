@@ -8,5 +8,5 @@ readme.rst
 .eggs
 *.egg
 bots.yaml
-
+.envrc
 docs/_build

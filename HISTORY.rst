@@ -1,3 +1,7 @@
+0.11.6.post1
+------
+* Fix bad import in helpers
+
 0.11.6
 ------
 * Add `api.media_upload` method as workaround for old/missing functions in tweepy
