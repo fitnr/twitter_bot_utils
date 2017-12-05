@@ -16,10 +16,12 @@ from __future__ import unicode_literals
 import re
 import unicodedata
 try:
-    from HTMLParser import HTMLParser
+    import HTMLParser
+    parser = HTMLParser.HTMLParser()
 except ImportError:
-    import html.parser as HTMLParser
+    from html import parser
 
+import six
 
 def has_url(status):
     return has_entity(status, 'urls')
@@ -66,13 +68,11 @@ def has_entities(status):
 
     return False
 
-
 def format_status(status):
     return format_text(status.text)
 
-
 def format_text(text):
-    return HTMLParser().unescape(text).strip()
+    return parser.unescape(text).strip()
 
 def remove_mentions(status):
     '''Remove mentions from status text'''
@@ -201,13 +201,13 @@ def chomp(text, max_len=280, split=None):
     return text
 
 
-def length(text, maxval=None):
+def length(text, maxval=None, encoding=None):
     '''
     Count the length of a str the way Twitter does,
     double-counting "wide" characters (e.g. ideographs, emoji)
 
     Args:
-        text (str): Text to count
+        text (str): Text to count. Must be a unicode string in Python 2
         maxval (int): The maximum encoding that will be counted as 1 character.
             Defaults to 4351 (ჿ GEORGIAN LETTER LABIAL SIGN, U+10FF)
 
@@ -215,4 +215,9 @@ def length(text, maxval=None):
         int
     '''
     maxval = maxval or 4351
+    try:
+        assert not isinstance(text, six.binary_type)
+    except AssertionError:
+        raise TypeError('helpers.length requires a unicode argument')
     return sum(2 if ord(x) > maxval else 1 for x in unicodedata.normalize('NFC', text))
+

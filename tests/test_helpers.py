@@ -111,6 +111,9 @@ class test_tbu_helpers(unittest.TestCase):
         self.assertEqual(helpers.queryize(query).strip(), '"hi" OR "bye" OR "oh wow" -"no" -"nuh uh"')
         self.assertEqual(helpers.queryize(query, 'user'), '"hi" OR "bye" OR "oh wow" -"no" -"nuh uh" -from:user')
 
+    def testFormatText(self):
+        self.assertEqual(helpers.format_text('&amp;'), '&')
+
     def testLength(self):
         # equal len and length
         strings = [
