@@ -40,7 +40,6 @@ test:
 	tbu auth --help
 
 deploy: README.rst | clean
-	python setup.py register
 	$(PYTHON) setup.py sdist
 	$(PYTHON3) setup.py bdist_wheel
 	twine upload dist/*

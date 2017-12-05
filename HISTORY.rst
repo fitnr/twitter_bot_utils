@@ -1,3 +1,10 @@
+0.11.6
+------
+* Add `api.media_upload` method as workaround for old/missing functions in tweepy
+* Add `helpers.length` method to get length of text as understood by Twitter
+* Change default length on `helpers.chomp` to 280
+* Remove explicit support for Tweepy 3.4.0
+
 0.11.5
 ------
 * Fix a bug that would prevent proper return of a Status object with API.update_status in some cases.
