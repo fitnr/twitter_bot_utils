@@ -30,37 +30,44 @@ By default, Twitter bot utils looks for a file called `bots.yaml` or `bots.json`
 These are two ways to lay out a bots config file. The basic way covers just one user and one app:
 
 ````yaml
-token: LONGSTRINGOFLETTERS-ANDNUMBERS
-secret: LETTERSANDNUMBERS
-consumer_key: LOL123...
-consumer_secret: OMG456...
+token: ...
+secret: ...
+consumer_key: ...
+consumer_secret: ...
 my_setting: "bots are good"
 ````
 
-If you have more than one bot or app, use the multi-bot layout:
+If you have more than one bot, a simple setup is to have one app for each bot. Visit [apps.twitter.com](https://apps.twitter.com), register the app, and then choose "Create my access token" in the "keys and tokens" tab.
 ````yaml
 general_setting: "all bots share this setting"
 
 users:
     # twitter screen_name
     MyBotName:
-        token: LONGSTRINGOFLETTERS-ANDNUMBERS
-        secret: LETTERSANDNUMBERS
-        # The app key should match a key in apps below
-        app: my_app_name
+        token: ...
+        secret: ...
+        consumer_key: ...
+        consumer_secret: ...
         custom_setting: "bots are great"
 
     other_bot:
         ...
-apps:
-    my_app_name:
-        app_setting: "apple juice"
-        consumer_key: ...
-        consumer_secret: ...
 ````
 
-The `twitter-auth` utility will happily read settings from a `bots.yaml` file:
+If you have one app shared by several bots, create an `apps` section in the config file:
+````yaml
+apps:
+    my_app_name:
+        consumer_key: ...
+        consumer_secret: ...
+users:
+    MyBotName:
+        token: ...
+        secret: ...
+        app: my_app_name
+````
 
+The `twitter-auth` utility will happily read settings from a `bots.yaml` file set up like this:
 ````
 twitter-auth -c ~/bots.yaml --app my_app_name
 ````
