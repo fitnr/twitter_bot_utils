@@ -86,7 +86,7 @@ def parse(file_path):
     _, ext = path.splitext(file_path)
 
     if ext in ('.yaml', '.yml'):
-        func = yaml.load
+        func = yaml.safe_load
 
     elif ext == '.json':
         func = json.load
