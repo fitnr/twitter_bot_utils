@@ -1,12 +1,13 @@
 language: python
 os:
-- linux
+  - linux
 python:
-- pypy
-- 2.7
-- 3.4
-- 3.5
-- 3.6
+  - pypy
+  - 3.4
+  - 3.5
+  - 3.6
+  - 3.7
+  - 3.8
 env:
   matrix:
   - TWEEPY=tweepy==3.5.0
@@ -20,7 +21,8 @@ env:
 matrix:
   fast_finish: true
   allow_failures:
-  - env: TWEEPY="-e git://github.com/tweepy/tweepy.git#egg=tweepy"
+    - python: 3.4
+    - env: TWEEPY="-e git://github.com/tweepy/tweepy.git#egg=tweepy"
 before_install:
 - export PATH=$PATH:~/.local/bin:~/bin
 - if [[ $TRAVIS_OS_NAME == "osx" ]]; then brew update; fi

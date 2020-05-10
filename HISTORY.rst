@@ -1,3 +1,7 @@
+0.12.0
+------
+* Remove support for Python 2
+
 0.11.6.post1
 ------
 * Fix bad import in helpers
