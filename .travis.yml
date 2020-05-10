@@ -12,7 +12,7 @@ python:
 env:
   matrix:
     - TWEEPY=tweepy
-    - TWEEPY=3.8.0
+    - TWEEPY='tweepy==3.8.0'
     - TWEEPY="-e git://github.com/tweepy/tweepy.git#egg=tweepy"
   global:
     - secure: gHdg4yyhRoas80JPb1/dTUpRjwmWYX55DAGAWo30hWAnXP9//kdAUufa/PHZz1lNT5T/nx/YY3swxD6kI/A03Oezwab8BYHIn3NaEPVFLPmSxtM2L9DUam/16UYJDTimbZj4IGoRMOXaA4svKUlZFHuPbjfD/bTJA4mKHW1Umjw=
