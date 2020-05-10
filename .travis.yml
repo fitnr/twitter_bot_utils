@@ -1,34 +1,40 @@
 language: python
+
 os:
-- linux
+  - linux
+
 python:
-- pypy
-- 2.7
-- 3.4
-- 3.5
-- 3.6
+  - 3.6
+  - 3.7
+  - 3.8
+
 env:
   matrix:
-  - TWEEPY=tweepy==3.5.0
-  - TWEEPY="-e git://github.com/tweepy/tweepy.git#egg=tweepy"
+    - TWEEPY=tweepy
+    - TWEEPY='tweepy==3.8.0'
+    - TWEEPY="-e git://github.com/tweepy/tweepy.git#egg=tweepy"
   global:
-  - secure: gHdg4yyhRoas80JPb1/dTUpRjwmWYX55DAGAWo30hWAnXP9//kdAUufa/PHZz1lNT5T/nx/YY3swxD6kI/A03Oezwab8BYHIn3NaEPVFLPmSxtM2L9DUam/16UYJDTimbZj4IGoRMOXaA4svKUlZFHuPbjfD/bTJA4mKHW1Umjw=
-  - secure: L7tHB9z/oT7MpW8HSxz2ASQFfKORnx17Zl7nSgfeBvaroJtRuX8RsyH9fJOwTfCkeTgCheVY1FURgiNOA7IAOQcr0WTKaZwG0Npx7Iii6SwawTPjZToBHRkT+8uv6Io1QC1ofs7PDPzQgaB7lEN+i8wZIiiOOwDOkFnbmmP45Eo=
-  - secure: Di2na6VyiG1RGeHfrS2y/1MQEKloAp4zvI60J0IK+NyWULFk4tKiSZ/D+Gaa3XBYAxHK3XET3nCkGFsnEkANVaT4lEhuFYK7MM92lDQWMq4dqy3OGLoVmDspChAT7yMytXfgwZEC5M7tgc3uiFPYo8SyLViwXD+js698jo/Wr9E=
-  - secure: qvqJst4rBN+9XO4caqcQJKP42nSJw74qZ41XVMlMClGOa32s+nZMMRWs12O5n1X4X0W8ikvQdWf/69Hkias0vWRmIN7XHwH2gzR4SIi69gw8IklhHFHvKqEytCdVvcVj743NhbUXI9PP1yg4ptEARpXaqNjGjv2rnOafQggnmlI=
-  - secure: yWhc1YW5Pr2Bjf4Yr0upoIz+YOlSjMd/4fscphl+gDdy/5uKzLC0zWzyd3HTxDKhk/YW2KHpk/ryPPNAl/WfbFJpZQbWF/aCMad8xHZkq5wnwAUm9+atM6zE/hMFODECrIGpK6wW9hFPCQHEHzckgeA7tV1TISujINNVHqScyU0=
+    - secure: gHdg4yyhRoas80JPb1/dTUpRjwmWYX55DAGAWo30hWAnXP9//kdAUufa/PHZz1lNT5T/nx/YY3swxD6kI/A03Oezwab8BYHIn3NaEPVFLPmSxtM2L9DUam/16UYJDTimbZj4IGoRMOXaA4svKUlZFHuPbjfD/bTJA4mKHW1Umjw=
+    - secure: L7tHB9z/oT7MpW8HSxz2ASQFfKORnx17Zl7nSgfeBvaroJtRuX8RsyH9fJOwTfCkeTgCheVY1FURgiNOA7IAOQcr0WTKaZwG0Npx7Iii6SwawTPjZToBHRkT+8uv6Io1QC1ofs7PDPzQgaB7lEN+i8wZIiiOOwDOkFnbmmP45Eo=
+    - secure: Di2na6VyiG1RGeHfrS2y/1MQEKloAp4zvI60J0IK+NyWULFk4tKiSZ/D+Gaa3XBYAxHK3XET3nCkGFsnEkANVaT4lEhuFYK7MM92lDQWMq4dqy3OGLoVmDspChAT7yMytXfgwZEC5M7tgc3uiFPYo8SyLViwXD+js698jo/Wr9E=
+    - secure: qvqJst4rBN+9XO4caqcQJKP42nSJw74qZ41XVMlMClGOa32s+nZMMRWs12O5n1X4X0W8ikvQdWf/69Hkias0vWRmIN7XHwH2gzR4SIi69gw8IklhHFHvKqEytCdVvcVj743NhbUXI9PP1yg4ptEARpXaqNjGjv2rnOafQggnmlI=
+    - secure: yWhc1YW5Pr2Bjf4Yr0upoIz+YOlSjMd/4fscphl+gDdy/5uKzLC0zWzyd3HTxDKhk/YW2KHpk/ryPPNAl/WfbFJpZQbWF/aCMad8xHZkq5wnwAUm9+atM6zE/hMFODECrIGpK6wW9hFPCQHEHzckgeA7tV1TISujINNVHqScyU0=
+
 matrix:
   fast_finish: true
   allow_failures:
-  - env: TWEEPY="-e git://github.com/tweepy/tweepy.git#egg=tweepy"
+    - env: TWEEPY="-e git://github.com/tweepy/tweepy.git#egg=tweepy"
+
 before_install:
-- export PATH=$PATH:~/.local/bin:~/bin
-- if [[ $TRAVIS_OS_NAME == "osx" ]]; then brew update; fi
-- if [[ $TRAVIS_OS_NAME == "osx" ]]; then brew install python; fi
-- if [[ $TRAVIS_OS_NAME == "osx" ]]; then pip install -U setuptools virtualenv; fi
-- pip install coverage
+  - export PATH=$PATH:~/.local/bin:~/bin
+  - if [[ $TRAVIS_OS_NAME == "osx" ]]; then brew update; fi
+  - if [[ $TRAVIS_OS_NAME == "osx" ]]; then brew install python; fi
+  - if [[ $TRAVIS_OS_NAME == "osx" ]]; then pip install -U setuptools virtualenv; fi
+  - pip install coverage
+
 install:
-- pip install $TWEEPY
-- python setup.py install
+  - pip install $TWEEPY
+  - python setup.py install
+
 script:
-- make test
+  - make test
