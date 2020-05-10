@@ -3,19 +3,15 @@
 import os
 import unittest
 import argparse
-try:
-    FileNotFoundError
-except NameError:
-    from errno import ENOENT
-    FileNotFoundError = lambda x: IOError(ENOENT, x)
-
 import six
-from vcr import VCR
 import tweepy
+from vcr import VCR
 from twitter_bot_utils import api, confighelper
 from .config import credentials
 
+
 vcr = VCR(filter_headers=['Authorization'])
+
 
 class test_twitter_bot_utils(unittest.TestCase):
 
@@ -35,6 +31,7 @@ class test_twitter_bot_utils(unittest.TestCase):
             self._api = api.API(config_file=False, **credentials)
             self.assertEqual(self._api.screen_name, credentials['screen_name'])
             self.assertEqual(self._api.auth.get_username(), credentials['screen_name'])
+
         return self._api
 
     def testApiSetup(self):
