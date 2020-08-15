@@ -4,7 +4,7 @@ Twitter bot utils make it a little easier to set up a Twitter bot, with an eye t
 
 This package is intended to assist with the creation of bots for artistic or personal projects. Don't use it to spam or harrass people.
 
-Works with Python 2.7, 3.4 and 3.5 (2.6 & 3.3 probably work, too).
+Works with python 3.4>=. 
 
 Install with `pip install twitter_bot_utils`.
 
@@ -14,7 +14,7 @@ See a basic run through in the [Hello World](https://pythonhosted.org/twitter_bo
 
 One hurdle with setting up bots is getting the proper authentication keys. It can be a bit of a pain to log in and out of Twitter's app site. Twitter bot utils comes with `tbu auth`, a command line helper for this:
 ````
-$ twitter-auth --consumer-key 1233... --consumer-key 345...
+$ tbu auth --consumer-key 1233... --consumer-key 345...
 ````
 
 This will prompt you with an url. Open this in a browser where your bot is logged in, click "Authorize". Twitter will show you an authorization code, enter this on the command line, and presto! your keys will be displayed.
