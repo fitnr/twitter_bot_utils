@@ -101,7 +101,7 @@ def authenticate(arguments=None):
     auth = tweepy.OAuthHandler(consumer_key, consumer_secret, 'oob')
 
     print(auth.get_authorization_url())
-    verifier = raw_input('Please visit this url, click "Authorize app" and enter in the PIN:\n> ')
+    verifier = input('Please visit this url, click "Authorize app" and enter in the PIN:\n> ')
 
     try:
         auth.get_access_token(verifier)
