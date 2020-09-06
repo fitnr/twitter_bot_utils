@@ -38,7 +38,8 @@ test:
 	tbu auth --help >/dev/null
 
 deploy: README.rst | clean
-	python setup.py sdist bdist_wheel
+	python setup.py sdist
+	python setup.py bdist_wheel
 	twine upload dist/*
 	git push
 	git push --tags
