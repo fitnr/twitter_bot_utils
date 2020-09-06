@@ -4,7 +4,7 @@ Twitter bot utils make it a little easier to set up a Twitter bot, with an eye t
 
 This package is intended to assist with the creation of bots for artistic or personal projects. Don't use it to spam or harrass people.
 
-Works with python >= 3.5. 
+Works with python >= 3.6. 
 
 Install with `pip install twitter_bot_utils`.
 
