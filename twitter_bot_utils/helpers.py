@@ -67,27 +67,34 @@ def has_entities(status):
 
     return False
 
+
 def format_status(status):
     return format_text(status.text)
 
+
 def format_text(text):
     return parser.unescape(text).strip()
+
 
 def remove_mentions(status):
     '''Remove mentions from status text'''
     return remove_entities(status, ['user_mentions'])
 
+
 def remove_urls(status):
     '''Remove urls from status text'''
     return remove_entities(status, ['urls'])
+
 
 def remove_symbols(status):
     '''Remove symbols from status text'''
     return remove_entities(status, ['symbols'])
 
+
 def remove_hashtags(status):
     '''Remove hashtags from status text'''
     return remove_entities(status, ['hastags'])
+
 
 def remove_entity(status, entitytype):
     '''Use indices to remove given entity type from status text'''

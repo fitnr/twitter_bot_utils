@@ -7,6 +7,7 @@ from .config import credentials
 
 vcr = VCR(filter_headers=['Authorization'])
 
+
 class testTools(unittest.TestCase):
 
     def setUp(self):
