@@ -65,6 +65,6 @@ setup(
 
     install_requires=[
         'tweepy >=3.8.0, <4',
-        'pyyaml>=4.2b1',
+        'pyYAML>=4.2',
     ],
 )

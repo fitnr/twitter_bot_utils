@@ -1,3 +1,8 @@
+0.12.1
+------
+* Remove remaining Python 2 methods and support (#6)
+* Move tests to tox
+
 0.12.0
 ------
 * Remove support for Python 2
