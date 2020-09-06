@@ -4,10 +4,7 @@ from __future__ import unicode_literals
 import unittest
 import tweepy
 from twitter_bot_utils import helpers
-import six
 
-if six.PY2:
-    chr = unichr
 
 TWEET = {
     "source": "\u003Ca href=\"http:\/\/twitter.com\/download\/iphone\" rel=\"nofollow\"\u003ETwitter for iPhone\u003C\/a\u003E",

@@ -21,7 +21,6 @@ try:
 except ImportError:
     from html import parser
 
-import six
 
 def has_url(status):
     return has_entity(status, 'urls')
@@ -201,13 +200,13 @@ def chomp(text, max_len=280, split=None):
     return text
 
 
-def length(text, maxval=None, encoding=None):
+def length(text, maxval=None, *args):
     '''
     Count the length of a str the way Twitter does,
     double-counting "wide" characters (e.g. ideographs, emoji)
 
     Args:
-        text (str): Text to count. Must be a unicode string in Python 2
+        text (str): Text to count.
         maxval (int): The maximum encoding that will be counted as 1 character.
             Defaults to 4351 (ჿ GEORGIAN LETTER LABIAL SIGN, U+10FF)
 
@@ -216,8 +215,7 @@ def length(text, maxval=None, encoding=None):
     '''
     maxval = maxval or 4351
     try:
-        assert not isinstance(text, six.binary_type)
+        assert isinstance(text, str)
     except AssertionError:
-        raise TypeError('helpers.length requires a unicode argument')
+        raise TypeError('helpers.length requires a string argument')
     return sum(2 if ord(x) > maxval else 1 for x in unicodedata.normalize('NFC', text))
-
