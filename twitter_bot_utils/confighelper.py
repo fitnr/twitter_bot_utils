@@ -16,13 +16,6 @@
 from itertools import product
 import json
 from os import path, getcwd
-# "FileNotFoundError" is a Py 3 thing. If we're in Py 2, we mimic it with a lambda expression.
-try:
-    FileNotFoundError
-except NameError:
-    from errno import ENOENT
-    FileNotFoundError = lambda x: IOError(ENOENT, x)
-
 import yaml
 import tweepy
 
