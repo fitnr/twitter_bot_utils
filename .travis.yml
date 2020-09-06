@@ -4,9 +4,10 @@ os:
   - linux
 
 python:
-  - 3.6
-  - 3.7
-  - 3.8
+  - "3.5"
+  - "3.6"
+  - "3.7"
+  - "3.8"
 
 env:
   matrix:
@@ -27,14 +28,12 @@ matrix:
 
 before_install:
   - export PATH=$PATH:~/.local/bin:~/bin
-  - if [[ $TRAVIS_OS_NAME == "osx" ]]; then brew update; fi
-  - if [[ $TRAVIS_OS_NAME == "osx" ]]; then brew install python; fi
-  - if [[ $TRAVIS_OS_NAME == "osx" ]]; then pip install -U setuptools virtualenv; fi
   - pip install coverage
 
 install:
+  - pip install tox-travis
   - pip install $TWEEPY
   - python setup.py install
 
 script:
-  - make test
+  - tox

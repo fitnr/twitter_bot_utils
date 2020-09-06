@@ -67,14 +67,4 @@ setup(
         'tweepy >=3.8.0, <4',
         'pyyaml>=4.2b1',
     ],
-
-    test_suite="tests",
-
-    tests_require=[
-        'coverage',
-        'sphinx',
-        'sphinx_rtd_theme',
-        'vcrpy==1.11.1',
-        'six>=1.10.0'
-    ],
 )

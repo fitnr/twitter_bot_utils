@@ -12,9 +12,6 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-PYTHON=python
-PYTHON3=python3
-
 .PHONY: all
 all: README.rst docs.zip
 
@@ -24,24 +21,24 @@ README.rst: README.md
 	- python setup.py check --restructuredtext --strict
 
 docs.zip: docs/source/conf.py $(wildcard docs/*.rst docs/*/*.rst twitter_bot_utils/*.py) 
+	python -m pip install -q sphinx sphinx_rtd_theme
 	$(MAKE) -C docs html
 	cd docs/_build/html; \
 	zip -qr ../../../$@ . -x '*/.DS_Store' .DS_Store
 
-.PHONY: test deploy clean cov
+.PHONY: test deploy clean
 test:
-	$(PYTHON) setup.py --version --url
-	coverage run --include=twitter_bot_utils/*,build/lib/* setup.py -q test
-	coverage report
-	coverage html
+	python setup.py --version --url
+	python -m coverage run --include=twitter_bot_utils/*,build/lib/* -m unittest tests/test_*.py
+	python -m coverage report
+	python -m coverage html
 	tbu --version
-	tbu like --help
-	tbu follow --help
-	tbu auth --help
+	tbu like --help >/dev/null
+	tbu follow --help >/dev/null
+	tbu auth --help >/dev/null
 
 deploy: README.rst | clean
-	$(PYTHON) setup.py sdist
-	$(PYTHON3) setup.py bdist_wheel
+	python setup.py sdist bdist_wheel
 	twine upload dist/*
 	git push
 	git push --tags
