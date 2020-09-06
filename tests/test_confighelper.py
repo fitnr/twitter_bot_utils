@@ -93,5 +93,6 @@ class test_confighelper(unittest.TestCase):
         assert config['consumer_key'] == 'NOVEMBER'
         assert config['random'] == 'foo'
 
+
 if __name__ == '__main__':
     unittest.main()

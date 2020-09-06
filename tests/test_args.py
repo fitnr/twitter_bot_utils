@@ -22,5 +22,6 @@ class test_twitter_bot_utils(unittest.TestCase):
         assert self.args.dry_run is True
         assert self.args.verbose is True
 
+
 if __name__ == '__main__':
     unittest.main()

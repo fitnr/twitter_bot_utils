@@ -9,39 +9,7 @@ import tweepy
 from twitter_bot_utils import archive, confighelper
 from twitter_bot_utils import args
 
-TWEET = {
-    "source": "\u003Ca href=\"http:\/\/twitter.com\/download\/iphone\" rel=\"nofollow\"\u003ETwitter for iPhone\u003C\/a\u003E",
-    "entities": {
-        "user_mentions": [{
-            "name": "John Doe",
-            "screen_name": "twitter",
-            "indices": [0, 8],
-            "id_str": "1",
-            "id": 1
-        }],
-        "media": [],
-        "hashtags": [],
-        "urls": []
-    },
-    "in_reply_to_status_id_str": "318563540590010368",
-    "id_str": "318565861172600832",
-    "in_reply_to_user_id": 14155645,
-    "text": "@twitter example tweet example tweet example tweet",
-    "id": 318565861172600832,
-    "in_reply_to_status_id": 318563540590010368,
-    "in_reply_to_screen_name": "twitter",
-    "in_reply_to_user_id_str": "14155645",
-    "retweeted": None,
-    "user": {
-        "name": "Neil Freeman",
-        "screen_name": "fitnr",
-        "protected": False,
-        "id_str": "6853512",
-        "profile_image_url_https": "https:\/\/pbs.twimg.com\/profile_images\/431817496350314496\/VGgzYAE7_normal.jpeg",
-        "id": 6853512,
-        "verified": False
-    }
-}
+from .config import example_tweet
 
 
 class test_twitter_bot_utils(unittest.TestCase):
@@ -55,7 +23,7 @@ class test_twitter_bot_utils(unittest.TestCase):
 
     def setUp(self):
         self.api = tweepy.API()
-        self.status = tweepy.Status.parse(self.api, TWEET)
+        self.status = tweepy.Status.parse(self.api, example_tweet)
 
         parent = args.parent(version='1.2.3')
         self.parser = argparse.ArgumentParser(description='desc', parents=[parent])
