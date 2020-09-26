@@ -13,13 +13,13 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import sys
-import logging
 import argparse
+import logging
+import sys
 
 
 def add_default_args(parser, version=None, include=None):
-    '''
+    """
     Add default arguments to a parser. These are:
         - config: argument for specifying a configuration file.
         - user: argument for specifying a user.
@@ -31,43 +31,58 @@ def add_default_args(parser, version=None, include=None):
     Args:
         version (str): version to return on <cli> --version
         include (Sequence): default arguments to add to cli. Default: (config, user, dry-run, verbose, quiet)
-    '''
-    include = include or ('config', 'user', 'dry-run', 'verbose', 'quiet')
+    """
+    include = include or ("config", "user", "dry-run", "verbose", "quiet")
 
-    if 'config' in include:
-        parser.add_argument('-c', '--config', dest='config_file', metavar='PATH', default=None,
-                            type=str, help='bots config file (json or yaml)')
-    if 'user' in include:
-        parser.add_argument('-u', '--user', dest='screen_name', type=str, help="Twitter screen name")
+    if "config" in include:
+        parser.add_argument(
+            "-c",
+            "--config",
+            dest="config_file",
+            metavar="PATH",
+            default=None,
+            type=str,
+            help="bots config file (json or yaml)",
+        )
+    if "user" in include:
+        parser.add_argument(
+            "-u", "--user", dest="screen_name", type=str, help="Twitter screen name"
+        )
 
-    if 'dry-run' in include:
-        parser.add_argument('-n', '--dry-run', action='store_true', help="Don't actually do anything")
+    if "dry-run" in include:
+        parser.add_argument(
+            "-n", "--dry-run", action="store_true", help="Don't actually do anything"
+        )
 
-    if 'verbose' in include:
-        parser.add_argument('-v', '--verbose', action='store_true', help="Run talkatively")
+    if "verbose" in include:
+        parser.add_argument(
+            "-v", "--verbose", action="store_true", help="Run talkatively"
+        )
 
-    if 'quiet' in include:
-        parser.add_argument('-q', '--quiet', action='store_true', help="Run quietly")
+    if "quiet" in include:
+        parser.add_argument("-q", "--quiet", action="store_true", help="Run quietly")
 
     if version:
-        parser.add_argument('-V', '--version', action='version', version="%(prog)s " + version)
+        parser.add_argument(
+            "-V", "--version", action="version", version="%(prog)s " + version
+        )
 
 
 def parent(version=None, include=None):
-    '''
+    """
     Return the default args as a parent parser, optionally adding a version
 
     Args:
         version (str): version to return on <cli> --version
         include (Sequence): default arguments to add to cli. Default: (config, user, dry-run, verbose, quiet)
-    '''
+    """
     parser = argparse.ArgumentParser(add_help=False)
     add_default_args(parser, version=version, include=include)
     return parser
 
 
 def add_logger(name, level=None, format=None):
-    '''
+    """
     Set up a stdout logger.
 
     Args:
@@ -78,8 +93,8 @@ def add_logger(name, level=None, format=None):
 
     Returns:
         The logger object.
-    '''
-    format = format or '%(filename)-11s %(lineno)-3d: %(message)s'
+    """
+    format = format or "%(filename)-11s %(lineno)-3d: %(message)s"
     log = logging.getLogger(name)
 
     # Set logging level.

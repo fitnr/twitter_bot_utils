@@ -13,33 +13,36 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 from __future__ import unicode_literals
+
 import re
 import unicodedata
+
 try:
     import HTMLParser
+
     parser = HTMLParser.HTMLParser()
 except ImportError:
     from html import parser
 
 
 def has_url(status):
-    return has_entity(status, 'urls')
+    return has_entity(status, "urls")
 
 
 def has_hashtag(status):
-    return has_entity(status, 'hashtags')
+    return has_entity(status, "hashtags")
 
 
 def has_mention(status):
-    return has_entity(status, 'user_mentions')
+    return has_entity(status, "user_mentions")
 
 
 def has_media(status):
-    return has_entity(status, 'media')
+    return has_entity(status, "media")
 
 
 def has_symbol(status):
-    return has_entity(status, 'symbols')
+    return has_entity(status, "symbols")
 
 
 def has_entity(status, entitykey):
@@ -47,7 +50,7 @@ def has_entity(status, entitykey):
         return len(status.entities[entitykey]) > 0
 
     except AttributeError:
-        return len(status['entities'][entitykey]) > 0
+        return len(status["entities"][entitykey]) > 0
 
 
 def has_entities(status):
@@ -62,7 +65,7 @@ def has_entities(status):
             return True
 
     except AttributeError:
-        if sum(len(v) for v in status['entities'].values()) > 0:
+        if sum(len(v) for v in status["entities"].values()) > 0:
             return True
 
     return False
@@ -77,40 +80,45 @@ def format_text(text):
 
 
 def remove_mentions(status):
-    '''Remove mentions from status text'''
-    return remove_entities(status, ['user_mentions'])
+    """Remove mentions from status text"""
+    return remove_entities(status, ["user_mentions"])
 
 
 def remove_urls(status):
-    '''Remove urls from status text'''
-    return remove_entities(status, ['urls'])
+    """Remove urls from status text"""
+    return remove_entities(status, ["urls"])
 
 
 def remove_symbols(status):
-    '''Remove symbols from status text'''
-    return remove_entities(status, ['symbols'])
+    """Remove symbols from status text"""
+    return remove_entities(status, ["symbols"])
 
 
 def remove_hashtags(status):
-    '''Remove hashtags from status text'''
-    return remove_entities(status, ['hastags'])
+    """Remove hashtags from status text"""
+    return remove_entities(status, ["hastags"])
 
 
 def remove_entity(status, entitytype):
-    '''Use indices to remove given entity type from status text'''
+    """Use indices to remove given entity type from status text"""
     return remove_entities(status, [entitytype])
 
 
 def remove_entities(status, entitylist):
-    '''Remove entities for a list of items.'''
+    """Remove entities for a list of items."""
     try:
         entities = status.entities
         text = status.text
     except AttributeError:
-        entities = status.get('entities', dict())
-        text = status['text']
+        entities = status.get("entities", dict())
+        text = status["text"]
 
-    indices = [ent['indices'] for etype, entval in list(entities.items()) for ent in entval if etype in entitylist]
+    indices = [
+        ent["indices"]
+        for etype, entval in list(entities.items())
+        for ent in entval
+        if etype in entitylist
+    ]
     indices.sort(key=lambda x: x[0], reverse=True)
 
     for start, end in indices:
@@ -120,7 +128,7 @@ def remove_entities(status, entitylist):
 
 
 def replace_urls(status):
-    '''
+    """
     Replace shorturls in a status with expanded urls.
 
     Args:
@@ -128,13 +136,13 @@ def replace_urls(status):
 
     Returns:
         str
-    '''
+    """
     text = status.text
 
     if not has_url(status):
         return text
 
-    urls = [(e['indices'], e['expanded_url']) for e in status.entities['urls']]
+    urls = [(e["indices"], e["expanded_url"]) for e in status.entities["urls"]]
     urls.sort(key=lambda x: x[0][0], reverse=True)
 
     for (start, end), url in urls:
@@ -144,29 +152,29 @@ def replace_urls(status):
 
 
 def shorten(string, length=140, ellipsis=None):
-    '''
+    """
     Shorten a string to 140 characters without breaking words.
     Optionally add an ellipsis character: '…' if ellipsis=True, or a given string
     e.g. ellipsis=' (cut)'
-    '''
+    """
     string = string.strip()
 
     if len(string) > length:
         if ellipsis is True:
-            ellipsis = '…'
+            ellipsis = "…"
         else:
-            ellipsis = ellipsis or ''
+            ellipsis = ellipsis or ""
 
         L = length - len(ellipsis)
 
-        return ' '.join(string[:L].split(' ')[:-1]).strip(',;:.') + ellipsis
+        return " ".join(string[:L].split(" ")[:-1]).strip(",;:.") + ellipsis
 
     else:
         return string
 
 
 def queryize(terms, exclude_screen_name=None):
-    '''
+    """
     Create query from list of terms, using OR
     but intelligently excluding terms beginning with '-' (Twitter's NOT operator).
     Optionally add -from:exclude_screen_name.
@@ -180,15 +188,15 @@ def queryize(terms, exclude_screen_name=None):
 
     Returns:
         A string ready to be passed to tweepy.API.search
-    '''
-    ors = ' OR '.join('"{}"'.format(x) for x in terms if not x.startswith('-'))
-    nots = ' '.join('-"{}"'.format(x[1:]) for x in terms if x.startswith('-'))
-    sn = "-from:{}".format(exclude_screen_name) if exclude_screen_name else ''
-    return ' '.join((ors, nots, sn))
+    """
+    ors = " OR ".join('"{}"'.format(x) for x in terms if not x.startswith("-"))
+    nots = " ".join('-"{}"'.format(x[1:]) for x in terms if x.startswith("-"))
+    sn = "-from:{}".format(exclude_screen_name) if exclude_screen_name else ""
+    return " ".join((ors, nots, sn))
 
 
 def chomp(text, max_len=280, split=None):
-    '''
+    """
     Shorten a string so that it fits under max_len, splitting it at 'split'.
     Not guaranteed to return a string under max_len, as it may not be possible
 
@@ -196,11 +204,11 @@ def chomp(text, max_len=280, split=None):
         text (str): String to shorten
         max_len (int): maximum length. default 140
         split (str): strings to split on (default is common punctuation: "-;,.")
-    '''
-    split = split or '—;,.'
+    """
+    split = split or "—;,."
     while length(text) > max_len:
         try:
-            text = re.split(r'[' + split + ']', text[::-1], 1)[1][::-1]
+            text = re.split(r"[" + split + "]", text[::-1], 1)[1][::-1]
         except IndexError:
             return text
 
@@ -208,7 +216,7 @@ def chomp(text, max_len=280, split=None):
 
 
 def length(text, maxval=None, *args):
-    '''
+    """
     Count the length of a str the way Twitter does,
     double-counting "wide" characters (e.g. ideographs, emoji)
 
@@ -219,10 +227,10 @@ def length(text, maxval=None, *args):
 
     Returns:
         int
-    '''
+    """
     maxval = maxval or 4351
     try:
         assert isinstance(text, str)
     except AssertionError:
-        raise TypeError('helpers.length requires a string argument')
-    return sum(2 if ord(x) > maxval else 1 for x in unicodedata.normalize('NFC', text))
+        raise TypeError("helpers.length requires a string argument")
+    return sum(2 if ord(x) > maxval else 1 for x in unicodedata.normalize("NFC", text))

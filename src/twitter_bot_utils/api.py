@@ -10,31 +10,32 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 
+import logging
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import os
-from time import sleep
-import logging
 from argparse import Namespace
+from time import sleep
+
 import tweepy
 
-from .confighelper import configure
 from . import args as tbu_args
+from .confighelper import configure
 
 PROTECTED_INFO = [
-    'consumer_key',
-    'consumer_secret',
-    'key',
-    'token',
-    'oauth_token',
-    'secret',
-    'oauth_secret',
+    "consumer_key",
+    "consumer_secret",
+    "key",
+    "token",
+    "oauth_token",
+    "secret",
+    "oauth_secret",
 ]
 
 
 class API(tweepy.API):
 
-    '''
+    """
     Extends the tweepy API with config-file handling.
 
     Args:
@@ -47,7 +48,7 @@ class API(tweepy.API):
         quiet (bool): Set logging level to ERROR. Overrides verbose.
         use_env (bool): Allow environment variables to override settings. Default: True
         kwargs: Other settings will be passed to the config
-    '''
+    """
 
     _last_tweet = _last_reply = _last_retweet = None
 
@@ -55,40 +56,49 @@ class API(tweepy.API):
     max_size_chunked = 15360  # chunked uploads must be less than 15 MB
 
     def __init__(self, args=None, **kwargs):
-        '''
+        """
         Construct the tbu.API object.
-        '''
+        """
 
         # Update the kwargs with non-None contents of args
         if isinstance(args, Namespace):
             kwargs.update({k: v for k, v in vars(args).items() if v is not None})
 
-        self._screen_name = kwargs.pop('screen_name', None)
+        self._screen_name = kwargs.pop("screen_name", None)
 
         # Add a logger
-        level = logging.DEBUG if kwargs.pop('verbose', None) else None
-        level = logging.ERROR if kwargs.get('quiet', None) else level
-        self.logger = tbu_args.add_logger(kwargs.pop('logger_name', self._screen_name), level,
-                                          kwargs.pop('format', None))
+        level = logging.DEBUG if kwargs.pop("verbose", None) else None
+        level = logging.ERROR if kwargs.get("quiet", None) else level
+        self.logger = tbu_args.add_logger(
+            kwargs.pop("logger_name", self._screen_name),
+            level,
+            kwargs.pop("format", None),
+        )
 
         # get config file and parse it
         config = configure(self._screen_name, **kwargs)
         self._config = {k: v for k, v in config.items() if k not in PROTECTED_INFO}
         keys = {k: v for k, v in config.items() if k in PROTECTED_INFO}
-        if kwargs.get('use_env', True):
-            keys.update({
-                k: os.environ['TWITTER_' + k.upper()] for k in PROTECTED_INFO
-                if k not in keys and 'TWITTER_' + k.upper() in os.environ
-            })
+        if kwargs.get("use_env", True):
+            keys.update(
+                {
+                    k: os.environ["TWITTER_" + k.upper()]
+                    for k in PROTECTED_INFO
+                    if k not in keys and "TWITTER_" + k.upper() in os.environ
+                }
+            )
 
         try:
             # setup auth
-            auth = tweepy.OAuthHandler(consumer_key=keys['consumer_key'], consumer_secret=keys['consumer_secret'])
+            auth = tweepy.OAuthHandler(
+                consumer_key=keys["consumer_key"],
+                consumer_secret=keys["consumer_secret"],
+            )
 
             try:
                 auth.set_access_token(
-                    key=keys.get('token', keys.get('key', keys.get('oauth_token'))),
-                    secret=keys.get('secret', keys.get('oauth_secret'))
+                    key=keys.get("token", keys.get("key", keys.get("oauth_token"))),
+                    secret=keys.get("secret", keys.get("oauth_secret")),
                 )
 
             except KeyError:
@@ -112,10 +122,12 @@ class API(tweepy.API):
 
     @property
     def app(self):
-        return self._config['app']
+        return self._config["app"]
 
     def _sinces(self):
-        tl = self.user_timeline(self.screen_name, count=1000, include_rts=True, exclude_replies=False)
+        tl = self.user_timeline(
+            self.screen_name, count=1000, include_rts=True, exclude_replies=False
+        )
 
         if tl:
             self._last_tweet = tl[0].id
@@ -141,15 +153,15 @@ class API(tweepy.API):
 
     @property
     def last_tweet(self, refresh=None):
-        return self._last('_last_tweet', refresh)
+        return self._last("_last_tweet", refresh)
 
     @property
     def last_reply(self, refresh=None):
-        return self._last('_last_reply', refresh)
+        return self._last("_last_reply", refresh)
 
     @property
     def last_retweet(self, refresh=None):
-        return self._last('_last_retweet', refresh)
+        return self._last("_last_retweet", refresh)
 
     def update_status(self, *pargs, **kwargs):
         """
@@ -159,7 +171,7 @@ class API(tweepy.API):
             return super(API, self).update_status(*pargs, **kwargs)
 
         except tweepy.TweepError as e:
-            if getattr(e, 'api_code', None) == 503:
+            if getattr(e, "api_code", None) == 503:
                 sleep(10)
                 return super(API, self).update_status(*pargs, **kwargs)
 
