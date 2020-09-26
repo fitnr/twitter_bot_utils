@@ -21,7 +21,7 @@ README.rst: README.md
 	- python setup.py check --restructuredtext --strict
 
 docs.zip: docs/source/conf.py $(wildcard docs/*.rst docs/*/*.rst twitter_bot_utils/*.py) 
-	python -m pip install -q sphinx sphinx_rtd_theme
+	python -m pip install '.[doc]'
 	$(MAKE) -C docs html
 	cd docs/_build/html; \
 	zip -qr ../../../$@ . -x '*/.DS_Store' .DS_Store

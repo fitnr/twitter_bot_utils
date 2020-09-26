@@ -35,7 +35,8 @@ test = [
     "vcrpy==1.11.1",
 ]
 doc = [ 
-    "sphinx"
+    "sphinx",
+    "sphinx_rtd_theme"
 ]
 
 [tool.flit.scripts]

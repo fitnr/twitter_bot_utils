@@ -222,10 +222,10 @@ def length(text, maxval=None):
         Count the length of a str the way Twitter does,
         double-counting "wide" characters (e.g. ideographs, emoji)
 
-    Ar:
-            text (str): Text to count.
-            maxval (int): The maximum encoding that will be counted as 1 character.
-                Defaults to 4351 (ჿ GEORGIAN LETTER LABIAL SIGN, U+10FF)
+    Args:
+        text (str): Text to count.
+        maxval (int): The maximum encoding that will be counted as 1 character.
+            Defaults to 4351 (ჿ GEORGIAN LETTER LABIAL SIGN, U+10FF)
 
         Returns:
             int
