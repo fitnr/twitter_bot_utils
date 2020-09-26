@@ -1,4 +1,0 @@
-vcrpy==1.11.1
-six>=1.10.0
-mock
-coverage
