@@ -13,6 +13,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+"""Tools for managing bots.yaml and other config files."""
+
 import json
 from itertools import product
 from os import getcwd, path
@@ -71,7 +73,6 @@ def configure(screen_name=None, config_file=None, app=None, **kwargs):
 
 def parse(file_path):
     """Parse a YAML or JSON file."""
-
     _, ext = path.splitext(file_path)
 
     if ext in (".yaml", ".yml"):
@@ -89,12 +90,11 @@ def parse(file_path):
 
 def find_file(config_file=None, default_directories=None, default_bases=None):
     """Search for a config file in a list of files."""
-
     if config_file:
         if path.exists(path.expanduser(config_file)):
             return config_file
-        else:
-            raise FileNotFoundError("Config file not found: {}".format(config_file))
+
+        raise FileNotFoundError("Config file not found: {}".format(config_file))
 
     dirs = default_directories or CONFIG_DIRS
     dirs = [getcwd()] + dirs
@@ -111,9 +111,7 @@ def find_file(config_file=None, default_directories=None, default_bases=None):
 
 def setup_auth(**keys):
     """Set up Tweepy authentication using passed args or config file settings."""
-    auth = tweepy.OAuthHandler(
-        consumer_key=keys["consumer_key"], consumer_secret=keys["consumer_secret"]
-    )
+    auth = tweepy.OAuthHandler(consumer_key=keys["consumer_key"], consumer_secret=keys["consumer_secret"])
     auth.set_access_token(
         key=keys.get("token", keys.get("key", keys.get("oauth_token"))),
         secret=keys.get("secret", keys.get("oauth_secret")),
@@ -122,6 +120,7 @@ def setup_auth(**keys):
 
 
 def dump(contents, file_path):
+    """Dump a file's contents as a Python object"""
     _, ext = path.splitext(file_path)
 
     if ext in (".yaml", ".yml"):

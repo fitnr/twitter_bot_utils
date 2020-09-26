@@ -4,15 +4,16 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-
-import logging
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+""" Wrapper around the tweepy.API """
+
+import logging
 import os
 from argparse import Namespace
 from time import sleep
@@ -41,7 +42,8 @@ class API(tweepy.API):
     Args:
         args (Namespace): argparse.Namespace to read.
         screen_name (str): Twitter screen name
-        config_file (str): Config file. When False, don't read any config files. Defaults to bots.json or bots.yaml in ~/ or ~/bots/.
+        config_file (str): Config file. When False, don't read any config files.
+            Defaults to bots.json or bots.yaml in ~/ or ~/bots/.
         logger_name (str): Use a logger with this name. Defaults to screen_name
         format (str): Format for logger. Defaults to 'file lineno: message'
         verbose (bool): Set logging level to DEBUG
@@ -105,74 +107,78 @@ class API(tweepy.API):
                 # API won't have an access key
                 pass
 
-        except KeyError:
+        except KeyError as err:
             missing = [p for p in PROTECTED_INFO if p not in keys]
-            raise ValueError("Incomplete config. Missing {}".format(missing))
+            raise ValueError("Incomplete config. Missing {}".format(missing)) from err
 
         # initiate api connection
-        super(API, self).__init__(auth)
+        super().__init__(auth)
 
     @property
     def config(self):
+        """Return config dict."""
         return self._config
 
     @property
     def screen_name(self):
+        """Return authorized @screen_name"""
         return self._screen_name
 
     @property
     def app(self):
+        """Return current app name."""
         return self._config["app"]
 
     def _sinces(self):
-        tl = self.user_timeline(
-            self.screen_name, count=1000, include_rts=True, exclude_replies=False
-        )
+        timeline = self.user_timeline(self.screen_name, count=1000, include_rts=True, exclude_replies=False)
 
-        if tl:
-            self._last_tweet = tl[0].id
+        if timeline:
+            self._last_tweet = timeline[0].id
         else:
             self._last_tweet = self._last_reply = self._last_retweet = None
             return
 
         try:
-            self._last_reply = max(t.id for t in tl if t.in_reply_to_user_id)
+            self._last_reply = max(t.id for t in timeline if t.in_reply_to_user_id)
         except ValueError:
             self._last_reply = None
 
         try:
-            self._last_retweet = max(t.id for t in tl if t.retweeted)
+            self._last_retweet = max(t.id for t in timeline if t.retweeted)
         except ValueError:
             self._last_retweet = None
 
-    def _last(self, last_what, refresh):
+    def _last(self, last_what, refresh=None):
         if refresh or getattr(self, last_what) is None:
             self._sinces()
 
         return getattr(self, last_what)
 
     @property
-    def last_tweet(self, refresh=None):
-        return self._last("_last_tweet", refresh)
+    def last_tweet(self):
+        """Return most recent sent tweet."""
+        return self._last("_last_tweet")
 
     @property
-    def last_reply(self, refresh=None):
-        return self._last("_last_reply", refresh)
+    def last_reply(self):
+        """Return most recent sent reply."""
+        return self._last("_last_reply")
 
     @property
-    def last_retweet(self, refresh=None):
-        return self._last("_last_retweet", refresh)
+    def last_retweet(self):
+        """Return most recent retweet."""
+        return self._last("_last_retweet")
 
     def update_status(self, *pargs, **kwargs):
         """
         Wrapper for tweepy.api.update_status with a 10s wait when twitter is over capacity
         """
         try:
-            return super(API, self).update_status(*pargs, **kwargs)
+            return super().update_status(*pargs, **kwargs)
 
-        except tweepy.TweepError as e:
-            if getattr(e, "api_code", None) == 503:
+        except tweepy.TweepError as err:
+            if getattr(err, "api_code", None) == 503:
                 sleep(10)
-                return super(API, self).update_status(*pargs, **kwargs)
+                return super().update_status(*pargs, **kwargs)
 
-            raise e
+            raise err from err

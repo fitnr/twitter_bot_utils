@@ -13,6 +13,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+"""Argument helper for cli tool."""
+
 import argparse
 import logging
 import sys
@@ -45,27 +47,19 @@ def add_default_args(parser, version=None, include=None):
             help="bots config file (json or yaml)",
         )
     if "user" in include:
-        parser.add_argument(
-            "-u", "--user", dest="screen_name", type=str, help="Twitter screen name"
-        )
+        parser.add_argument("-u", "--user", dest="screen_name", type=str, help="Twitter screen name")
 
     if "dry-run" in include:
-        parser.add_argument(
-            "-n", "--dry-run", action="store_true", help="Don't actually do anything"
-        )
+        parser.add_argument("-n", "--dry-run", action="store_true", help="Don't actually do anything")
 
     if "verbose" in include:
-        parser.add_argument(
-            "-v", "--verbose", action="store_true", help="Run talkatively"
-        )
+        parser.add_argument("-v", "--verbose", action="store_true", help="Run talkatively")
 
     if "quiet" in include:
         parser.add_argument("-q", "--quiet", action="store_true", help="Run quietly")
 
     if version:
-        parser.add_argument(
-            "-V", "--version", action="version", version="%(prog)s " + version
-        )
+        parser.add_argument("-V", "--version", action="version", version="%(prog)s " + version)
 
 
 def parent(version=None, include=None):
@@ -94,14 +88,15 @@ def add_logger(name, level=None, format=None):
     Returns:
         The logger object.
     """
+    # pylint: disable=redefined-builtin
     format = format or "%(filename)-11s %(lineno)-3d: %(message)s"
     log = logging.getLogger(name)
 
     # Set logging level.
     log.setLevel(level or logging.INFO)
 
-    ch = logging.StreamHandler(sys.stdout)
-    ch.setFormatter(logging.Formatter(format))
-    log.addHandler(ch)
+    handler = logging.StreamHandler(sys.stdout)
+    handler.setFormatter(logging.Formatter(format))
+    log.addHandler(handler)
 
     return log

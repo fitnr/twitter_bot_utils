@@ -1,19 +1,20 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-import sys
-import os
-import unittest
-import inspect
 import argparse
+import inspect
+import os
+import sys
+import unittest
+
 import tweepy
-from twitter_bot_utils import archive, confighelper
-from twitter_bot_utils import args
+
+from twitter_bot_utils import archive, args, confighelper
 
 from .config import example_tweet
 
 
 class test_twitter_bot_utils(unittest.TestCase):
-
+    # pylint: disable=invalid-name
     screen_name = 'example_screen_name'
 
     archive = os.path.dirname(__file__)
@@ -45,7 +46,7 @@ class test_twitter_bot_utils(unittest.TestCase):
 
         self.assertEqual(
             confighelper.find_file(default_directories=[real_path], default_bases=[self.yaml]),
-            os.path.realpath(self.yaml)
+            os.path.realpath(self.yaml),
         )
 
     def test_parse(self):

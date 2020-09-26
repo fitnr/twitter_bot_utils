@@ -1,15 +1,18 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+
 import unittest
+
 import tweepy
+
 from twitter_bot_utils import helpers
 
 from .config import example_tweet
 
 
 class test_tbu_helpers(unittest.TestCase):
-
+    # pylint: disable=invalid-name
     def setUp(self):
         self.api = tweepy.API()
         self.tweet = example_tweet
@@ -35,12 +38,15 @@ class test_tbu_helpers(unittest.TestCase):
 
     def test_remove_entities(self):
         assert helpers.remove_entity(self.status, 'hashtags') == self.status.text
-        assert helpers.remove_entity(
-            self.status, 'user_mentions') == " example tweet example tweet example tweet"
-        assert helpers.remove_entities(
-            self.status, ['hashtags', 'user_mentions']) == " example tweet example tweet example tweet"
-        assert helpers.remove_entities(
-            self.tweet, ['hashtags', 'user_mentions']) == " example tweet example tweet example tweet"
+        assert helpers.remove_entity(self.status, 'user_mentions') == " example tweet example tweet example tweet"
+        assert (
+            helpers.remove_entities(self.status, ['hashtags', 'user_mentions'])
+            == " example tweet example tweet example tweet"
+        )
+        assert (
+            helpers.remove_entities(self.tweet, ['hashtags', 'user_mentions'])
+            == " example tweet example tweet example tweet"
+        )
 
     def test_replace_urls(self):
         assert helpers.replace_urls(self.status) == self.tweet['text']
@@ -53,9 +59,11 @@ class test_tbu_helpers(unittest.TestCase):
         assert helpers.replace_urls(status) == "http://long.long.url hey"
 
     def test_shorten(self):
-        hello = ("This is a long string that's longer than 140 characters, "
-                 "yes it's quite long. It's so long that we need to shorten it. "
-                 "Supercalifragilisticexpialidocious! Amazing. I want to test this.")
+        hello = (
+            "This is a long string that's longer than 140 characters, "
+            "yes it's quite long. It's so long that we need to shorten it. "
+            "Supercalifragilisticexpialidocious! Amazing. I want to test this."
+        )
 
         for i in range(10, 180, 10):
             self.assertLessEqual(len(helpers.shorten(hello, i)), i)
@@ -68,15 +76,13 @@ class test_tbu_helpers(unittest.TestCase):
 
         assert helpers.shorten(hello, ellipsis=True) == (
             "This is a long string that's longer than 140 characters, "
-            "yes it's quite long. It's so long that we need to shorten it…")
+            "yes it's quite long. It's so long that we need to shorten it…"
+        )
 
     def test_querize(self):
         query = ('hi', 'bye', 'oh wow', '-no', '-nuh uh')
         self.assertEqual(helpers.queryize(query).strip(), '"hi" OR "bye" OR "oh wow" -"no" -"nuh uh"')
         self.assertEqual(helpers.queryize(query, 'user'), '"hi" OR "bye" OR "oh wow" -"no" -"nuh uh" -from:user')
-
-    def testFormatText(self):
-        self.assertEqual(helpers.format_text('&amp;'), '&')
 
     def testLength(self):
         # equal len and length
@@ -84,7 +90,7 @@ class test_tbu_helpers(unittest.TestCase):
             'happy 123',  # ascii
             u'ქართული ენა',  # Georgian
             u'˗˖˭ʰ',  # Spacing modifiers
-            u'āz̪u̾ìì'  # diacretics
+            u'āz̪u̾ìì',  # diacretics
         ]
         for s in strings:
             self.assertEqual(len(s), helpers.length(s))

@@ -28,14 +28,16 @@ docs.zip: docs/source/conf.py $(wildcard docs/*.rst docs/*/*.rst twitter_bot_uti
 
 .PHONY: test deploy clean
 test:
-	python setup.py --version --url
-	python -m coverage run --include=twitter_bot_utils/*,build/lib/* -m unittest tests/test_*.py
+	python -m coverage run --source twitter_bot_utils -m unittest tests/test*.py
 	python -m coverage report
 	python -m coverage html
 	tbu --version
 	tbu like --help >/dev/null
 	tbu follow --help >/dev/null
 	tbu auth --help >/dev/null
+
+format:
+	black src tests
 
 deploy: README.rst | clean
 	python setup.py sdist

@@ -12,40 +12,50 @@
 
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
-from __future__ import unicode_literals
+
+"""Helpers for working with tweets"""
 
 import re
+from html import parser
 import unicodedata
-
-try:
-    import HTMLParser
-
-    parser = HTMLParser.HTMLParser()
-except ImportError:
-    from html import parser
 
 
 def has_url(status):
+    """Return true if a tweet has an url entity."""
     return has_entity(status, "urls")
 
 
 def has_hashtag(status):
+    """Return true if a tweet has a hashtag entity."""
     return has_entity(status, "hashtags")
 
 
 def has_mention(status):
+    """Return true if a tweet has a mention entity."""
     return has_entity(status, "user_mentions")
 
 
 def has_media(status):
+    """Return true if a tweet has a media entity."""
     return has_entity(status, "media")
 
 
 def has_symbol(status):
+    """Return true if a tweet has a symbol entity."""
     return has_entity(status, "symbols")
 
 
 def has_entity(status, entitykey):
+    """
+    Return true if a tweet has the given entity key.
+
+    Args:
+        status (tweepy.Status): A tweet
+        entitykey (str): A possible entity name to check for, e.g. "urls".
+
+    Returns:
+        boolean
+    """
     try:
         return len(status.entities[entitykey]) > 0
 
@@ -72,11 +82,8 @@ def has_entities(status):
 
 
 def format_status(status):
-    return format_text(status.text)
-
-
-def format_text(text):
-    return parser.unescape(text).strip()
+    """Remove escaped characters from a status."""
+    return parser.unescape(status.text).strip()
 
 
 def remove_mentions(status):
@@ -113,12 +120,7 @@ def remove_entities(status, entitylist):
         entities = status.get("entities", dict())
         text = status["text"]
 
-    indices = [
-        ent["indices"]
-        for etype, entval in list(entities.items())
-        for ent in entval
-        if etype in entitylist
-    ]
+    indices = [ent["indices"] for etype, entval in list(entities.items()) for ent in entval if etype in entitylist]
     indices.sort(key=lambda x: x[0], reverse=True)
 
     for start, end in indices:
@@ -157,6 +159,7 @@ def shorten(string, length=140, ellipsis=None):
     Optionally add an ellipsis character: '…' if ellipsis=True, or a given string
     e.g. ellipsis=' (cut)'
     """
+    # pylint: disable=redefined-outer-name
     string = string.strip()
 
     if len(string) > length:
@@ -165,12 +168,11 @@ def shorten(string, length=140, ellipsis=None):
         else:
             ellipsis = ellipsis or ""
 
-        L = length - len(ellipsis)
+        i = length - len(ellipsis)
 
-        return " ".join(string[:L].split(" ")[:-1]).strip(",;:.") + ellipsis
+        return " ".join(string[:i].split(" ")[:-1]).strip(",;:.") + ellipsis
 
-    else:
-        return string
+    return string
 
 
 def queryize(terms, exclude_screen_name=None):
@@ -191,8 +193,8 @@ def queryize(terms, exclude_screen_name=None):
     """
     ors = " OR ".join('"{}"'.format(x) for x in terms if not x.startswith("-"))
     nots = " ".join('-"{}"'.format(x[1:]) for x in terms if x.startswith("-"))
-    sn = "-from:{}".format(exclude_screen_name) if exclude_screen_name else ""
-    return " ".join((ors, nots, sn))
+    screen_name = "-from:{}".format(exclude_screen_name) if exclude_screen_name else ""
+    return " ".join((ors, nots, screen_name))
 
 
 def chomp(text, max_len=280, split=None):
@@ -215,22 +217,22 @@ def chomp(text, max_len=280, split=None):
     return text
 
 
-def length(text, maxval=None, *args):
+def length(text, maxval=None):
     """
-    Count the length of a str the way Twitter does,
-    double-counting "wide" characters (e.g. ideographs, emoji)
+        Count the length of a str the way Twitter does,
+        double-counting "wide" characters (e.g. ideographs, emoji)
 
-    Args:
-        text (str): Text to count.
-        maxval (int): The maximum encoding that will be counted as 1 character.
-            Defaults to 4351 (ჿ GEORGIAN LETTER LABIAL SIGN, U+10FF)
+    Ar:
+            text (str): Text to count.
+            maxval (int): The maximum encoding that will be counted as 1 character.
+                Defaults to 4351 (ჿ GEORGIAN LETTER LABIAL SIGN, U+10FF)
 
-    Returns:
-        int
+        Returns:
+            int
     """
     maxval = maxval or 4351
     try:
-        assert isinstance(text, str)
-    except AssertionError:
-        raise TypeError("helpers.length requires a string argument")
+        assert isinstance(text, str), "helpers.length requires a string argument"
+    except AssertionError as err:
+        raise TypeError from err
     return sum(2 if ord(x) > maxval else 1 for x in unicodedata.normalize("NFC", text))

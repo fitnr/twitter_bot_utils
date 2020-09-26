@@ -13,7 +13,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import unicode_literals
+"""A bit of a grab-bag, honestly."""
 
 from time import sleep
 
@@ -23,10 +23,12 @@ RATE_LIMIT_RESET_MINUTES = 15
 
 
 def follow_back(api, dry_run=None):
+    """Follow back using the given API"""
     _autofollow(api, "follow", dry_run)
 
 
 def unfollow(api, dry_run=None):
+    """Unlfollow-back back using the given API"""
     _autofollow(api, "unfollow", dry_run)
 
 
@@ -43,9 +45,9 @@ def _autofollow(api, action, dry_run):
         # Get the last 5000 people user has followed
         friends = api.friends_ids()
 
-    except TweepError as e:
+    except TweepError as err:
         api.logger.error("%s: error getting followers/followers", action)
-        api.logger.error("%s", e)
+        api.logger.error("%s", err)
         return
 
     if action == "unfollow":
@@ -58,9 +60,7 @@ def _autofollow(api, action, dry_run):
     else:
         raise IndexError("Unknown action: {}".format(action))
 
-    api.logger.info(
-        "%sing: found %s friends, %s followers", action, len(friends), len(followers)
-    )
+    api.logger.info("%sing: found %s friends, %s followers", action, len(friends), len(followers))
 
     # auto-following:
     # for all my followers
@@ -86,9 +86,9 @@ def _autofollow(api, action, dry_run):
             sleep(RATE_LIMIT_RESET_MINUTES * 60)
             method(id=uid)
 
-        except TweepError as e:
+        except TweepError as err:
             api.logger.error("error %sing on %s", action, uid)
-            api.logger.error("code %s: %s", e.api_code, e)
+            api.logger.error("code %s: %s", err.api_code, err)
 
 
 def fave_mentions(api, dry_run=None):
@@ -100,12 +100,7 @@ def fave_mentions(api, dry_run=None):
     f = api.favorites(include_entities=False, count=150)
     favs = [m.id_str for m in f]
 
-    try:
-        mentions = api.mentions_timeline(
-            trim_user=True, include_entities=False, count=75
-        )
-    except Exception as e:
-        raise e
+    mentions = api.mentions_timeline(trim_user=True, include_entities=False, count=75)
 
     for mention in mentions:
         # only try to fav if not in recent favs
@@ -124,6 +119,6 @@ def fave_mentions(api, dry_run=None):
                 sleep(RATE_LIMIT_RESET_MINUTES * 60)
                 api.create_favorite(mention.id_str, include_entities=False)
 
-            except TweepError as e:
+            except TweepError as err:
                 api.logger.error("error liking %s", mention.id_str)
-                api.logger.error("code %s: %s", e.api_code, e)
+                api.logger.error("code %s: %s", err.api_code, err)

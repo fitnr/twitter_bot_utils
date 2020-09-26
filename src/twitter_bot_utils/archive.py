@@ -13,6 +13,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+"""Utilities for reading twitter archives"""
+
 import csv
 import json
 from glob import iglob
@@ -66,6 +68,16 @@ def read_json(directory, data_files="data/js/tweets/*.js"):
 
 
 def read_text(data_file):
+    """
+    Read a text file containing one tweet per lint, yielding a generator
+    that returns one tweet at a time.
+
+    Args:
+        data_file (str): Name of file
+
+    Returns:
+        generator
+    """
     with open(data_file, "r") as f:
         data = f.readlines()
 
