@@ -1,0 +1,60 @@
+[build-system]
+requires = ["flit_core >=2,<4"]
+build-backend = "flit_core.buildapi"
+
+[tool.flit.metadata]
+module = "twitter_bot_utils"
+dist-name = "twitter-bot-utils"
+author = "Neil Freeman"
+author-email = "contact@fakeisthenewreal.org"
+home-page = "https://github.com/fitnr/twitter_bot_utils"
+description-file = "README.md"
+keywords = "twitter, twitter bot"
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3.5",
+    "Programming Language :: Python :: 3.6",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+]
+requires-python = "~=3.5"
+requires = [
+    "tweepy >= 3.8.0, <4",
+    "pyYAML >= 4.2"
+]
+
+[tool.flit.metadata.requires-extra]
+test = [
+    "coverage",
+    "mock",
+    "six>=1.10.0",
+    "tox",
+    "vcrpy==1.11.1",
+]
+doc = [ 
+    "sphinx"
+]
+
+[tool.flit.scripts]
+tbu = "twitter_bot_utils.cli:main"
+
+[tool.black]
+line-length = 120
+target-version = ["py38"]
+include = 'py$'
+skip-string-normalization = true
+
+[tool.pylint.master]
+fail-under = "9.5"
+
+[tool.pylint.basic]
+good-names = "f, i, j, k, x, y, z"
+
+[tool.pylint.message_control]
+disable = "print-statement"
+
+[tool.pylint.format]
+max-line-length = 120
