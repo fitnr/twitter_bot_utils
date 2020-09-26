@@ -13,14 +13,14 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from os import path
-import json
 import csv
+import json
 from glob import iglob
+from os import path
 
 
 def read_csv(directory):
-    '''
+    """
     Scrape a twitter archive csv, yielding tweet text.
 
     Args:
@@ -31,31 +31,31 @@ def read_csv(directory):
 
     Returns:
         generator
-    '''
+    """
     if path.isdir(directory):
-        csvfile = path.join(directory, 'tweets.csv')
+        csvfile = path.join(directory, "tweets.csv")
     else:
         csvfile = directory
 
-    with open(csvfile, 'r') as f:
+    with open(csvfile, "r") as f:
         for tweet in csv.DictReader(f):
             try:
-                tweet['text'] = tweet['text'].decode('utf-8')
+                tweet["text"] = tweet["text"].decode("utf-8")
             except AttributeError:
                 pass
 
             yield tweet
 
 
-def read_json(directory, data_files='data/js/tweets/*.js'):
-    '''
+def read_json(directory, data_files="data/js/tweets/*.js"):
+    """
     Scrape a twitter archive file.
     Inspiration from https://github.com/mshea/Parse-Twitter-Archive
-    '''
+    """
     files = path.join(directory, data_files)
 
     for fname in iglob(files):
-        with open(fname, 'r') as f:
+        with open(fname, "r") as f:
             # Twitter's JSON first line is bogus
             data = f.readlines()[1:]
             data = "".join(data)
@@ -66,11 +66,11 @@ def read_json(directory, data_files='data/js/tweets/*.js'):
 
 
 def read_text(data_file):
-    with open(data_file, 'r') as f:
+    with open(data_file, "r") as f:
         data = f.readlines()
 
     for tweet in data:
         try:
-            yield tweet.rstrip().decode('utf-8')
+            yield tweet.rstrip().decode("utf-8")
         except AttributeError:
             yield tweet.rstrip()

@@ -14,26 +14,28 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from __future__ import unicode_literals
+
 from time import sleep
+
 from tweepy.error import RateLimitError, TweepError
 
 RATE_LIMIT_RESET_MINUTES = 15
 
 
 def follow_back(api, dry_run=None):
-    _autofollow(api, 'follow', dry_run)
+    _autofollow(api, "follow", dry_run)
 
 
 def unfollow(api, dry_run=None):
-    _autofollow(api, 'unfollow', dry_run)
+    _autofollow(api, "unfollow", dry_run)
 
 
 def _autofollow(api, action, dry_run):
-    '''
+    """
     Follow back or unfollow the friends/followers of user authenicated in 'api'.
     :api twitter_bot_utils.api.API
     :dry_run bool don't actually (un)follow, just report
-    '''
+    """
     try:
         # get the last 5000 followers
         followers = api.followers_ids()
@@ -42,7 +44,7 @@ def _autofollow(api, action, dry_run):
         friends = api.friends_ids()
 
     except TweepError as e:
-        api.logger.error('%s: error getting followers/followers', action)
+        api.logger.error("%s: error getting followers/followers", action)
         api.logger.error("%s", e)
         return
 
@@ -56,7 +58,9 @@ def _autofollow(api, action, dry_run):
     else:
         raise IndexError("Unknown action: {}".format(action))
 
-    api.logger.info('%sing: found %s friends, %s followers', action, len(friends), len(followers))
+    api.logger.info(
+        "%sing: found %s friends, %s followers", action, len(friends), len(followers)
+    )
 
     # auto-following:
     # for all my followers
@@ -69,32 +73,37 @@ def _autofollow(api, action, dry_run):
 
     for uid in targets:
         try:
-            api.logger.info('%sing %s', action, uid)
+            api.logger.info("%sing %s", action, uid)
 
             if not dry_run:
                 method(id=uid)
 
         except RateLimitError:
-            api.logger.warning("reached Twitter's rate limit, sleeping for %d minutes", RATE_LIMIT_RESET_MINUTES)
+            api.logger.warning(
+                "reached Twitter's rate limit, sleeping for %d minutes",
+                RATE_LIMIT_RESET_MINUTES,
+            )
             sleep(RATE_LIMIT_RESET_MINUTES * 60)
             method(id=uid)
 
         except TweepError as e:
-            api.logger.error('error %sing on %s', action, uid)
+            api.logger.error("error %sing on %s", action, uid)
             api.logger.error("code %s: %s", e.api_code, e)
 
 
 def fave_mentions(api, dry_run=None):
-    '''
+    """
     Fave (aka like) recent mentions from user authenicated in 'api'.
     :api twitter_bot_utils.api.API
     :dry_run bool don't actually favorite, just report
-    '''
+    """
     f = api.favorites(include_entities=False, count=150)
     favs = [m.id_str for m in f]
 
     try:
-        mentions = api.mentions_timeline(trim_user=True, include_entities=False, count=75)
+        mentions = api.mentions_timeline(
+            trim_user=True, include_entities=False, count=75
+        )
     except Exception as e:
         raise e
 
@@ -102,16 +111,19 @@ def fave_mentions(api, dry_run=None):
         # only try to fav if not in recent favs
         if mention.id_str not in favs:
             try:
-                api.logger.info('liking %s: %s', mention.id_str, mention.text)
+                api.logger.info("liking %s: %s", mention.id_str, mention.text)
 
                 if not dry_run:
                     api.create_favorite(mention.id_str, include_entities=False)
 
             except RateLimitError:
-                api.logger.warning("reached Twitter's rate limit, sleeping for %d minutes", RATE_LIMIT_RESET_MINUTES)
+                api.logger.warning(
+                    "reached Twitter's rate limit, sleeping for %d minutes",
+                    RATE_LIMIT_RESET_MINUTES,
+                )
                 sleep(RATE_LIMIT_RESET_MINUTES * 60)
                 api.create_favorite(mention.id_str, include_entities=False)
 
             except TweepError as e:
-                api.logger.error('error liking %s', mention.id_str)
+                api.logger.error("error liking %s", mention.id_str)
                 api.logger.error("code %s: %s", e.api_code, e)

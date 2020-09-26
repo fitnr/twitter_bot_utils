@@ -13,24 +13,20 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from itertools import product
 import json
-from os import path, getcwd
-import yaml
-import tweepy
+from itertools import product
+from os import getcwd, path
 
+import tweepy
+import yaml
 
 CONFIG_DIRS = [
     getcwd(),
-    '~',
-    path.join('~', 'bots'),
+    "~",
+    path.join("~", "bots"),
 ]
 
-CONFIG_BASES = [
-    'bots.yml',
-    'bots.yaml',
-    'bots.json'
-]
+CONFIG_BASES = ["bots.yml", "bots.yaml", "bots.json"]
 
 
 def configure(screen_name=None, config_file=None, app=None, **kwargs):
@@ -46,8 +42,8 @@ def configure(screen_name=None, config_file=None, app=None, **kwargs):
     """
     # Use passed config file, or look for it in the default path.
     # Super-optionally, accept a different place to look for the file
-    dirs = kwargs.pop('default_directories', None)
-    bases = kwargs.pop('default_bases', None)
+    dirs = kwargs.pop("default_directories", None)
+    bases = kwargs.pop("default_bases", None)
     file_config = {}
     if config_file is not False:
         config_file = find_file(config_file, dirs, bases)
@@ -57,11 +53,11 @@ def configure(screen_name=None, config_file=None, app=None, **kwargs):
     # Pull non-authentication settings from the file.
     # Kwargs, user, app, and general settings are included, in that order of preference
     # Exclude apps and users sections from config
-    config = {k: v for k, v in file_config.items() if k not in ('apps', 'users')}
+    config = {k: v for k, v in file_config.items() if k not in ("apps", "users")}
 
-    user_conf = file_config.get('users', {}).get(screen_name, {})
-    app = app or user_conf.get('app')
-    app_conf = file_config.get('apps', {}).get(app, {})
+    user_conf = file_config.get("users", {}).get(screen_name, {})
+    app = app or user_conf.get("app")
+    app_conf = file_config.get("apps", {}).get(app, {})
 
     # Pull user and app data from the file
     config.update(app_conf)
@@ -74,31 +70,31 @@ def configure(screen_name=None, config_file=None, app=None, **kwargs):
 
 
 def parse(file_path):
-    '''Parse a YAML or JSON file.'''
+    """Parse a YAML or JSON file."""
 
     _, ext = path.splitext(file_path)
 
-    if ext in ('.yaml', '.yml'):
+    if ext in (".yaml", ".yml"):
         func = yaml.safe_load
 
-    elif ext == '.json':
+    elif ext == ".json":
         func = json.load
 
     else:
         raise ValueError("Unrecognized config file type %s" % ext)
 
-    with open(file_path, 'r') as f:
+    with open(file_path, "r") as f:
         return func(f)
 
 
 def find_file(config_file=None, default_directories=None, default_bases=None):
-    '''Search for a config file in a list of files.'''
+    """Search for a config file in a list of files."""
 
     if config_file:
         if path.exists(path.expanduser(config_file)):
             return config_file
         else:
-            raise FileNotFoundError('Config file not found: {}'.format(config_file))
+            raise FileNotFoundError("Config file not found: {}".format(config_file))
 
     dirs = default_directories or CONFIG_DIRS
     dirs = [getcwd()] + dirs
@@ -110,15 +106,17 @@ def find_file(config_file=None, default_directories=None, default_bases=None):
         if path.exists(filepath):
             return filepath
 
-    raise FileNotFoundError('Config file not found in {}'.format(dirs))
+    raise FileNotFoundError("Config file not found in {}".format(dirs))
 
 
 def setup_auth(**keys):
-    '''Set up Tweepy authentication using passed args or config file settings.'''
-    auth = tweepy.OAuthHandler(consumer_key=keys['consumer_key'], consumer_secret=keys['consumer_secret'])
+    """Set up Tweepy authentication using passed args or config file settings."""
+    auth = tweepy.OAuthHandler(
+        consumer_key=keys["consumer_key"], consumer_secret=keys["consumer_secret"]
+    )
     auth.set_access_token(
-        key=keys.get('token', keys.get('key', keys.get('oauth_token'))),
-        secret=keys.get('secret', keys.get('oauth_secret'))
+        key=keys.get("token", keys.get("key", keys.get("oauth_token"))),
+        secret=keys.get("secret", keys.get("oauth_secret")),
     )
     return auth
 
@@ -126,16 +124,16 @@ def setup_auth(**keys):
 def dump(contents, file_path):
     _, ext = path.splitext(file_path)
 
-    if ext in ('.yaml', '.yml'):
+    if ext in (".yaml", ".yml"):
         func = yaml.dump
-        kwargs = {'canonical': False, 'default_flow_style': False, 'indent': 4}
+        kwargs = {"canonical": False, "default_flow_style": False, "indent": 4}
 
-    elif ext == '.json':
+    elif ext == ".json":
         func = json.dump
-        kwargs = {'sort_keys': True, 'indent': 4}
+        kwargs = {"sort_keys": True, "indent": 4}
 
     else:
         raise ValueError("Unrecognized config file type %s" % ext)
 
-    with open(file_path, 'w') as f:
+    with open(file_path, "w") as f:
         func(contents, f, **kwargs)
