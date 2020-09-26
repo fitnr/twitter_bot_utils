@@ -2,11 +2,12 @@
 # -*- coding: utf-8 -*-
 import os
 import unittest
+
 from twitter_bot_utils import confighelper
 
 
 class test_confighelper(unittest.TestCase):
-
+    # pylint: disable=invalid-name
     screen_name = 'example_screen_name'
 
     def setUp(self):
@@ -22,7 +23,9 @@ class test_confighelper(unittest.TestCase):
     def test_find_file(self):
         for f in (self.simple, self.yaml, self.json):
             self.assertEqual(f, confighelper.find_file(f))
-            self.assertEqual(f, confighelper.find_file(default_bases=(os.path.basename(f),), default_directories=[self.datapath]))
+            self.assertEqual(
+                f, confighelper.find_file(default_bases=(os.path.basename(f),), default_directories=[self.datapath])
+            )
 
     def test_yaml(self):
         config = confighelper.configure(self.screen_name, config_file=self.yaml)

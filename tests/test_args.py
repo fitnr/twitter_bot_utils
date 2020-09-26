@@ -1,13 +1,14 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+import argparse
 import os.path
 import unittest
-import argparse
+
 from twitter_bot_utils import args
 
 
 class test_twitter_bot_utils(unittest.TestCase):
-
+    # pylint: disable=invalid-name
     def setUp(self):
         self.screen_name = 'example_screen_name'
 

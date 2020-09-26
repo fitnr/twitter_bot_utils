@@ -14,7 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import print_function
+"""Command line interface for twitter-bot-utils"""
 
 import logging
 import sys
@@ -26,17 +26,14 @@ from . import __version__ as version
 from . import api, args, confighelper, tools
 
 ARGS = ["config", "dry-run", "verbose", "quiet"]
-AUTHORIZATION_FAILED_MESSAGE = (
-    "Authorization failed. Check that the consumer key and secret are correct."
-)
+AUTHORIZATION_FAILED_MESSAGE = "Authorization failed. Check that the consumer key and secret are correct."
 DEPRECATION = "This command is deprecated. Please use the tbu command."
 
 
 def fave_mentions(arguments=None):
+    """Add a favorite to recent mentions."""
     if arguments is None:
-        parser = ArgumentParser(
-            description="fave/like mentions", usage="%(prog)s [options] screen_name"
-        )
+        parser = ArgumentParser(description="fave/like mentions", usage="%(prog)s [options] screen_name")
         parser.add_argument("screen_name", type=str)
         args.add_default_args(parser, version=version, include=ARGS)
         print(DEPRECATION, file=sys.stderr)
@@ -48,6 +45,7 @@ def fave_mentions(arguments=None):
 
 
 def auto_follow(arguments=None):
+    """Follow-back recent followers."""
     if arguments is None:
         parser = ArgumentParser(
             description="automatic following and unfollowing",
@@ -73,10 +71,9 @@ def auto_follow(arguments=None):
 
 
 def authenticate(arguments=None):
+    """Authenticate with Twitter API"""
     if arguments is None:
-        parser = ArgumentParser(
-            description="Authorize an account with a twitter application."
-        )
+        parser = ArgumentParser(description="Authorize an account with a twitter application.")
 
         parser.add_argument(
             "-c",
@@ -86,12 +83,8 @@ def authenticate(arguments=None):
             dest="config_file",
             help="config file",
         )
-        parser.add_argument(
-            "--app", metavar="app", type=str, help="app name in config file"
-        )
-        parser.add_argument(
-            "-s", "--save", action="store_true", help="Save details to config file"
-        )
+        parser.add_argument("--app", metavar="app", type=str, help="app name in config file")
+        parser.add_argument("-s", "--save", action="store_true", help="Save details to config file")
 
         parser.add_argument(
             "--consumer-key",
@@ -99,12 +92,8 @@ def authenticate(arguments=None):
             type=str,
             help="consumer key (aka consumer token)",
         )
-        parser.add_argument(
-            "--consumer-secret", metavar="secret", type=str, help="consumer secret"
-        )
-        parser.add_argument(
-            "-V", "--version", action="version", version="%(prog)s " + version
-        )
+        parser.add_argument("--consumer-secret", metavar="secret", type=str, help="consumer secret")
+        parser.add_argument("-V", "--version", action="version", version="%(prog)s " + version)
 
         arguments = parser.parse_args()
         print(DEPRECATION, file=sys.stderr)
@@ -130,20 +119,14 @@ def authenticate(arguments=None):
             consumer_secret = conf["consumer_secret"]
             consumer_key = conf["consumer_key"]
 
-        except KeyError:
-            err = (
-                "Couldn't find consumer-key and consumer-secret for '{}' in {}".format(
-                    arguments.app, file_name
-                )
-            )
-            raise KeyError(err)
+        except KeyError as err:
+            msg = "Couldn't find consumer-key and consumer-secret for '{}' in {}".format(arguments.app, file_name)
+            raise KeyError(msg) from err
 
     auth = tweepy.OAuthHandler(consumer_key, consumer_secret, "oob")
 
     print(auth.get_authorization_url())
-    verifier = input(
-        'Please visit this url, click "Authorize app" and enter in the PIN:\n> '
-    )
+    verifier = input('Please visit this url, click "Authorize app" and enter in the PIN:\n> ')
 
     try:
         auth.get_access_token(verifier)
@@ -207,15 +190,14 @@ def post(arguments):
         if not arguments.dry_run:
             twitter.update_status(**params)
 
-    except tweepy.TweepError as e:
-        logging.getLogger(arguments.screen_name).error(e.message)
+    except tweepy.TweepError as err:
+        logging.getLogger(arguments.screen_name).error(err)
 
 
 def main():
+    """Command line interface for `tbu`."""
     parser = ArgumentParser()
-    parser.add_argument(
-        "-V", "--version", action="version", version="%(prog)s " + version
-    )
+    parser.add_argument("-V", "--version", action="version", version="%(prog)s " + version)
 
     subparsers = parser.add_subparsers()
 
@@ -271,14 +253,10 @@ def main():
         type=str,
         help="consumer key (aka consumer token)",
     )
-    auth.add_argument(
-        "--consumer-secret", metavar="secret", type=str, help="consumer secret"
-    )
+    auth.add_argument("--consumer-secret", metavar="secret", type=str, help="consumer secret")
     auth.set_defaults(func=authenticate)
 
-    fave = subparsers.add_parser(
-        "like", description="fave/like mentions", usage="%(prog)s [options] screen_name"
-    )
+    fave = subparsers.add_parser("like", description="fave/like mentions", usage="%(prog)s [options] screen_name")
     fave.add_argument("screen_name", type=str)
     fave.set_defaults(func=fave)
 

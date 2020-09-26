@@ -1,19 +1,21 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+import argparse
 import os
 import unittest
-import argparse
+
 import tweepy
 from vcr import VCR
-from twitter_bot_utils import api, confighelper
-from .config import credentials
 
+from twitter_bot_utils import api, confighelper
+
+from .config import credentials
 
 vcr = VCR(filter_headers=['Authorization'])
 
 
 class test_twitter_bot_utils(unittest.TestCase):
-
+    # pylint: disable=invalid-name
     _api = None
 
     def setUp(self):

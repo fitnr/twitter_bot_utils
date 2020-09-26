@@ -1,15 +1,18 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import unittest
+
 from vcr import VCR
-from twitter_bot_utils import tools, API
+
+from twitter_bot_utils import API, tools
+
 from .config import credentials
 
 vcr = VCR(filter_headers=['Authorization'])
 
 
 class testTools(unittest.TestCase):
-
+    # pylint: disable=invalid-name
     def setUp(self):
         self.api = API(config_file=False, **credentials)
 
