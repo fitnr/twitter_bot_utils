@@ -58,7 +58,7 @@ author = u'Neil Freeman'
 # |version| and |release|, also used in various other places throughout the
 # built documents.
 #
-with open(os.path.join(os.path.dirname(__file__), '../..', 'twitter_bot_utils/__init__.py')) as i:
+with open(os.path.join(os.path.dirname(__file__), '../..', 'src/twitter_bot_utils/__init__.py')) as i:
     version = next(r for r in i.readlines() if '__version__' in r).split('=')[1].strip('"\' \n')
 
 # The short X.Y version.
