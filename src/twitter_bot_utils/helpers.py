@@ -16,8 +16,8 @@
 """Helpers for working with tweets"""
 
 import re
-from html import parser
 import unicodedata
+from html import parser
 
 
 def has_url(status):
