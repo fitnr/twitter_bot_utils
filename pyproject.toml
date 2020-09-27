@@ -59,3 +59,6 @@ disable = "print-statement"
 
 [tool.pylint.format]
 max-line-length = 120
+
+[tool.isort]
+line_length = 120
