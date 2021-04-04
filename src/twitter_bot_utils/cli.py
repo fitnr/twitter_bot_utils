@@ -194,6 +194,11 @@ def post(arguments):
         logging.getLogger(arguments.screen_name).error(err)
 
 
+def retweet(arguments):
+    twitter = api.API(arguments)
+    twitter.retweet(id=arguments.id)
+
+
 def main():
     """Command line interface for `tbu`."""
     parser = ArgumentParser()
@@ -225,6 +230,19 @@ def main():
         help="Unfollow those who don't follow you",
     )
     follow.set_defaults(func=auto_follow)
+
+    retweet = subparsers.add_parser(
+        "retweet",
+        description="Retweet a tweet",
+        usage="%(prog)s [options] screen_name",
+    )
+    retweet.add_argument("screen_name", type=str)
+    retweet.add_argument(
+        "-i",
+        "--id",
+        help="Retweet this status",
+    )
+    retweet.set_defaults(func=retweet)
 
     auth = subparsers.add_parser(
         "auth",
