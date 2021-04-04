@@ -1,3 +1,9 @@
+0.13
+----
+* Add `tbu retweet` method to command-line tool
+* Boring updates to packaging method and testing
+* Remove media upload methods now available in tweepy
+
 0.12.1
 ------
 * Remove remaining Python 2 methods and support (#6)
