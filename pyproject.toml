@@ -1,46 +1,91 @@
+# -*- coding: utf-8 -*-
+# Copyright 2014-2021 Neil Freeman contact@fakeisthenewreal.org
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
 [build-system]
-requires = ["flit_core >=2,<4"]
+requires = ["flit_core >=3.2,<4"]
 build-backend = "flit_core.buildapi"
 
-[tool.flit.metadata]
-module = "twitter_bot_utils"
-dist-name = "twitter-bot-utils"
-author = "Neil Freeman"
-author-email = "contact@fakeisthenewreal.org"
-home-page = "https://github.com/fitnr/twitter_bot_utils"
-description-file = "README.md"
-keywords = "twitter, twitter bot"
+[project]
+name = "twitter_bot_utils"
+description = "Python utilities for twitter bots"
+readme = "README.md"
+authors = [
+    { name = "Neil Freeman", email = "contact@fakeisthenewreal.org"}
+]
 classifiers = [
+    "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
     "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
-    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
-    "Operating System :: OS Independent",
-    "Programming Language :: Python :: 3.5",
     "Programming Language :: Python :: 3.6",
     "Programming Language :: Python :: 3.7",
     "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Operating System :: OS Independent",
 ]
-requires-python = "~=3.5"
-requires = [
-    "tweepy >= 3.8.0, <4",
-    "pyYAML >= 4.2"
+dynamic = ["version"]
+dependencies = [
+    "tweepy >=3.8.0, <4",
+    "pyYAML>=4.2"
 ]
 
-[tool.flit.metadata.requires-extra]
+[project.license]
+file = "LICENSE"
+
+[project.urls]
+Home = "https://github.com/fitnr/twitter_bot_utils"
+
+[project.scripts]
+tbu = "twitter_bot_utils.cli:main"
+
+[project.optional-dependencies]
 test = [
-    "coverage",
-    "mock",
-    "six>=1.10.0",
-    "tox",
-    "vcrpy==1.11.1",
+    "vcrpy==4.1.1",
+    "mock"
 ]
 doc = [ 
     "sphinx",
     "sphinx_rtd_theme"
 ]
+pylint = ["pylint"]
 
-[tool.flit.scripts]
-tbu = "twitter_bot_utils.cli:main"
+[tool.tox]
+legacy_tox_ini = """
+[tox]
+envlist = py35, py36, py37, py38, py39, py310, pylint
+isolated_build = true
+
+[testenv]
+deps = .[test]
+passenv =
+    TWITTER_SCREEN_NAME
+    TWITTER_CONSUMER_KEY
+    TWITTER_CONSUMER_SECRET
+    TWITTER_OAUTH_TOKEN
+    TWITTER_OAUTH_SECRET
+
+commands = make test
+
+whitelist_externals = make
+
+[testenv:pylint]
+deps = .[test,pylint]
+commands =
+    pylint src
+    pylint -d missing-module-docstring,missing-function-docstring,missing-class-docstring tests
+
+"""
 
 [tool.black]
 line-length = 120

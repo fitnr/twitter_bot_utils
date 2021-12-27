@@ -22,7 +22,6 @@ class test_twitter_bot_utils(unittest.TestCase):
         self.yaml = os.path.join(os.path.dirname(__file__), 'data', 'test.yaml')
         self.json = os.path.join(os.path.dirname(__file__), 'data', 'test.json')
         self.simple = os.path.join(os.path.dirname(__file__), 'data', 'simple.yml')
-
         self.txtfile = os.path.join(os.path.dirname(__file__), 'data', 'tweets.txt')
         self.archive = os.path.dirname(__file__)
 
@@ -60,12 +59,6 @@ class test_twitter_bot_utils(unittest.TestCase):
         self.assertEqual(twitter.auth.consumer_secret.decode('utf8'), credentials['consumer_secret'])
         self.assertEqual(twitter.auth.access_token, credentials['token'])
         self.assertEqual(twitter.auth.access_token_secret, credentials['secret'])
-
-        twitter = api.API(screen_name='fake', config_file='.travis.yml')
-
-        # Strange that two of these are bytes and two are str.
-        self.assertEqual(twitter.auth.consumer_key.decode('utf8'), os.environ['TWITTER_CONSUMER_KEY'])
-        assert twitter.auth.consumer_secret.decode('utf8') == os.environ['TWITTER_CONSUMER_SECRET']
 
     def testApiAttributes(self):
         twitter = api.API(screen_name='example_screen_name', config_file=self.yaml, use_env=False)

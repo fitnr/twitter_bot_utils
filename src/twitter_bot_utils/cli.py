@@ -52,12 +52,7 @@ def auto_follow(arguments=None):
             usage="%(prog)s [options] screen_name",
         )
         parser.add_argument("screen_name", type=str)
-        parser.add_argument(
-            "-U",
-            "--unfollow",
-            action="store_true",
-            help="Unfollow those who don't follow you",
-        )
+        parser.add_argument("-U", "--unfollow", action="store_true", help="Unfollow those who don't follow you")
         args.add_default_args(parser, version=version, include=ARGS)
         arguments = parser.parse_args()
         print(DEPRECATION, file=sys.stderr)
@@ -75,23 +70,11 @@ def authenticate(arguments=None):
     if arguments is None:
         parser = ArgumentParser(description="Authorize an account with a twitter application.")
 
-        parser.add_argument(
-            "-c",
-            metavar="file",
-            type=str,
-            default=None,
-            dest="config_file",
-            help="config file",
-        )
+        parser.add_argument("-c", metavar="file", type=str, default=None, dest="config_file", help="config file")
         parser.add_argument("--app", metavar="app", type=str, help="app name in config file")
         parser.add_argument("-s", "--save", action="store_true", help="Save details to config file")
 
-        parser.add_argument(
-            "--consumer-key",
-            metavar="key",
-            type=str,
-            help="consumer key (aka consumer token)",
-        )
+        parser.add_argument("--consumer-key", metavar="key", type=str, help="consumer key (aka consumer token)")
         parser.add_argument("--consumer-secret", metavar="secret", type=str, help="consumer secret")
         parser.add_argument("-V", "--version", action="version", version="%(prog)s " + version)
 
@@ -190,11 +173,12 @@ def post(arguments):
         if not arguments.dry_run:
             twitter.update_status(**params)
 
-    except tweepy.TweepError as err:
+    except tweepy.TweepError as e:
         logging.getLogger(arguments.screen_name).error(err)
 
 
 def retweet(arguments):
+    """Retweet a status"""
     twitter = api.API(arguments)
     twitter.retweet(id=arguments.id)
 
@@ -223,40 +207,15 @@ def main():
         usage="%(prog)s [options] screen_name",
     )
     follow.add_argument("screen_name", type=str)
-    follow.add_argument(
-        "-U",
-        "--unfollow",
-        action="store_true",
-        help="Unfollow those who don't follow you",
-    )
+    follow.add_argument("-U", "--unfollow", action="store_true", help="Unfollow those who don't follow you")
     follow.set_defaults(func=auto_follow)
-
-    retweet = subparsers.add_parser(
-        "retweet",
-        description="Retweet a tweet",
-        usage="%(prog)s [options] screen_name",
-    )
-    retweet.add_argument("screen_name", type=str)
-    retweet.add_argument(
-        "-i",
-        "--id",
-        help="Retweet this status",
-    )
-    retweet.set_defaults(func=retweet)
 
     auth = subparsers.add_parser(
         "auth",
         description="Authorize an account with a twitter application.",
         usage="%(prog)s [options]",
     )
-    auth.add_argument(
-        "-c",
-        metavar="file",
-        type=str,
-        default=None,
-        dest="config_file",
-        help="config file",
-    )
+    auth.add_argument("-c", metavar="file", type=str, default=None, dest="config_file", help="config file")
     auth.add_argument("--app", metavar="app", type=str, help="app name in config file")
     auth.add_argument(
         "-s",
@@ -265,12 +224,7 @@ def main():
         const=True,
         help="Save details to config file. If no file is given, uses file in --config.",
     )
-    auth.add_argument(
-        "--consumer-key",
-        metavar="key",
-        type=str,
-        help="consumer key (aka consumer token)",
-    )
+    auth.add_argument("--consumer-key", metavar="key", type=str, help="consumer key (aka consumer token)")
     auth.add_argument("--consumer-secret", metavar="secret", type=str, help="consumer secret")
     auth.set_defaults(func=authenticate)
 
