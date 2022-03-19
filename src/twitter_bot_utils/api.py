@@ -47,7 +47,6 @@ class API(tweepy.API):
         format (str): Format for logger. Defaults to 'file lineno: message'
         verbose (bool): Set logging level to DEBUG
         quiet (bool): Set logging level to ERROR. Overrides verbose.
-        use_env (bool): Allow environment variables to override settings. Default: True
         kwargs: Other settings will be passed to the config
     """
 
@@ -80,14 +79,6 @@ class API(tweepy.API):
         config = configure(self._screen_name, **kwargs)
         self._config = {k: v for k, v in config.items() if k not in PROTECTED_INFO}
         keys = {k: v for k, v in config.items() if k in PROTECTED_INFO}
-        if kwargs.get("use_env", True):
-            keys.update(
-                {
-                    k: os.environ["TWITTER_" + k.upper()]
-                    for k in PROTECTED_INFO
-                    if k not in keys and "TWITTER_" + k.upper() in os.environ
-                }
-            )
 
         try:
             # setup auth
