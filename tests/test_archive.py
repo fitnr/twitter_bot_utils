@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import argparse
 import inspect
@@ -24,7 +23,7 @@ class test_twitter_bot_utils(unittest.TestCase):
 
     def setUp(self):
         self.api = tweepy.API()
-        self.status = tweepy.Status.parse(self.api, example_tweet)
+        self.status = tweepy.models.Status.parse(self.api, example_tweet)
 
         parent = args.parent(version='1.2.3')
         self.parser = argparse.ArgumentParser(description='desc', parents=[parent])

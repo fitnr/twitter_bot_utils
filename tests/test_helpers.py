@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
@@ -16,7 +15,7 @@ class test_tbu_helpers(unittest.TestCase):
     def setUp(self):
         self.api = tweepy.API()
         self.tweet = example_tweet
-        self.status = tweepy.Status.parse(self.api, self.tweet)
+        self.status = tweepy.models.Status.parse(self.api, self.tweet)
 
     def test_has_entities(self):
         assert helpers.has_entities(self.status) is True
@@ -54,7 +53,7 @@ class test_tbu_helpers(unittest.TestCase):
         self.tweet['entities']['urls'] = [{"indices": [0, 12], "expanded_url": "http://long.long.url"}]
         self.tweet['text'] = 'http://short hey'
 
-        status = tweepy.Status.parse(self.api, self.tweet)
+        status = tweepy.models.Status.parse(self.api, self.tweet)
 
         assert helpers.replace_urls(status) == "http://long.long.url hey"
 

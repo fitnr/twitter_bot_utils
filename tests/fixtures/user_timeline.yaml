@@ -4,7 +4,7 @@ interactions:
     headers:
       Host: [api.twitter.com]
     method: GET
-    uri: https://api.twitter.com/1.1/statuses/user_timeline.json?exclude_replies=False&include_rts=True&id=botutils&count=1000
+    uri: https://api.twitter.com/1.1/statuses/user_timeline.json?exclude_replies=False&include_rts=True&screen_name=botutils&count=1000
   response:
     body: {string: '[{"created_at":"Thu Nov 30 19:41:04 +0000 2017","id":936319185277341697,"id_str":"936319185277341697","text":"I
         am here to help test bot tools","truncated":false,"entities":{"hashtags":[],"symbols":[],"user_mentions":[],"urls":[]},"source":"\u003ca

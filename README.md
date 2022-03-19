@@ -25,7 +25,7 @@ This will prompt you with an url. Open this in a browser where your bot is logge
 
 One goal of Twitter Bot Utils is to create Tweepy instances with authentication data stored in a simple config file. This gives botmakers a simple, reusable place to store keys outside of source control.
 
-By default, Twitter bot utils looks for a file called `bots.yaml` or `bots.json` in the current directory, your home directory (`~/`) or the `~/bots` directory. Custom config locations can be set, too.
+By default, Twitter bot utils looks for a file called `bots.yaml` (or `.yml`) in the current directory, your home directory (`~/`) or the `~/bots` directory. Custom config locations can be set, too.
 
 These are two ways to lay out a bots config file. The basic way covers just one user and one app:
 

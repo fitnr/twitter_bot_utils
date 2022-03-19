@@ -36,7 +36,7 @@ classifiers = [
 ]
 dynamic = ["version"]
 dependencies = [
-    "tweepy >=3.8.0, <4",
+    "tweepy >=4.6, <5",
     "pyYAML>=4.2"
 ]
 

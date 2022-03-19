@@ -44,8 +44,8 @@ def configure(screen_name=None, config_file=None, app=None, **kwargs):
     """
     # Use passed config file, or look for it in the default path.
     # Super-optionally, accept a different place to look for the file
-    dirs = kwargs.pop("default_directories", None)
-    bases = kwargs.pop("default_bases", None)
+    dirs = kwargs.pop("directories", None)
+    bases = kwargs.pop("bases", None)
     file_config = {}
     if config_file is not False:
         config_file = find_file(config_file, dirs, bases)
@@ -72,20 +72,14 @@ def configure(screen_name=None, config_file=None, app=None, **kwargs):
 
 
 def parse(file_path):
-    """Parse a YAML or JSON file."""
+    """Parse a YAML file."""
     _, ext = path.splitext(file_path)
 
-    if ext in (".yaml", ".yml"):
-        func = yaml.safe_load
-
-    elif ext == ".json":
-        func = json.load
-
-    else:
+    if ext not in (".yaml", ".yml"):
         raise ValueError(f"Unrecognized config file type: {ext}")
 
     with open(file_path, "r", encoding="utf-8") as f:
-        return func(f)
+        return yaml.safe_load(f)
 
 
 def find_file(config_file=None, default_directories=None, default_bases=None):
@@ -111,28 +105,20 @@ def find_file(config_file=None, default_directories=None, default_bases=None):
 
 def setup_auth(**keys):
     """Set up Tweepy authentication using passed args or config file settings."""
-    auth = tweepy.OAuthHandler(consumer_key=keys["consumer_key"], consumer_secret=keys["consumer_secret"])
-    auth.set_access_token(
-        key=keys.get("token", keys.get("key", keys.get("oauth_token"))),
-        secret=keys.get("secret", keys.get("oauth_secret")),
+    return tweepy.OAuth1UserHandler(
+        consumer_key=keys["consumer_key"],
+        consumer_secret=keys["consumer_secret"],
+        access_token=keys.get("token", keys.get("key", keys.get("oauth_token"))),
+        access_token_secret=keys.get("secret", keys.get("oauth_secret")),
     )
-    return auth
 
 
 def dump(contents, file_path):
     """Dump a file's contents as a Python object"""
     _, ext = path.splitext(file_path)
 
-    if ext in (".yaml", ".yml"):
-        func = yaml.dump
-        kwargs = {"canonical": False, "default_flow_style": False, "indent": 4}
-
-    elif ext == ".json":
-        func = json.dump
-        kwargs = {"sort_keys": True, "indent": 4}
-
-    else:
+    if ext not in (".yaml", ".yml"):
         raise ValueError(f"Unrecognized config file type {ext}")
 
     with open(file_path, "w", encoding="utf-8") as f:
-        func(contents, f, **kwargs)
+        yaml.dump(contents, f, canonical=False, default_flow_style=False, indent=2)

@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import os
 import unittest
@@ -13,7 +12,6 @@ class test_confighelper(unittest.TestCase):
     def setUp(self):
         self.datapath = os.path.join(os.path.dirname(__file__), 'data')
         self.yaml = os.path.join(self.datapath, 'test.yaml')
-        self.json = os.path.join(self.datapath, 'test.json')
         self.simple = os.path.join(self.datapath, 'simple.yml')
         self.badfile = os.path.join(self.datapath, 'tweets.txt')
 
@@ -21,7 +19,7 @@ class test_confighelper(unittest.TestCase):
         self.assertIn('~', confighelper.CONFIG_DIRS)
 
     def test_find_file(self):
-        for f in (self.simple, self.yaml, self.json):
+        for f in (self.simple, self.yaml):
             self.assertEqual(f, confighelper.find_file(f))
             self.assertEqual(
                 f, confighelper.find_file(default_bases=(os.path.basename(f),), default_directories=[self.datapath])
@@ -29,11 +27,6 @@ class test_confighelper(unittest.TestCase):
 
     def test_yaml(self):
         config = confighelper.configure(self.screen_name, config_file=self.yaml)
-        self.assertEqual(config['key'], 'INDIA')
-        self.assertEqual(config["consumer_key"], "NOVEMBER")
-
-    def test_json(self):
-        config = confighelper.configure(self.screen_name, config_file=self.json)
         self.assertEqual(config['key'], 'INDIA')
         self.assertEqual(config["consumer_key"], "NOVEMBER")
 
@@ -46,17 +39,9 @@ class test_confighelper(unittest.TestCase):
         with self.assertRaises(ValueError):
             confighelper.parse('foo.unknown')
 
-        with self.assertRaises((IOError, OSError)):
-            confighelper.parse('unknown.json')
-
     def testConfigKwargPassing(self):
         conf = confighelper.parse(self.yaml)
         config = confighelper.configure(config_file=self.yaml, **conf)
-        assert conf['custom'] == config['custom']
-
-    def testConfigKwargPassingJSON(self):
-        conf = confighelper.parse(self.json)
-        config = confighelper.configure(config_file=self.json, **conf)
         assert conf['custom'] == config['custom']
 
     def testConfigBadFileType(self):
@@ -64,8 +49,8 @@ class test_confighelper(unittest.TestCase):
             confighelper.parse(self.badfile)
 
     def testDumpConfig(self):
-        conf = confighelper.parse(self.json)
-        sink = 'a.json'
+        conf = confighelper.parse(self.yaml)
+        sink = 'a.yaml'
         confighelper.dump(conf, sink)
 
         dumped = confighelper.parse(sink)
@@ -95,7 +80,6 @@ class test_confighelper(unittest.TestCase):
         assert config['secret'] == 'LIMA'
         assert config['consumer_key'] == 'NOVEMBER'
         assert config['random'] == 'foo'
-
 
 if __name__ == '__main__':
     unittest.main()

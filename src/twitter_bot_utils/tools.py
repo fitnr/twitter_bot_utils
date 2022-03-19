@@ -17,7 +17,7 @@
 
 from time import sleep
 
-from tweepy.error import RateLimitError, TweepError
+from tweepy.errors import TooManyRequests as RateLimitError, TweepyException as TweepError
 
 RATE_LIMIT_RESET_MINUTES = 15
 
@@ -40,10 +40,10 @@ def _autofollow(api, action, dry_run):
     """
     try:
         # get the last 5000 followers
-        followers = api.followers_ids()
+        followers = api.get_follower_ids()
 
         # Get the last 5000 people user has followed
-        friends = api.friends_ids()
+        friends = api.get_friend_ids()
 
     except TweepError as err:
         api.logger.error("%s: error getting followers/followers", action)
@@ -97,7 +97,7 @@ def fave_mentions(api, dry_run=None):
     :api twitter_bot_utils.api.API
     :dry_run bool don't actually favorite, just report
     """
-    f = api.favorites(include_entities=False, count=150)
+    f = api.get_favorites(include_entities=False, count=150)
     favs = [m.id_str for m in f]
 
     mentions = api.mentions_timeline(trim_user=True, include_entities=False, count=75)

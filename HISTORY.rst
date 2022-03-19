@@ -1,3 +1,10 @@
+0.14
+----
+* Bump required tweepy to 4.6
+* Remove `api.update_status` method with retry
+* Remove `use_env` option in API.
+* Remove support for bots.json files
+
 0.13
 ----
 * Add `tbu retweet` method to command-line tool

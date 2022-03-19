@@ -1,6 +1,6 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import argparse
+import logging
 import os
 import unittest
 
@@ -18,9 +18,13 @@ class test_twitter_bot_utils(unittest.TestCase):
     # pylint: disable=invalid-name
     _api = None
 
+    def __init__(self, *args, **kwargs):
+        log = logging.getLogger("vcr")
+        log.setLevel(logging.ERROR)
+        super().__init__(*args, **kwargs)
+
     def setUp(self):
         self.yaml = os.path.join(os.path.dirname(__file__), 'data', 'test.yaml')
-        self.json = os.path.join(os.path.dirname(__file__), 'data', 'test.json')
         self.simple = os.path.join(os.path.dirname(__file__), 'data', 'simple.yml')
         self.txtfile = os.path.join(os.path.dirname(__file__), 'data', 'tweets.txt')
         self.archive = os.path.dirname(__file__)
@@ -30,7 +34,6 @@ class test_twitter_bot_utils(unittest.TestCase):
         if not self._api:
             self._api = api.API(config_file=False, **credentials)
             self.assertEqual(self._api.screen_name, credentials['screen_name'])
-            self.assertEqual(self._api.auth.get_username(), credentials['screen_name'])
 
         return self._api
 
@@ -55,8 +58,8 @@ class test_twitter_bot_utils(unittest.TestCase):
     def testEnviron(self):
         twitter = self.api()
         self.assertEqual(twitter.screen_name, credentials['screen_name'])
-        self.assertEqual(twitter.auth.consumer_key.decode('utf8'), credentials['consumer_key'])
-        self.assertEqual(twitter.auth.consumer_secret.decode('utf8'), credentials['consumer_secret'])
+        self.assertEqual(twitter.auth.consumer_key, credentials['consumer_key'])
+        self.assertEqual(twitter.auth.consumer_secret, credentials['consumer_secret'])
         self.assertEqual(twitter.auth.access_token, credentials['token'])
         self.assertEqual(twitter.auth.access_token_secret, credentials['secret'])
 
@@ -86,7 +89,7 @@ class test_twitter_bot_utils(unittest.TestCase):
 
     def testSetupAuth(self):
         auth = confighelper.setup_auth(**credentials)
-        self.assertIsInstance(auth, tweepy.OAuthHandler)
+        self.assertIsInstance(auth, tweepy.OAuth1UserHandler)
 
 
 if __name__ == '__main__':
