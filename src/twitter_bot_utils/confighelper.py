@@ -39,8 +39,8 @@ def configure(screen_name=None, config_file=None, app=None, **kwargs):
         screen_name (str): screen_name of user to search for in config file
         config_file (str): Path to read for the config file
         app (str): Name of the app to look for in the config file. Defaults to the one set in users.{screen_name}.
-        default_directories (str): Directories to read for the bots.yaml/json file. Defaults to CONFIG_DIRS.
-        default_bases (str): File names to look for in the directories. Defaults to CONFIG_BASES.
+        directories (str): Directories to read for the bots.yaml/json file. Defaults to ``CONFIG_DIRS``.
+        bases (str): File names to look for in the directories. Defaults to ``CONFIG_BASES``.
     """
     # Use passed config file, or look for it in the default path.
     # Super-optionally, accept a different place to look for the file
@@ -82,9 +82,9 @@ def parse(file_path):
         func = json.load
 
     else:
-        raise ValueError("Unrecognized config file type %s" % ext)
+        raise ValueError(f"Unrecognized config file type: {ext}")
 
-    with open(file_path, "r") as f:
+    with open(file_path, "r", encoding="utf-8") as f:
         return func(f)
 
 
@@ -94,7 +94,7 @@ def find_file(config_file=None, default_directories=None, default_bases=None):
         if path.exists(path.expanduser(config_file)):
             return config_file
 
-        raise FileNotFoundError("Config file not found: {}".format(config_file))
+        raise FileNotFoundError(f"Config file not found: {config_file}")
 
     dirs = default_directories or CONFIG_DIRS
     dirs = [getcwd()] + dirs
@@ -106,7 +106,7 @@ def find_file(config_file=None, default_directories=None, default_bases=None):
         if path.exists(filepath):
             return filepath
 
-    raise FileNotFoundError("Config file not found in {}".format(dirs))
+    raise FileNotFoundError(f"Config file not found in {dirs}")
 
 
 def setup_auth(**keys):
@@ -132,7 +132,7 @@ def dump(contents, file_path):
         kwargs = {"sort_keys": True, "indent": 4}
 
     else:
-        raise ValueError("Unrecognized config file type %s" % ext)
+        raise ValueError(f"Unrecognized config file type {ext}")
 
-    with open(file_path, "w") as f:
+    with open(file_path, "w", encoding="utf-8") as f:
         func(contents, f, **kwargs)

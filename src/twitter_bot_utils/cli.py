@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # Copyright 2014-17 Neil Freeman contact@fakeisthenewreal.org
 # This program is free software: you can redistribute it and/or modify
@@ -109,7 +108,7 @@ def authenticate(arguments=None):
     auth = tweepy.OAuthHandler(consumer_key, consumer_secret, "oob")
 
     print(auth.get_authorization_url())
-    verifier = input('Please visit this url, click "Authorize app" and enter in the PIN:\n> ')
+    verifier = input("Please visit this url, click 'Authorize app' and enter in the PIN:\n> ")
 
     try:
         auth.get_access_token(verifier)
@@ -147,11 +146,11 @@ def authenticate(arguments=None):
 
         confighelper.dump(config, file_name)
 
-        print("Saved keys in {}".format(file_name))
+        print(f"Saved keys in {file_name}")
 
     # Or just print them
     else:
-        print("key: {}\nsecret: {}".format(auth.access_token, auth.access_token_secret))
+        print(f"key: {auth.access_token}\nsecret: {auth.access_token_secret}")
 
 
 def post(arguments):
@@ -173,7 +172,7 @@ def post(arguments):
         if not arguments.dry_run:
             twitter.update_status(**params)
 
-    except tweepy.TweepError as e:
+    except tweepy.TweepError as err:
         logging.getLogger(arguments.screen_name).error(err)
 
 
