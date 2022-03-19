@@ -16,7 +16,6 @@
 import logging
 import os
 from argparse import Namespace
-from time import sleep
 
 import tweepy
 
@@ -168,17 +167,3 @@ class API(tweepy.API):
     def last_retweet(self):
         """Return most recent retweet."""
         return self._last("_last_retweet")
-
-    def update_status(self, *pargs, **kwargs):
-        """
-        Wrapper for tweepy.api.update_status with a 10s wait when twitter is over capacity
-        """
-        try:
-            return super().update_status(*pargs, **kwargs)
-
-        except tweepy.TweepError as err:
-            if getattr(err, "api_code", None) == 503:
-                sleep(10)
-                return super().update_status(*pargs, **kwargs)
-
-            raise err from err
