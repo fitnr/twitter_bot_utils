@@ -50,16 +50,10 @@ class API(tweepy.API):
         kwargs: Other settings will be passed to the config
     """
 
-    _last_tweet = _last_reply = _last_retweet = None
-
-    max_size_standard = 5120  # standard uploads must be less then 5 MB
-    max_size_chunked = 15360  # chunked uploads must be less than 15 MB
-
     def __init__(self, args=None, **kwargs):
         """
         Construct the tbu.API object.
         """
-
         # Update the kwargs with non-None contents of args
         if isinstance(args, Namespace):
             kwargs.update({k: v for k, v in vars(args).items() if v is not None})
@@ -81,25 +75,20 @@ class API(tweepy.API):
         keys = {k: v for k, v in config.items() if k in PROTECTED_INFO}
 
         try:
-            # setup auth
-            auth = tweepy.OAuthHandler(
+            # set up auth
+            auth = tweepy.OAuth1UserHandler(
                 consumer_key=keys["consumer_key"],
                 consumer_secret=keys["consumer_secret"],
+                access_token=keys.get("token", keys.get("key", keys.get("oauth_token"))),
+                access_token_secret=keys.get("secret", keys.get("oauth_secret")),
             )
-
-            try:
-                auth.set_access_token(
-                    key=keys.get("token", keys.get("key", keys.get("oauth_token"))),
-                    secret=keys.get("secret", keys.get("oauth_secret")),
-                )
-
-            except KeyError:
-                # API won't have an access key
-                pass
-
         except KeyError as err:
             missing = [p for p in PROTECTED_INFO if p not in keys]
-            raise ValueError("Incomplete config. Missing {}".format(missing)) from err
+            raise ValueError(f"Incomplete config. Missing {missing}") from err
+
+        self._last_tweet = None
+        self._last_reply = None
+        self._last_retweet = None
 
         # initiate api connection
         super().__init__(auth)
